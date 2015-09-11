@@ -1,0 +1,111 @@
+<div>
+    This plugin executes the supplied Groovy code, every time an event is triggered. You can use <code>@Grab</code>
+    annotations (<a href="https://issues.apache.org/jira/browse/GROOVY-6069">only where they are valid</a>) if you'd
+    like to import external dependencies.<br/><br/>
+
+    <h4>Variables:</h4>
+
+    This plugin injects the following variables, which can be used in your Groovy code.<br/><br/>
+
+    Additionally, if you return a <code>java.util.Map</code> object, these variables will be added to the context for
+    any future code invocations.<br/><br/>
+
+    <table border="1" cellpadding="2px">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Class</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><code>log</code></td>
+            <td>The plugin's logger instance.</td>
+            <td><a href="http://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html">java.util.Logger</a>
+            </td>
+        </tr>
+        <tr>
+            <td><code>event</code></td>
+            <td>The name of the event that triggered the code (see Events below).</td>
+            <td><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html">java.lang.String</a></td>
+        </tr>
+        <tr>
+            <td><code>jenkins</code></td>
+            <td>The Jenkins instance.</td>
+            <td><a href="http://javadoc.jenkins-ci.org/jenkins/model/Jenkins.html">jenkins.model.Jenkins</a></td>
+        </tr>
+        <tr>
+            <td><code>env</code></td>
+            <td>(Optional) The EnvVars for a job instance.</td>
+            <td><a href="http://javadoc.jenkins-ci.org/hudson/EnvVars.html">hudson.EnvVars</a></td>
+        </tr>
+        <tr>
+            <td><code>run</code></td>
+            <td>(Optional) The run object associated with this job instance.</td>
+            <td><a href="http://javadoc.jenkins-ci.org/hudson/model/Run.html">hudson.model.Run</a></td>
+        </tr>
+        <tr>
+            <td><code>listener</code></td>
+            <td>(Optional) The task listener associated with the job instance.</td>
+            <td><a href="http://javadoc.jenkins-ci.org/hudson/model/TaskListener.html">hudson.model.TaskListener</a></td>
+        </tr>
+        <tr>
+        </tbody>
+    </table>
+    <br/><br/>
+
+    <h4>Events:</h4>
+
+    This Groovy code is executed when any of the below events occur.<br/><br/>
+
+    <table border="1" cellpadding="2px">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="#">GlobalEventsPlugin</a></code></th>
+        </tr>
+        <tr>
+            <td><code>GlobalEventsPlugin.start</code></td>
+            <td>Called when the plugin is started.</td>
+        </tr>
+        <tr>
+            <td><code>GlobalEventsPlugin.stop</code></td>
+            <td>Called when the plugin is stopped.</td>
+        </tr>
+        <tr>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="http://javadoc.jenkins-ci.org/hudson/model/listeners/RunListener.html">RunListener</a></code></th>
+        </tr>
+        <tr>
+            <td><code>RunListener.onStarted</code></td>
+            <td>Called when a build is started (i.e. it was in the queue, and
+                will now start running on an executor).
+            </td>
+        </tr>
+        <tr>
+            <td><code>RunListener.onCompleted</code></td>
+            <td>Called after a build is completed.</td>
+        </tr>
+        <tr>
+            <td><code>RunListener.onFinalized</code></td>
+            <td>Called after a build is moved to the Run.State.COMPLETED
+                state.
+            </td>
+        </tr>
+        <tr>
+            <td><code>RunListener.onDeleted</code></td>
+            <td>Called right before a build is going to be deleted.</td>
+        </tr>
+        </tbody>
+    </table>
+    <br/><br/>
+
+    <h4>Logging:</h4>
+
+    To configure a logger, use the logging filter "<code>org.jenkinsci.plugins.globalEventsPlugin</code>".
+</div>

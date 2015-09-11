@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url 'http://repo.jenkins-ci.org/releases/'
+        }
+    }
+    dependencies {
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.12.2'
+    }
+}
+
+defaultTasks 'clean', 'jpi'
+
+/**
+=== Usage ===
+
+gradlew jpi - Build the Jenkins plugin file, which can then be found in the build directory. The file will currently end in ".hpi".
+gradlew publishToMavenLocal - Build the Jenkins plugin and install it into your local Maven repository.
+gradlew publish - Deploy your plugin to the Jenkins Maven repository to be included in the Update Center.
+gradlew server - Start a local instance of Jenkins (http://localhost:8080) with the plugin pre-installed for testing and debugging.
+ */
+
+apply plugin: 'org.jenkins-ci.jpi'
+apply from: "$rootDir/gradle/common.gradle"
+
+group = 'org.jenkins-ci.plugins'
+description = 'Executes groovy code when an event occurs.'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url 'http://repo.jenkins-ci.org/releases/'
+    }
+}
+
+jenkinsPlugin {
+    coreVersion = '1.581'
+    shortName = 'global-events'
+    displayName = 'global-events-plugin'
+    url = 'https://wiki.jenkins-ci.org/display/JENKINS/GlobalEventsPlugin'
+    gitHubUrl = 'https://github.com/jenkinsci/global-events-plugin'
+    pluginFirstClassLoader = true
+    maskClasses = 'groovy groovyjarjarantlr groovyjarjarasm groovyjarjarcommonscli org.codehaus.groovy'
+    compatibleSinceVersion = '1.20'
+    fileExtension = 'jpi'
+    developers {
+        developer {
+            id 'nickg'
+            name 'Nick Grealy'
+            email 'nickgrealy@gmail.com'
+        }
+    }
+}
+
+configurations { forceGroovy }
+
+dependencies {
+    forceGroovy "org.codehaus.groovy:groovy-all:${groovyVersion}"
+	compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
+}
+
+jpi {
+	classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grap work
+}

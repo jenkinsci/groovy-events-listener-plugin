@@ -1,0 +1,61 @@
+
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+idea.project?.vcs = 'Git'
+
+ext {
+    /* optional - set variable enforceJavaVersion */
+    enforceVersionFlag = project.getProperties().containsKey('enforceJavaVersion')
+    javaVersion = project.getProperties().get('enforceJavaVersion') ?: JavaVersion.VERSION_1_6
+    compileTasks = [compileJava, compileTestJava, compileGroovy, compileTestGroovy]
+}
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile "junit:junit:4.12"
+}
+
+ext {
+    groovyVersion = '2.4.4'
+}
+
+configurations {
+    providedCompile
+}
+
+sourceSets.main.compileClasspath += configurations.providedCompile
+sourceSets.test.compileClasspath += configurations.providedCompile
+sourceSets.test.runtimeClasspath += configurations.providedCompile
+
+subprojects {
+    apply from: "$rootDir/gradle/idea.gradle"
+}
+
+// enforce version...
+
+task enforceVersion << {
+    if (enforceVersionFlag){
+        def foundVersion = JavaVersion.current()
+        if (foundVersion != enforceJavaVersion){
+            throw new IllegalStateException("Wrong Java version; required is $enforceJavaVersion, but found $foundVersion")
+        }
+    }
+}
+
+compileTasks*.dependsOn(enforceVersion);
+
+task showMeCache << {
+  configurations.compile.each { println it }
+}

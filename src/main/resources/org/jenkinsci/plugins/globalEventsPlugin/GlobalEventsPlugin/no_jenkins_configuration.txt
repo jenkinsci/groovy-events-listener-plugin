@@ -1,0 +1,1 @@
+Check that this package name matches the plugin class!
