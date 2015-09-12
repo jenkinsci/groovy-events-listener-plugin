@@ -26,7 +26,7 @@ were limited to making a HTTP GET/POST request (a bit restrictive).
 Bascially:
 
 - I wanted to be able to write my own code
-- I didn't want to have to repeat myself
+- I didn't want to repeat myself
 
 So I wrote this plugin. Along the way, I realised it could have some other applications too:
 
@@ -70,7 +70,7 @@ So lets get started with the simplest example.
 log.info "hello world!"
 ```
 
-Now save the changes, kick off a Jenkins job, and you will see "hello world" written to the logs three times!
+Now save the changes, kick off a Jenkins job, and you will see "hello world!" written to the logs three times.
 
 Excellent! Want to limit the logging to only occur when a Job is completed?
 
@@ -80,7 +80,7 @@ if (event == 'RunListener.onFinalized'){
 }
 ```
 
-Or perhaps for Job's whose name starts with "Foobar"?
+Or perhaps only for Job's whose name starts with "Foobar"?
 
 ```groovy
 if (env.JOB_NAME.startsWith('Foobar')){
@@ -95,7 +95,7 @@ for your solution!).
 ```groovy
 @Grab('commons-lang:commons-lang:2.4')
 import org.apache.commons.lang.WordUtils
-log.info "Hello ${WordUtils.capitalize('world')}"
+log.info "Hello ${WordUtils.capitalize('world')}!"
 ```
 
 Not bad! You can pretty much do what ever you want from here... custom logging to a file, sending performance metrics to
