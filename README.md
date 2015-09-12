@@ -8,7 +8,7 @@ Table of contents
 
 1. [Overview](#overview)
 1. [Building](#building)
-1. [Basic Usage](#basicusage)
+1. [Basic Usage](#basic-usage)
 1. [Authors](#authors)
 1. [License](#license)
 1. [Backlog](#backlog)
