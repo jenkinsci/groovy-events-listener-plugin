@@ -12,6 +12,7 @@ Table of contents
 1. [Authors](#authors)
 1. [License](#license)
 1. [Backlog](#backlog)
+1. [Similar Plugins](#similar-plugins)
 
 Overview
 ---
@@ -72,7 +73,7 @@ log.info "hello world!"
 
 Now save the changes, kick off a Jenkins job, and you will see "hello world!" written to the logs three times.
 
-The plugin actually injects a couple of variables, which you can use in your code. Here's an example using the `event`
+The plugin actually injects a couple of variables, which you can use in your code. Here's some examples using the `event`
 and `env` variables.
 
 This code limits the logging to only occur when a Job is completed!
@@ -146,3 +147,13 @@ Backlog
 - cache compilation of script
 - only execute script for registered events (to mitigate performance impacts)
 - optionally use script file or integrate with scriptler
+
+Similar Plugins
+---
+
+These plugins have similar (but different) functionality:
+
+- [https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin]()
+- [https://wiki.jenkins-ci.org/display/JENKINS/Extreme+Notification+Plugin]()
+- [https://github.com/speedledger/elasticsearch-jenkins]()
+- [https://github.com/jenkinsci/post-completed-build-result-plugin]()
