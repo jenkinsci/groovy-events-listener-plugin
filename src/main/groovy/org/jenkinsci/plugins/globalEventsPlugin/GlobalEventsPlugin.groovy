@@ -118,7 +118,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                     params.put("jenkins", Jenkins.getInstance())
                     params.put("log", log)
                     // add all parameters from the in-memory context...
-                    params.putAll(context)
+                    params.put("context", context)
                     log.finer(">>> Executing groovy script - parameters: ${params.keySet()}")
 
                     def shell = new GroovyShell(new Binding(params))

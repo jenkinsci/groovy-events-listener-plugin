@@ -72,7 +72,10 @@ log.info "hello world!"
 
 Now save the changes, kick off a Jenkins job, and you will see "hello world!" written to the logs three times.
 
-Excellent! Want to limit the logging to only occur when a Job is completed?
+The plugin actually injects a couple of variables, which you can use in your code. Here's an example using the `event`
+and `env` variables.
+
+This code limits the logging to only occur when a Job is completed!
 
 ```groovy
 if (event == 'RunListener.onFinalized'){
@@ -80,11 +83,32 @@ if (event == 'RunListener.onFinalized'){
 }
 ```
 
-Or perhaps only for Job's whose name starts with "Foobar"?
+And this one filters on Job's whose name starts with "Foobar"...
 
 ```groovy
 if (env.JOB_NAME.startsWith('Foobar')){
     log.info "hello world!"
+}
+```
+
+There's also a `context` Map variable. You can add your own variables to this Map, by returning a Map from your code.
+E.g.
+
+```groovy
+if (event == 'RunListener.onFinalized'){
+    def newCount = (context.finishCount ?: 0) + 1
+    log.info "hello world! finishCount=$newCount"
+    return ["finishCount": newCount]
+}
+```
+
+This will keep a record in memory, of how many times Jobs have finished. You can also achieve the same result, by
+adding variables directly to the Map variable... e.g.
+
+```groovy
+if (event == 'RunListener.onFinalized'){
+    context.finishCount = (context.finishCount ?: 0) + 1
+    log.info "hello world! finishCount=${context.finishCount}"
 }
 ```
 
