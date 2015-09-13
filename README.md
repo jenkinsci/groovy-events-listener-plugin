@@ -153,7 +153,7 @@ Similar Plugins
 
 These plugins have similar (but different) functionality:
 
-- [https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin]()
-- [https://wiki.jenkins-ci.org/display/JENKINS/Extreme+Notification+Plugin]()
-- [https://github.com/speedledger/elasticsearch-jenkins]()
-- [https://github.com/jenkinsci/post-completed-build-result-plugin]()
+- [https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Notification+Plugin)
+- [https://wiki.jenkins-ci.org/display/JENKINS/Extreme+Notification+Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Extreme+Notification+Plugin)
+- [https://github.com/speedledger/elasticsearch-jenkins](https://github.com/speedledger/elasticsearch-jenkins)
+- [https://github.com/jenkinsci/post-completed-build-result-plugin](https://github.com/jenkinsci/post-completed-build-result-plugin)
