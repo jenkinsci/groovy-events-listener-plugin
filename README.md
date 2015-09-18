@@ -1,4 +1,4 @@
-# global-events-plugin
+# groovy-events-listener-plugin
 A jenkins plugin, which executes groovy code when an event occurs.
 
 ---

@@ -12,7 +12,7 @@
     tags they use. Views are always organized according to its owner class,
     so it should be straightforward to find them.
   -->
-  <f:section title="Global Events Plugin">
+  <f:section title="Groovy Events Listener Plugin">
     <f:entry title="${%Groovy Code}" field="onEventGroovyCode" description="This Groovy code is executed every time an event occurs.">
       <f:textarea
         default="${descriptor.getDefaultOnEventGroovyCode()}"
