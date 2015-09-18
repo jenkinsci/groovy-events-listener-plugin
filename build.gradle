@@ -25,7 +25,7 @@ apply plugin: 'org.jenkins-ci.jpi'
 apply from: "$rootDir/gradle/common.gradle"
 
 group = 'org.jenkins-ci.plugins'
-description = 'Executes groovy code when an event occurs.'
+description = 'A jenkins plugin, which executes groovy code when an event occurs.'
 
 repositories {
     mavenCentral()
@@ -37,10 +37,10 @@ repositories {
 
 jenkinsPlugin {
     coreVersion = '1.581'
-    shortName = 'global-events'
-    displayName = 'global-events-plugin'
-    url = 'https://wiki.jenkins-ci.org/display/JENKINS/GlobalEventsPlugin'
-    gitHubUrl = 'https://github.com/jenkinsci/global-events-plugin'
+    shortName = 'groovy-events-listener-plugin'
+    displayName = 'A jenkins plugin, which executes groovy code when an event occurs.'
+    url = 'https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Events+Listener+Plugin'
+    gitHubUrl = 'https://github.com/jenkinsci/groovy-events-listener-plugin'
     pluginFirstClassLoader = true
     maskClasses = 'groovy groovyjarjarantlr groovyjarjarasm groovyjarjarcommonscli org.codehaus.groovy'
     compatibleSinceVersion = '1.20'
