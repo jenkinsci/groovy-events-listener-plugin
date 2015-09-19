@@ -26,8 +26,9 @@ class GlobalEventsPluginTest {
         // clear log buffer, override logger.info method...
         loginfo = []
         logsevere = []
-        logger.metaClass.info = { String msg -> loginfo.add(msg) }
-//        logger.metaClass.log = { Level level, String msg, Throwable t -> logsevere.add(msg) }
+        // override method behaviour...
+        Logger.metaClass.info = { String msg -> loginfo.add(msg) }
+        Logger.metaClass.log = { Level level, String msg, Throwable t -> logsevere.add(msg) }
     }
 
     @Test
@@ -36,8 +37,10 @@ class GlobalEventsPluginTest {
 println 'Foobar1'
 System.out.println('Foobar2')
 System.err.println('Foobar3')
+log.info('Foobar4')
 """, [:])
-        assert loginfo == ['Foobar1','Foobar2','Foobar3']
+        // only using the logger captures output...
+        assert loginfo == ['Foobar4']
     }
 
     @Test
@@ -87,7 +90,7 @@ assert bbb == 222
     void testExceptionHandling(){
         plugin.safeExecGroovyCode(logger, "throw new RuntimeException('ERR')", [:])
         // exception should be wrapped, logged and suppressed (i.e. not bubble up to here)!
-        assert logsevere[0] == 'Caught unhandled exception!'
+        assert logsevere[0] == '>>> Caught unhandled exception!'
     }
 
     @Ignore("Static one time compilation has not yet been implemented!")

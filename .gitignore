@@ -3,6 +3,8 @@
 target/
 work/
 build/
+out/
+target/
 *.iml
 *.iws
 *.ipr
