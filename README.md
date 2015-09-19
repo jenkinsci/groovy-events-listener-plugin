@@ -46,11 +46,23 @@ Prerequisites:
 
 To run Jenkins ([http://localhost:8080](http://localhost:8080)) locally with the plugin installed:
 
-    ./gradlew clean server
+```Shell
+./gradlew clean server
+```
 
 To build the Jenkins plugin (.jpi) file:
 
-    ./gradlew clean jpi
+```Shell
+./gradlew clean jpi
+```
+
+To publish/release the Jenkins plugin:
+
+1. Update the `version` in `gradle.properties`, to remove "-SNAPSHOT"
+```Shell
+./gradlew clean publish
+```
+1. Update the `version` in `gradle.properties`, to increment the version and re-add "-SNAPSHOT"
 
 Basic Usage
 ---
@@ -67,7 +79,7 @@ This plugin executes the supplied Groovy code, every time an event is triggered.
 
 So lets get started with the simplest example.
 
-```groovy
+```Groovy
 log.info "hello world!"
 ```
 
@@ -78,7 +90,7 @@ and `env` variables.
 
 This code limits the logging to only occur when a Job is completed!
 
-```groovy
+```Groovy
 if (event == 'RunListener.onFinalized'){
     log.info "hello world!"
 }
@@ -86,7 +98,7 @@ if (event == 'RunListener.onFinalized'){
 
 And this one filters on Job's whose name starts with "Foobar"...
 
-```groovy
+```Groovy
 if (env.JOB_NAME.startsWith('Foobar')){
     log.info "hello world!"
 }
@@ -95,7 +107,7 @@ if (env.JOB_NAME.startsWith('Foobar')){
 There's also a `context` Map variable. You can add your own variables to this Map, by returning a Map from your code.
 E.g.
 
-```groovy
+```Groovy
 if (event == 'RunListener.onFinalized'){
     def newCount = (context.finishCount ?: 0) + 1
     log.info "hello world! finishCount=$newCount"
@@ -106,7 +118,7 @@ if (event == 'RunListener.onFinalized'){
 This will keep a record in memory, of how many times Jobs have finished. You can also achieve the same result, by
 adding variables directly to the Map variable... e.g.
 
-```groovy
+```Groovy
 if (event == 'RunListener.onFinalized'){
     context.finishCount = (context.finishCount ?: 0) + 1
     log.info "hello world! finishCount=${context.finishCount}"
@@ -117,7 +129,7 @@ You can also use `@Grab` annotations ([only where they are valid](https://issues
 if you'd like to import external dependencies (thanks [Daniel](https://github.com/CoreMedia/job-dsl-plugin/commit/830fae7a0fd8a046c620600e46633166804190e3)
 for your solution!).
 
-```groovy
+```Groovy
 @Grab('commons-lang:commons-lang:2.4')
 import org.apache.commons.lang.WordUtils
 log.info "Hello ${WordUtils.capitalize('world')}!"
