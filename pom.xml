@@ -106,7 +106,7 @@
                 <configuration>
                     <gradleVersion>2.4</gradleVersion>
                     <tasks>
-                        <!-- this would effectively call "gradle clean check jpi" -->
+                        <!-- this would effectively call "gradle clean check publishToMavenLocal" -->
                         <task>clean</task>
                         <task>check</task>
                         <task>publishToMavenLocal</task>

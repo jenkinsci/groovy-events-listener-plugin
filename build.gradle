@@ -24,9 +24,6 @@ gradlew server - Start a local instance of Jenkins (http://localhost:8080) with 
 apply plugin: 'org.jenkins-ci.jpi'
 apply from: "$rootDir/gradle/common.gradle"
 
-group = 'org.jenkins-ci.plugins'
-description = 'A jenkins plugin, which executes groovy code when an event occurs.'
-
 repositories {
     mavenCentral()
     jcenter()
@@ -37,10 +34,10 @@ repositories {
 
 jenkinsPlugin {
     coreVersion = '1.581'
-    shortName = 'groovy-events-listener-plugin'
-    displayName = 'A jenkins plugin, which executes groovy code when an event occurs.'
-    url = 'https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Events+Listener+Plugin'
-    gitHubUrl = 'https://github.com/jenkinsci/groovy-events-listener-plugin'
+    shortName = project.name
+    displayName = jenkinsDisplayName
+    url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
+    gitHubUrl = "https://github.com/jenkinsci/$project.name"
     pluginFirstClassLoader = true
     maskClasses = 'groovy groovyjarjarantlr groovyjarjarasm groovyjarjarcommonscli org.codehaus.groovy'
     compatibleSinceVersion = '1.20'
