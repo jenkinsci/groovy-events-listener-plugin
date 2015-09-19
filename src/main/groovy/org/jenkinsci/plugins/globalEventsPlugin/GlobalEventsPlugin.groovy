@@ -145,7 +145,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                 }
             } catch (Throwable t) {
                 log.log(Level.SEVERE, ">>> Caught unhandled exception!", t)
-                if (testMode){
+                if (testMode) {
                     return FormValidation.error("\nAn exception was caught.\n\n" + stringifyException(t))
                 }
             }
@@ -155,15 +155,19 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                 @QueryParameter("onEventGroovyCode") final String onEventGroovyCode
         ) {
             LoggerTrap logger = new LoggerTrap(GlobalEventsPlugin.name)
-            def validationResult = safeExecGroovyCode(logger, onEventGroovyCode, [event: 'RunListener.onStarted'], true)
-            if (validationResult == null){
-                validationResult = FormValidation.ok("\nExecution completed successfully!\n\n${ logger.all.join("\n\n") }")
+            def validationResult = safeExecGroovyCode(logger, onEventGroovyCode, [
+                    event: 'RunListener.onStarted',
+                    env  : [:],
+                    run  : [:],
+            ], true)
+            if (validationResult == null) {
+                validationResult = FormValidation.ok("\nExecution completed successfully!\n\n${logger.all.join("\n\n")}")
             }
             validationResult
         }
     }
 
-    private static String stringifyException(Throwable t){
+    private static String stringifyException(Throwable t) {
         StringWriter sw = new StringWriter()
         t.printStackTrace(new PrintWriter(sw))
         sw.toString()
