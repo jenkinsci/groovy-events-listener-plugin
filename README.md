@@ -58,11 +58,11 @@ To build the Jenkins plugin (.jpi) file:
 
 To publish/release the Jenkins plugin:
 
-1. Update the `version` in `gradle.properties`, to remove "-SNAPSHOT"
+1. Update the `version` in `gradle.properties`, to remove "-SNAPSHOT" (increment and re-add after publishing)
+
 ```Shell
 ./gradlew clean publish
 ```
-1. Update the `version` in `gradle.properties`, to increment the version and re-add "-SNAPSHOT"
 
 Basic Usage
 ---
@@ -73,7 +73,7 @@ To get started:
 1. Navigate to the *Jenkins > Manage Jenkins > Configuration* page
 1. You should now see a *Global Events Plugin* section (similar to the following screenshot).
 
-![Version 1.0.0](src/main/site/screenshot-version-1.0.0.png "Version 1.0.0")
+![Version 1.0.0](src/main/site/screenshot-version-1.005.png "Version 1.005")
 
 This plugin executes the supplied Groovy code, every time an event is triggered.
 
@@ -83,7 +83,8 @@ So lets get started with the simplest example.
 log.info "hello world!"
 ```
 
-Now save the changes, kick off a Jenkins job, and you will see "hello world!" written to the logs three times.
+Now save the changes, kick off a Jenkins job, and you will see "hello world!" written to the logs three times. Alternatively, 
+there's now a `Test Groovy Code` button, which will execute the code with the `event`=`RunListener.onStarted`.
 
 The plugin actually injects a couple of variables, which you can use in your code. Here's some examples using the `event`
 and `env` variables.

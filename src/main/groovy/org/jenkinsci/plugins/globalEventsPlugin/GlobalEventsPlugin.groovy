@@ -3,9 +3,11 @@ package org.jenkinsci.plugins.globalEventsPlugin
 import hudson.Extension
 import hudson.Plugin
 import hudson.model.*
+import hudson.util.FormValidation
 import hudson.util.LogTaskListener
 import jenkins.model.Jenkins
 import net.sf.json.JSONObject
+import org.kohsuke.stapler.QueryParameter
 import org.kohsuke.stapler.StaplerRequest
 import org.kohsuke.stapler.export.ExportedBean
 
@@ -48,8 +50,8 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * <p/>
          * If you don't want fields to be persisted, use <tt>transient</tt>.
          */
-        private transient Map<Object, Object> context = new HashMap<Object, Object>()
-        private String onEventGroovyCode = defaultOnEventGroovyCode
+        protected transient Map<Object, Object> context = new HashMap<Object, Object>()
+        protected String onEventGroovyCode = defaultOnEventGroovyCode
 
         /**
          * In order to load the persisted global configuration,  you have to
@@ -82,7 +84,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         }
 
         String getDisplayName() {
-            return "global-events-plugin"
+            return "groovy-events-listener-plugin"
         }
 
         @Override
@@ -103,7 +105,11 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * @param groovyCode
          * @param params
          */
-        private synchronized void safeExecGroovyCode(Logger log, String groovyCode, Map<Object, Object> params) {
+        private synchronized FormValidation safeExecGroovyCode(
+                Logger log,
+                String groovyCode,
+                Map<Object, Object> params,
+                boolean testMode = false) {
             try {
                 if (groovyCode) {
                     // try adding the environment to the groovy params...
@@ -139,8 +145,28 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                 }
             } catch (Throwable t) {
                 log.log(Level.SEVERE, ">>> Caught unhandled exception!", t)
+                if (testMode){
+                    return FormValidation.error("\nAn exception was caught.\n\n" + stringifyException(t))
+                }
             }
         }
+
+        public FormValidation doTestGroovyCode(
+                @QueryParameter("onEventGroovyCode") final String onEventGroovyCode
+        ) {
+            LoggerTrap logger = new LoggerTrap(GlobalEventsPlugin.name)
+            def validationResult = safeExecGroovyCode(logger, onEventGroovyCode, [event: 'RunListener.onStarted'], true)
+            if (validationResult == null){
+                validationResult = FormValidation.ok("\nExecution completed successfully!\n\n${ logger.all.join("\n\n") }")
+            }
+            validationResult
+        }
+    }
+
+    private static String stringifyException(Throwable t){
+        StringWriter sw = new StringWriter()
+        t.printStackTrace(new PrintWriter(sw))
+        sw.toString()
     }
 }
 
