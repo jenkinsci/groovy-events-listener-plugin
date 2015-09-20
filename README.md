@@ -1,7 +1,5 @@
-# groovy-events-listener-plugin
+# Groovy Events Listener Plugin
 A jenkins plugin, which executes groovy code when an event occurs.
-
----
 
 Table of contents
 ---
