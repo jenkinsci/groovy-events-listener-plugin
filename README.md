@@ -40,7 +40,7 @@ So I wrote this plugin. Along the way, I realised it could have some other appli
 Building
 ---
 
-Build Status: [![Build Status](https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/poll-mailbox-trigger-plugin "Build Status")](https://jenkins.ci.cloudbees.com/job/plugins/job/poll-mailbox-trigger-plugin/)
+Build Status: [![Build Status](https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/groovy-events-listener-plugin "Build Status")](https://jenkins.ci.cloudbees.com/job/plugins/job/groovy-events-listener-plugin/)
 
 Prerequisites:
 
