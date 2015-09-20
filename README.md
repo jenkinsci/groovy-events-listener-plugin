@@ -40,9 +40,17 @@ So I wrote this plugin. Along the way, I realised it could have some other appli
 Building
 ---
 
+Build Status: [![Build Status](https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/poll-mailbox-trigger-plugin "Build Status")](https://jenkins.ci.cloudbees.com/job/plugins/job/poll-mailbox-trigger-plugin/)
+
 Prerequisites:
 
 - JDK 6 (or above)
+
+To setup for use with Intellij IDEA
+
+```Shell
+./gradlew cleanIdea idea
+```
 
 To run Jenkins ([http://localhost:8080](http://localhost:8080)) locally with the plugin installed:
 
