@@ -39,6 +39,13 @@ sourceSets.main.compileClasspath += configurations.providedCompile
 sourceSets.test.compileClasspath += configurations.providedCompile
 sourceSets.test.runtimeClasspath += configurations.providedCompile
 
+allprojects {
+	clean{
+		delete "work"
+		delete ".gradle"
+	}
+}
+
 subprojects {
     apply from: "$rootDir/gradle/idea.gradle"
 }

@@ -41,7 +41,7 @@ jenkinsPlugin {
     pluginFirstClassLoader = true
     maskClasses = 'groovy groovyjarjarantlr groovyjarjarasm groovyjarjarcommonscli org.codehaus.groovy'
     compatibleSinceVersion = '1.20'
-    fileExtension = 'jpi'
+    fileExtension = 'hpi'
     developers {
         developer {
             id 'nickg'
