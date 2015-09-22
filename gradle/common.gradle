@@ -15,10 +15,6 @@ ext {
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
-}
-
 repositories {
     mavenCentral()
 }
@@ -29,6 +25,7 @@ dependencies {
 
 ext {
     groovyVersion = '2.4.4'
+    customJvmArgs = ['-XX:MaxPermSize=128m', '-Xmx128m']
 }
 
 configurations {
@@ -39,11 +36,42 @@ sourceSets.main.compileClasspath += configurations.providedCompile
 sourceSets.test.compileClasspath += configurations.providedCompile
 sourceSets.test.runtimeClasspath += configurations.providedCompile
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.7'
+
+    def jvmOpts = customJvmArgs.join(' ')
+    inputs.property("jvmOpts", jvmOpts)
+    doLast {
+        def optsEnvVar = "DEFAULT_JVM_OPTS"
+        scriptFile.write scriptFile.text.replace("$optsEnvVar=\"\"", "$optsEnvVar=\"$jvmOpts\"")
+        batchScript.write batchScript.text.replace("set $optsEnvVar=", "set $optsEnvVar=$jvmOpts")
+    }
+}
+
 allprojects {
 	clean{
 		delete "work"
 		delete ".gradle"
 	}
+	
+	tasks.withType(JavaCompile) {
+        options.fork = true
+        options.forkOptions.jvmArgs += customJvmArgs
+	}
+	
+    tasks.withType(GroovyCompile) {
+        configure(groovyOptions.forkOptions) {
+            memoryMaximumSize = '256m'
+            jvmArgs = customJvmArgs
+        }
+    }
+    
+    tasks.withType(Test) {
+        jvmArgs(customJvmArgs)
+        testLogging {
+            exceptionFormat = 'full'
+        }
+    }
 }
 
 subprojects {
