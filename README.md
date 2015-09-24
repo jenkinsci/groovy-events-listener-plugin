@@ -1,7 +1,7 @@
 # Groovy Events Listener Plugin
 A Jenkins plugin, which executes groovy code when an event occurs.
 
-[![Version](http://sebastian-badge.info/plugins/groovy-events-listener-plugin.svg "Version")](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Events+Listener+Plugin) [![Build Status](https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/groovy-events-listener-plugin "Build Status")](https://jenkins.ci.cloudbees.com/job/plugins/job/groovy-events-listener-plugin/)
+[![Version](http://sebastian-badge.info/plugins/groovy-events-listener-plugin.svg "Version")](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Events+Listener+Plugin) [![Build Status](https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/groovy-events-listener-plugin&style=plastic "Build Status")](https://jenkins.ci.cloudbees.com/job/plugins/job/groovy-events-listener-plugin/)
 
 Table of contents
 ---
