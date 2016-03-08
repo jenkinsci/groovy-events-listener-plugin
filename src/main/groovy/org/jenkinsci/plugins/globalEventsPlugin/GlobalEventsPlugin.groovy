@@ -53,7 +53,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         protected transient Map<Object, Object> context = new HashMap<Object, Object>()
         protected String onEventGroovyCode = getDefaultOnEventGroovyCode()
 
-        private final transient static GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
+        private final transient static GroovyClassLoader groovyClassLoader = new GroovyClassLoader(GlobalEventsPlugin.class.getClassLoader());
         private transient Script groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
 
         /**
