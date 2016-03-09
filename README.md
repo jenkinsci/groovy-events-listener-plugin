@@ -12,7 +12,6 @@ Table of contents
 1. [Basic Usage](#basic-usage)
 1. [Authors](#authors)
 1. [License](#license)
-1. [Backlog](#backlog)
 1. [Similar Plugins](#similar-plugins)
 
 Overview
@@ -175,15 +174,6 @@ License
 ---
 
 Licensed under the [MIT License (MIT)](LICENSE)
-
-Backlog
----
-
-- add more listeners
-- add a "Run now" button
-- cache compilation of script
-- only execute script for registered events (to mitigate performance impacts)
-- optionally use script file or integrate with scriptler
 
 Similar Plugins
 ---
