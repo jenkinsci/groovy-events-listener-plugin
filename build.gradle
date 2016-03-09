@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.12.2'
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.15.0'
     }
 }
 
@@ -23,6 +23,7 @@ gradlew server - Start a local instance of Jenkins (http://localhost:8080) with 
 
 apply plugin: 'org.jenkins-ci.jpi'
 apply from: "$rootDir/gradle/common.gradle"
+apply plugin: 'jacoco'	
 
 repositories {
     mavenCentral()
@@ -31,6 +32,15 @@ repositories {
         url 'http://repo.jenkins-ci.org/releases/'
     }
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport
 
 jenkinsPlugin {
     coreVersion = '1.581'
@@ -54,8 +64,13 @@ jenkinsPlugin {
 configurations { forceGroovy }
 
 dependencies {
-    forceGroovy "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    forceGroovy "org.codehaus.groovy:groovy-all:2.4.6"
 	compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
+    testCompile('junit:junit:4.12') { force = true }
+    testCompile 'org.mockito:mockito-all:1.10.19'
+    // bdd testing
+    testCompile "info.cukes:cucumber-junit:1.2.4"
+    testCompile "info.cukes:cucumber-java:1.2.4"
 }
 
 jpi {
