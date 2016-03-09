@@ -16,7 +16,7 @@ class GlobalEventsPluginTest {
     void setup(){
         // disable load method, create new plugin...
         GlobalEventsPlugin.DescriptorImpl.metaClass.load = {}
-        plugin = new GlobalEventsPlugin.DescriptorImpl()
+        plugin = new GlobalEventsPlugin.DescriptorImpl(ClassLoader.getSystemClassLoader())
         logger = new LoggerTrap(GlobalEventsPluginTest.name)
     }
 

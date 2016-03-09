@@ -15,7 +15,7 @@ class GlobalRunListenerTest {
     void setup(){
         // disable load method, create new plugin, set default groovy script...
         GlobalEventsPlugin.DescriptorImpl.metaClass.load = {}
-        plugin = new GlobalEventsPlugin.DescriptorImpl()
+        plugin = new GlobalEventsPlugin.DescriptorImpl(ClassLoader.getSystemClassLoader())
         plugin.setOnEventGroovyCode("[event: event]")
         // setup a new listener, with an overridden parent descriptor...
         listener = new GlobalRunListener()

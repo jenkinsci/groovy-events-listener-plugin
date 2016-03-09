@@ -19,7 +19,8 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
 
     private final static Logger log = Logger.getLogger(GlobalEventsPlugin.class.getName())
     @Extension
-    public final static DescriptorImpl descriptor = new DescriptorImpl()
+    public final static DescriptorImpl descriptor =
+            new DescriptorImpl(Jenkins.getInstance().getPluginManager().uberClassLoader)
 
     void start() {
         getDescriptor().safeExecOnEventGroovyCode(log, [event: "GlobalEventsPlugin.start"])
@@ -59,9 +60,9 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * In order to load the persisted global configuration,  you have to
          * call load() in the constructor.
          */
-        DescriptorImpl() {
+        DescriptorImpl(ClassLoader classLoader) {
             load()
-            groovyClassLoader = new GroovyClassLoader(Hudson.getInstance().getPluginManager().uberClassLoader);
+            groovyClassLoader = new GroovyClassLoader(classLoader);
             groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
         }
 
