@@ -18,8 +18,8 @@ import java.util.logging.Logger
 class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugin> {
 
     private final static Logger log = Logger.getLogger(GlobalEventsPlugin.class.getName())
-
-    private Map context = new HashMap()
+    @Extension
+    public final static DescriptorImpl descriptor = new DescriptorImpl()
 
     void start() {
         getDescriptor().safeExecOnEventGroovyCode(log, [event: "GlobalEventsPlugin.start"])
@@ -33,14 +33,13 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
     }
 
     DescriptorImpl getDescriptor() {
-        return new DescriptorImpl().setContext(context)
+        return descriptor;
     }
 
     /**
      * Descriptor for {@link GlobalEventsPlugin}. Used as a singleton.
      * The class is marked as so that it can be accessed from views.
      */
-    @Extension
     static final class DescriptorImpl extends Descriptor<GlobalEventsPlugin> {
 
         /**
@@ -50,11 +49,11 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * <p/>
          * If you don't want fields to be persisted, use <tt>transient</tt>.
          */
+        private final transient GroovyClassLoader groovyClassLoader
+        private transient Script groovyScript
+
         protected transient Map<Object, Object> context = new HashMap<Object, Object>()
         protected String onEventGroovyCode = getDefaultOnEventGroovyCode()
-
-        private final transient static GroovyClassLoader groovyClassLoader = new GroovyClassLoader(GlobalEventsPlugin.class.getClassLoader());
-        private transient Script groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
 
         /**
          * In order to load the persisted global configuration,  you have to
@@ -62,6 +61,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          */
         DescriptorImpl() {
             load()
+            groovyClassLoader = new GroovyClassLoader(Hudson.getInstance().getPluginManager().uberClassLoader);
             groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
         }
 

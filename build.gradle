@@ -38,8 +38,6 @@ jenkinsPlugin {
     displayName = jenkinsDisplayName
     url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
     gitHubUrl = "https://github.com/jenkinsci/$project.name"
-    pluginFirstClassLoader = true
-    maskClasses = 'groovy groovyjarjarantlr groovyjarjarasm groovyjarjarcommonscli org.codehaus.groovy'
     compatibleSinceVersion = '1.20'
     fileExtension = 'hpi'
     developers {
