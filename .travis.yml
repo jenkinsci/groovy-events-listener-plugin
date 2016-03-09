@@ -1,13 +1,7 @@
 language: java
 sudo: required
 jdk:
-#  - oraclejdk9
-  - oraclejdk8
   - oraclejdk7
-#  - oraclejdk6 - End of life
-#  - openjdk8 - Unknown
-#  - openjdk7
-#  - openjdk6
 
 # enable codecov reporting...
 after_success:
