@@ -165,7 +165,7 @@ an elastic server, sending email or messenger notifications, calling a SOAP serv
 you've got something cool that you want to share, let me know and I'll add it to the [examples](src/main/site/examples)!
 
 For more details on which events trigger the code, what variables are available and details on configuring logging,
-please see the [plugin's help file](https://cdn.rawgit.com/nickgrealy/global-events/master/src/main/resources/org/jenkinsci/plugins/globalEventsPlugin/GlobalEventsPlugin/help-onEventGroovyCode.html).
+please see the [plugin's help file](https://cdn.rawgit.com/jenkinsci/groovy-events-listener-plugin/master/src/main/resources/org/jenkinsci/plugins/globalEventsPlugin/GlobalEventsPlugin/help-onEventGroovyCode.html).
 
 Authors
 ---
