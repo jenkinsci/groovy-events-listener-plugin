@@ -18,8 +18,9 @@ import java.util.logging.Logger
 class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugin> {
 
     private final static Logger log = Logger.getLogger(GlobalEventsPlugin.class.getName())
-
-    private Map context = new HashMap()
+    @Extension
+    public final static DescriptorImpl descriptor =
+            new DescriptorImpl(Jenkins.getInstance().getPluginManager().uberClassLoader)
 
     void start() {
         getDescriptor().safeExecOnEventGroovyCode(log, [event: "GlobalEventsPlugin.start"])
@@ -33,14 +34,13 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
     }
 
     DescriptorImpl getDescriptor() {
-        return new DescriptorImpl().setContext(context)
+        return descriptor;
     }
 
     /**
      * Descriptor for {@link GlobalEventsPlugin}. Used as a singleton.
      * The class is marked as so that it can be accessed from views.
      */
-    @Extension
     static final class DescriptorImpl extends Descriptor<GlobalEventsPlugin> {
 
         /**
@@ -50,15 +50,20 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * <p/>
          * If you don't want fields to be persisted, use <tt>transient</tt>.
          */
+        private final transient GroovyClassLoader groovyClassLoader
+        private transient Script groovyScript
+
         protected transient Map<Object, Object> context = new HashMap<Object, Object>()
-        protected String onEventGroovyCode = defaultOnEventGroovyCode
+        protected String onEventGroovyCode = getDefaultOnEventGroovyCode()
 
         /**
          * In order to load the persisted global configuration,  you have to
          * call load() in the constructor.
          */
-        DescriptorImpl() {
+        DescriptorImpl(ClassLoader classLoader) {
             load()
+            groovyClassLoader = new GroovyClassLoader(classLoader);
+            groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
         }
 
         DescriptorImpl setContext(Map<Object, Object> context) {
@@ -72,6 +77,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
 
         void setOnEventGroovyCode(String onEventGroovyCode) {
             this.onEventGroovyCode = onEventGroovyCode
+            groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
         }
 
         String getDefaultOnEventGroovyCode() {
@@ -87,15 +93,21 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return "groovy-events-listener-plugin"
         }
 
+        public Script getScriptReadyToBeExecuted(String groovyCode) {
+            final Class<? extends Script> clazz = groovyClassLoader.parseClass(groovyCode);
+            return clazz.newInstance();
+        }
+
         @Override
         boolean configure(StaplerRequest req, JSONObject formData) {
             onEventGroovyCode = formData.getString("onEventGroovyCode")
+            groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
             save() // save configuration
             return super.configure(req, formData)
         }
 
         void safeExecOnEventGroovyCode(Logger log, Map<Object, Object> params) {
-            safeExecGroovyCode(log, getOnEventGroovyCode(), params)
+            safeExecGroovyCode(log, groovyScript, params)
         }
 
         /**
@@ -107,11 +119,11 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          */
         private synchronized FormValidation safeExecGroovyCode(
                 Logger log,
-                String groovyCode,
+                Script groovyScript,
                 Map<Object, Object> params,
                 boolean testMode = false) {
             try {
-                if (groovyCode) {
+                if (groovyScript) {
                     // try adding the environment to the groovy params...
                     if (params.run instanceof Run) {
                         Run run = params.run
@@ -127,9 +139,10 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                     params.put("context", context)
                     log.finer(">>> Executing groovy script - parameters: ${params.keySet()}")
 
-                    def shell = new GroovyShell(new Binding(params))
+                    groovyScript.setBinding(new Binding(params))
+
                     def start = System.currentTimeMillis()
-                    def response = shell.evaluate(groovyCode)
+                    def response = groovyScript.run()
                     def durationMillis = System.currentTimeMillis() - start
                     if (response instanceof Map) {
                         // if response, add the values to the in-memory context...
@@ -151,11 +164,11 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             }
         }
 
-        public FormValidation doTestGroovyCode(
-                @QueryParameter("onEventGroovyCode") final String onEventGroovyCode
+        public FormValidation doTestGroovyCode(@QueryParameter("onEventGroovyCode") final String onEventGroovyCode
         ) {
+            Script script = getScriptReadyToBeExecuted(onEventGroovyCode);
             LoggerTrap logger = new LoggerTrap(GlobalEventsPlugin.name)
-            def validationResult = safeExecGroovyCode(logger, onEventGroovyCode, [
+            def validationResult = safeExecGroovyCode(logger, script, [
                     event: 'RunListener.onStarted',
                     env  : [:],
                     run  : [:],

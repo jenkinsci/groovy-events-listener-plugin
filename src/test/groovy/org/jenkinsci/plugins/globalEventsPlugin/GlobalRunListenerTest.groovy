@@ -1,12 +1,6 @@
 package org.jenkinsci.plugins.globalEventsPlugin
-
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
-
-import java.util.logging.Level
-import java.util.logging.Logger
-
 /**
  * Tests that when the listener is invoked, the groovy is invoked with an "event" variable.
  * // todo test all parameters are passed into the groovy script (e.g. run, etc)
@@ -14,9 +8,6 @@ import java.util.logging.Logger
  * Created by nickgrealy@gmail.com.
  */
 class GlobalRunListenerTest {
-
-    private final static Logger logger = Logger.getLogger(GlobalRunListenerTest.name)
-
     GlobalEventsPlugin.DescriptorImpl plugin
     GlobalRunListener listener
 
@@ -24,7 +15,7 @@ class GlobalRunListenerTest {
     void setup(){
         // disable load method, create new plugin, set default groovy script...
         GlobalEventsPlugin.DescriptorImpl.metaClass.load = {}
-        plugin = new GlobalEventsPlugin.DescriptorImpl()
+        plugin = new GlobalEventsPlugin.DescriptorImpl(ClassLoader.getSystemClassLoader())
         plugin.setOnEventGroovyCode("[event: event]")
         // setup a new listener, with an overridden parent descriptor...
         listener = new GlobalRunListener()
