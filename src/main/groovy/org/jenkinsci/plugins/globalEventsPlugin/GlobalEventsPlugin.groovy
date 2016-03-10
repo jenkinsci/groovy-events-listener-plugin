@@ -117,7 +117,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * @param groovyCode
          * @param params
          */
-        private synchronized FormValidation safeExecGroovyCode(
+        private FormValidation safeExecGroovyCode(
                 Logger log,
                 Script groovyScript,
                 Map<Object, Object> params,
