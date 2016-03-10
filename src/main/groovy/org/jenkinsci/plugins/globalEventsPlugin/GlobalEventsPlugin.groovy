@@ -165,24 +165,38 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                     params.put("env", envVars);
                     params.put("jenkins", jenkins)
                     params.put("log", log)
-                    // add all parameters from the in-memory context...
-                    params.put("context", context)
-                    log.finer(">>> Executing groovy script - parameters: ${params.keySet()}")
 
-                    groovyScript.setBinding(new Binding(params))
+                    def syncStart = System.currentTimeMillis()
+                    def executionStart
 
-                    def start = System.currentTimeMillis()
-                    def response = groovyScript.run()
-                    def durationMillis = System.currentTimeMillis() - start
-                    if (response instanceof Map) {
-                        // if response, add the values to the in-memory context...
-                        Map responseMap = (Map) response
-                        log.finer(">>> Adding keys to context: ${response.keySet()}")
-                        context.putAll(responseMap)
-                    } else {
-                        log.finer(">>> Ignoring response - value is null or not a Map. response=$response")
+                    synchronized (groovyScript) {
+                        // add all parameters from the in-memory context...
+                        params.put("context", context)
+                        log.finer(">>> Executing groovy script - parameters: ${params.keySet()}")
+
+                        groovyScript.setBinding(new Binding(params))
+
+                        executionStart = System.currentTimeMillis()
+                        def response = groovyScript.run()
+
+                        if (response instanceof Map) {
+                            // if response, add the values to the in-memory context...
+                            Map responseMap = (Map) response
+                            log.finer(">>> Adding keys to context: ${response.keySet()}")
+                            context.putAll(responseMap)
+                        } else {
+                            log.finer(">>> Ignoring response - value is null or not a Map. response=$response")
+                        }
                     }
-                    log.fine(""">>> Executing groovy script completed successfully. durationMillis="$durationMillis" """)
+
+                    def totalDurationMillis = System.currentTimeMillis() - syncStart
+                    def executionDurationMillis = System.currentTimeMillis() - executionStart
+                    def synchronizationMillis=totalDurationMillis-executionDurationMillis
+
+                    log.finer(">>> Executing groovy script completed successfully. "+
+                            "totalDurationMillis='$totalDurationMillis'," +
+                            "executionDurationMillis='$executionDurationMillis'," +
+                            "synchronizationMillis=`$synchronizationMillis`")
                 } else {
                     log.warning(">>> Skipping execution, Groovy code was null or blank.")
                 }
