@@ -41,7 +41,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
     }
 
     static DescriptorImpl getStaticDescriptor(){
-        if (isNull(descriptor)){
+        if (descriptor == null){
             try {
                 return new DescriptorImpl(Jenkins.getInstance().getPluginManager().uberClassLoader)
             } catch (NullPointerException npe){
