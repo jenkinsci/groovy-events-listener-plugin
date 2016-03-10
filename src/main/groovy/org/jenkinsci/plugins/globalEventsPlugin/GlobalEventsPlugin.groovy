@@ -15,8 +15,6 @@ import org.kohsuke.stapler.export.ExportedBean
 import java.util.logging.Level
 import java.util.logging.Logger
 
-import static java.util.Objects.*
-
 @ExportedBean
 class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugin> {
 
