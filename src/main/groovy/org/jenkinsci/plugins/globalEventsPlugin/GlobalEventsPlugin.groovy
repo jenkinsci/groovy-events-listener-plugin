@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.globalEventsPlugin
 import hudson.Extension
 import hudson.Plugin
 import hudson.model.*
+import hudson.slaves.EnvironmentVariablesNodeProperty
 import hudson.util.FormValidation
 import hudson.util.LogTaskListener
 import jenkins.model.Jenkins
@@ -124,16 +125,30 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                 boolean testMode = false) {
             try {
                 if (groovyScript) {
-                    // try adding the environment to the groovy params...
+                    // get the global environment variables...
+                    Map envVars = [:]
+                    def jenkins = Jenkins.getInstance()
+                    EnvironmentVariablesNodeProperty globalEnvVars = jenkins?.globalNodeProperties?.get(EnvironmentVariablesNodeProperty)
+                    if (globalEnvVars){
+                        envVars.putAll(globalEnvVars.envVars)
+                    }
+                    // get the Job's environment variables (if present)...
                     if (params.run instanceof Run) {
                         Run run = params.run
                         if (params.listener instanceof TaskListener) {
-                            params.env = run.getEnvironment((TaskListener) params.listener)
+                            def tmp = run.getEnvironment((TaskListener) params.listener)
+                            if (tmp){
+                                envVars.putAll(tmp)
+                            }
                         } else {
-                            params.env = run.getEnvironment(new LogTaskListener(log, Level.INFO))
+                            def tmp = run.getEnvironment(new LogTaskListener(log, Level.INFO))
+                            if (tmp){
+                                envVars.putAll(tmp)
+                            }
                         }
                     }
-                    params.put("jenkins", Jenkins.getInstance())
+                    params.put("env", envVars);
+                    params.put("jenkins", jenkins)
                     params.put("log", log)
                     // add all parameters from the in-memory context...
                     params.put("context", context)
