@@ -16,6 +16,8 @@ class GlobalRunListenerTest {
         // disable load method, create new plugin, set default groovy script...
         GlobalEventsPlugin.DescriptorImpl.metaClass.load = {}
         plugin = new GlobalEventsPlugin.DescriptorImpl(ClassLoader.getSystemClassLoader())
+
+        // use the groovy code feature, to capture the event being triggered...
         plugin.setOnEventGroovyCode("[event: event]")
         // setup a new listener, with an overridden parent descriptor...
         listener = new GlobalRunListener()
@@ -25,25 +27,25 @@ class GlobalRunListenerTest {
     @Test
     void testOnStartedEvent(){
         listener.onStarted(null, null)
-        assert plugin.context == [event: 'RunListener.onStarted']
+        assert plugin.context == [event: Event.JOB_STARTED]
     }
 
     @Test
     void testOnCompletedEvent(){
         listener.onCompleted(null, null)
-        assert plugin.context == [event: 'RunListener.onCompleted']
+        assert plugin.context == [event: Event.JOB_COMPLETED]
     }
 
     @Test
     void testOnFinalizedEvent(){
         listener.onFinalized(null)
-        assert plugin.context == [event: 'RunListener.onFinalized']
+        assert plugin.context == [event: Event.JOB_FINALIZED]
     }
 
     @Test
     void testOnDeletedEvent(){
         listener.onDeleted(null)
-        assert plugin.context == [event: 'RunListener.onDeleted']
+        assert plugin.context == [event: Event.JOB_DELETED]
     }
 
 }

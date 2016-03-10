@@ -20,27 +20,6 @@ class GlobalEventsPluginTest {
         logger = new LoggerTrap(GlobalEventsPluginTest.name)
     }
 
-    @Test
-    void testTrappingSystemOutput(){
-        plugin.safeExecGroovyCode(logger, plugin.getScriptReadyToBeExecuted("""
-            println 'Foobar1';
-            System.out.println('Foobar2');
-            System.err.println('Foobar3');
-            log.info('Foobar4');
-            """), [:])
-        // only using the logger captures output...
-        assert logger.info == ['Foobar4']
-    }
-
-    @Test
-    void testGrabbingDependencies(){
-        plugin.safeExecGroovyCode(logger, plugin.getScriptReadyToBeExecuted("""
-            @Grab('com.github.groovy-wslite:groovy-wslite:1.1.2')
-            def x = 1 // <- hack, otherwise compiler complains...
-            log.info(wslite.soap.SOAPClient.simpleName)
-            """), [:])
-        assert logger.info == ['SOAPClient']
-    }
 
     @Test
     void testPassingInputs(){
@@ -51,11 +30,6 @@ class GlobalEventsPluginTest {
         assert plugin.context == [success:true]
     }
 
-    @Test
-    void testUsingLogger(){
-        plugin.safeExecGroovyCode(logger, plugin.getScriptReadyToBeExecuted("log.info 'Foobar'"), [:])
-        assert logger.info == ['Foobar']
-    }
 
     @Test
     void testSavingContext(){

@@ -15,26 +15,40 @@ import org.kohsuke.stapler.export.ExportedBean
 import java.util.logging.Level
 import java.util.logging.Logger
 
+import static java.util.Objects.*
+
 @ExportedBean
 class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugin> {
 
     private final static Logger log = Logger.getLogger(GlobalEventsPlugin.class.getName())
+
     @Extension
-    public final static DescriptorImpl descriptor =
-            new DescriptorImpl(Jenkins.getInstance().getPluginManager().uberClassLoader)
+    public final static DescriptorImpl descriptor = getStaticDescriptor()
 
     void start() {
-        getDescriptor().safeExecOnEventGroovyCode(log, [event: "GlobalEventsPlugin.start"])
+        getDescriptor().safeExecOnEventGroovyCode(log, [event: Event.PLUGIN_STARTED])
         log.fine(">>> Initialising ${this.class.simpleName}... [DONE]")
     }
 
     @Override
     void stop() {
         super.stop()
-        getDescriptor().safeExecOnEventGroovyCode(log, [event: "GlobalEventsPlugin.stop"])
+        getDescriptor().safeExecOnEventGroovyCode(log, [event: Event.PLUGIN_STOPPED])
     }
 
     DescriptorImpl getDescriptor() {
+        getStaticDescriptor()
+    }
+
+    static DescriptorImpl getStaticDescriptor(){
+        if (isNull(descriptor)){
+            try {
+                return new DescriptorImpl(Jenkins.getInstance().getPluginManager().uberClassLoader)
+            } catch (NullPointerException npe){
+                // this occurs when code is run outside of a Jenkins context, use this class loader...
+                return new DescriptorImpl(GlobalEventsPlugin.classLoader)
+            }
+        }
         return descriptor;
     }
 
@@ -94,8 +108,11 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return "groovy-events-listener-plugin"
         }
 
+        /**
+         * Can throw compilation exception.
+         */
         public Script getScriptReadyToBeExecuted(String groovyCode) {
-            final Class<? extends Script> clazz = groovyClassLoader.parseClass(groovyCode);
+            final Class<? extends Script> clazz = groovyClassLoader.parseClass("import ${GlobalEventsPlugin.package.name}.*\n" + groovyCode);
             return clazz.newInstance();
         }
 
@@ -184,7 +201,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             Script script = getScriptReadyToBeExecuted(onEventGroovyCode);
             LoggerTrap logger = new LoggerTrap(GlobalEventsPlugin.name)
             def validationResult = safeExecGroovyCode(logger, script, [
-                    event: 'RunListener.onStarted',
+                    event: Event.JOB_STARTED,
                     env  : [:],
                     run  : [:],
             ], true)
@@ -195,11 +212,16 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         }
     }
 
+    /**
+     * <p>Converts a Throwable stacktrace to a String.</p>
+     * <p>Using ExceptionUtils causes "com.google.inject.CreationException: Guice creation errors:".</p>
+     */
     private static String stringifyException(Throwable t) {
         StringWriter sw = new StringWriter()
         t.printStackTrace(new PrintWriter(sw))
         sw.toString()
     }
+
 }
 
 

@@ -39,7 +39,7 @@ public class GlobalRunListener extends RunListener<Run> {
     public void onDeleted(final Run run) {
         this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
             put("run", run);
-            put("event", "RunListener.onDeleted");
+            put("event", Event.JOB_DELETED);
         }});
     }
 
@@ -48,7 +48,7 @@ public class GlobalRunListener extends RunListener<Run> {
         this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
             put("run", run);
             put("listener", listener);
-            put("event", "RunListener.onStarted");
+            put("event", Event.JOB_STARTED);
         }});
     }
 
@@ -56,7 +56,7 @@ public class GlobalRunListener extends RunListener<Run> {
     public void onFinalized(final Run run) {
         this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
             put("run", run);
-            put("event", "RunListener.onFinalized");
+            put("event", Event.JOB_FINALIZED);
         }});
     }
 
@@ -65,7 +65,7 @@ public class GlobalRunListener extends RunListener<Run> {
         this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
             put("run", run);
             put("listener", listener);
-            put("event", "RunListener.onCompleted");
+            put("event", Event.JOB_COMPLETED);
         }});
     }
 

@@ -19,10 +19,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testCompile "junit:junit:4.12"
-}
-
 ext {
     groovyVersion = '2.4.4'
     customJvmArgs = ['-XX:MaxPermSize=128m', '-Xmx128m']

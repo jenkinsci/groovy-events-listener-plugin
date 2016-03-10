@@ -64,6 +64,7 @@ configurations { forceGroovy }
 dependencies {
     forceGroovy "org.codehaus.groovy:groovy-all:2.4.6"
 	compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
+    testCompile('org.hamcrest:hamcrest-core:1.3') { force = true }
     testCompile('junit:junit:4.12') { force = true }
     testCompile 'org.mockito:mockito-all:1.10.19'
     // bdd testing
@@ -72,5 +73,12 @@ dependencies {
 }
 
 jpi {
-	classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grap work
+    classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grap work
+}
+
+/**
+ * We must exclude the junit-dep dependency, because it is clashing with junit when we run the AcceptanceTests.
+ */
+configurations.findAll {!it.name.endsWith('junit-dep')}.each { conf ->
+    conf.exclude group: "junit", module: "junit-dep"
 }
