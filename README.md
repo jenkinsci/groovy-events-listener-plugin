@@ -13,8 +13,8 @@ Table of contents
 1. [Authors](#authors)
 1. [License](#license)
 1. [Similar Plugins](#similar-plugins)
-1. [Release Notes](../../milestones?state=closed)
-1. [Bugs/Issues/Enhancements](../../issues)
+1. [Releases (Release Notes, Changelog, Artifacts)](../../releases)
+1. [Issues (Bugs / Issues / Enhancements)](../../issues)
 
 Overview
 ---
