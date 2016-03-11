@@ -14,7 +14,6 @@ Feature: Groovy Script - Runtime
 
 
   # todo test Plugin Started / Stopped events
-  @ignore
   Scenario Outline: Different event triggers should reflect in the 'event' parameter value, so that I can respond to specific events.
     Given the script
     """
