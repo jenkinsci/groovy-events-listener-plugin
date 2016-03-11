@@ -1,14 +1,12 @@
 package org.jenkinsci.plugins.globalEventsPlugin
 
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.FutureTask
-
 /**
  * Created by nickgrealy@gmail.com.
  */
@@ -25,7 +23,6 @@ class GlobalEventsPluginTest {
         logger = new LoggerTrap(GlobalEventsPluginTest.name)
     }
 
-
     @Test
     void testPassingInputs(){
         plugin.safeExecGroovyCode(logger, plugin.getScriptReadyToBeExecuted("""
@@ -33,25 +30,6 @@ class GlobalEventsPluginTest {
             [success:true]
             """), [aaa:111])
         assert plugin.context == [success:true]
-    }
-
-
-    @Test
-    void testSavingContext(){
-        // check return values are added to context...
-        plugin.context = [aaa:111]
-        plugin.safeExecGroovyCode(logger, plugin.getScriptReadyToBeExecuted("""
-            assert context.aaa == 111
-            [bbb:222]
-            """), [:])
-        assert plugin.context == [aaa:111,bbb:222]
-        // check context gets updated in following script...
-        plugin.safeExecGroovyCode(logger, plugin.getScriptReadyToBeExecuted("""
-            assert context.aaa == 111
-            assert context.bbb == 222
-            [ccc:333]
-            """), [:])
-        assert plugin.context == [aaa:111,bbb:222,ccc:333]
     }
 
     @Test
@@ -104,15 +82,4 @@ class GlobalEventsPluginTest {
         assert plugin.context == [total:expectedValue]
     }
 
-    @Test
-    void testExceptionHandling(){
-        plugin.safeExecGroovyCode(logger, plugin.getScriptReadyToBeExecuted("throw new RuntimeException('ERR')"), [:])
-        // exception should be wrapped, logged and suppressed (i.e. not bubble up to here)!
-        assert logger.severe == ['>>> Caught unhandled exception!']
-    }
-
-    @Ignore("Static one time compilation has not yet been implemented!")
-    @Test
-    void testStaticCompilation(){
-    }
 }

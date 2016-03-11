@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 @Extension
 public class GlobalRunListener extends RunListener<Run> {
 
-    private final static Logger log = Logger.getLogger(GlobalRunListener.class.getName());
+    protected static Logger log = Logger.getLogger(GlobalRunListener.class.getName());
 
     /**
      * This class is lazy loaded (as required).

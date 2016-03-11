@@ -201,7 +201,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                     log.warning(">>> Skipping execution, Groovy code was null or blank.")
                 }
             } catch (Throwable t) {
-                log.log(Level.SEVERE, ">>> Caught unhandled exception!", t)
+                log.log(Level.SEVERE, ">>> Caught unhandled exception! " + t.getMessage(), t)
                 if (testMode) {
                     return FormValidation.error("\nAn exception was caught.\n\n" + stringifyException(t))
                 }
@@ -210,15 +210,20 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
 
         public FormValidation doTestGroovyCode(@QueryParameter("onEventGroovyCode") final String onEventGroovyCode
         ) {
-            Script script = getScriptReadyToBeExecuted(onEventGroovyCode);
-            LoggerTrap logger = new LoggerTrap(GlobalEventsPlugin.name)
-            def validationResult = safeExecGroovyCode(logger, script, [
-                    event: Event.JOB_STARTED,
-                    env  : [:],
-                    run  : [:],
-            ], true)
-            if (validationResult == null) {
-                validationResult = FormValidation.ok("\nExecution completed successfully!\n\n${logger.all.join("\n\n")}")
+            FormValidation validationResult;
+            try {
+                Script script = getScriptReadyToBeExecuted(onEventGroovyCode);
+                LoggerTrap logger = new LoggerTrap(GlobalEventsPlugin.name)
+                validationResult = safeExecGroovyCode(logger, script, [
+                        event: Event.JOB_STARTED,
+                        env  : [:],
+                        run  : [:],
+                ], true)
+                if (validationResult == null) {
+                    validationResult = FormValidation.ok("\nExecution completed successfully!\n\n${logger.all.join("\n\n")}")
+                }
+            } catch (Throwable t){
+                validationResult = FormValidation.error("\nAn exception was caught.\n\n" + stringifyException(t))
             }
             validationResult
         }

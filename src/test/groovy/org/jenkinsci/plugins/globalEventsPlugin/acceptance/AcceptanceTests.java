@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.globalEventsPlugin;
+package org.jenkinsci.plugins.globalEventsPlugin.acceptance;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         strict = false,
         plugin = {"pretty"},
-        tags = {"@wip", "~@ignore"}
+        tags = {"~@ignore"}
 )
-public class WipAcceptanceTests {
+public class AcceptanceTests {
 }
