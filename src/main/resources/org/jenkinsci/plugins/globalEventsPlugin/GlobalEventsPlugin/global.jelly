@@ -20,14 +20,41 @@
                     default="${descriptor.getDefaultOnEventGroovyCode()}"
                     codemirror-mode="groovy"
                     codemirror-config="mode: 'text/x-groovy',
-        lineNumbers: true,
-        matchBrackets: true,
-        onBlur: function(editor){editor.save()}"/>
+                    lineNumbers: true,
+                    matchBrackets: true,
+                    onBlur: function(editor){editor.save()}"/>
         </f:entry>
 
         <f:validateButton
                 title="${%Test Groovy Code}" progress="${%Executing...}"
                 method="testGroovyCode" with="onEventGroovyCode"/>
 
+        <f:advanced>
+            <f:entry title="Disable Synchronization">
+                <f:checkbox field="disableSynchronization"/>
+            </f:entry>
+            <f:section title="Plugin">
+                <f:entry title="Started">
+                    <f:checkbox field="onPluginStarted" checked="${onPluginStarted}"/>
+                </f:entry>
+                <f:entry title="Stopped">
+                    <f:checkbox field="onPluginStopped" checked="${onPluginStopped}"/>
+                </f:entry>
+            </f:section>
+            <f:section title="Job run">
+                <f:entry title="Started">
+                    <f:checkbox field="onJobStarted" checked="${onJobStarted}"/>
+                </f:entry>
+                <f:entry title="Completed">
+                    <f:checkbox field="onJobCompleted" checked="${onJobCompleted}"/>
+                </f:entry>
+                <f:entry title="Finalized">
+                    <f:checkbox field="onJobFinalized" checked="${onJobFinalized}"/>
+                </f:entry>
+                <f:entry title="Deleted">
+                    <f:checkbox field="onJobDeleted" checked="${onJobDeleted}"/>
+                </f:entry>
+            </f:section>
+        </f:advanced>
     </f:section>
 </j:jelly>

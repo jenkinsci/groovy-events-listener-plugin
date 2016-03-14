@@ -24,25 +24,29 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
     public final static DescriptorImpl descriptor = getStaticDescriptor()
 
     void start() {
-        getDescriptor().safeExecOnEventGroovyCode(log, [event: Event.PLUGIN_STARTED])
+        if (descriptor.getOnPluginStarted()) {
+            descriptor.safeExecOnEventGroovyCode(log, [event: Event.PLUGIN_STARTED])
+        }
         log.fine(">>> Initialising ${this.class.simpleName}... [DONE]")
     }
 
     @Override
     void stop() {
         super.stop()
-        getDescriptor().safeExecOnEventGroovyCode(log, [event: Event.PLUGIN_STOPPED])
+        if (descriptor.getOnPluginStopped()) {
+            getDescriptor().safeExecOnEventGroovyCode(log, [event: Event.PLUGIN_STOPPED])
+        }
     }
 
     DescriptorImpl getDescriptor() {
-        getStaticDescriptor()
+        return descriptor
     }
 
-    static DescriptorImpl getStaticDescriptor(){
+    private static DescriptorImpl getStaticDescriptor(){
         if (descriptor == null){
-            try {
+            if (Jenkins.getInstance() != null) {
                 return new DescriptorImpl(Jenkins.getInstance().getPluginManager().uberClassLoader)
-            } catch (NullPointerException npe){
+            } else {
                 // this occurs when code is run outside of a Jenkins context, use this class loader...
                 return new DescriptorImpl(GlobalEventsPlugin.classLoader)
             }
@@ -65,12 +69,76 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          */
         private final transient GroovyClassLoader groovyClassLoader
         private transient Script groovyScript
-
-        protected transient Map<Object, Object> context = new HashMap<Object, Object>()
+        protected final transient Map<Object, Object> context = new HashMap<Object, Object>()
         protected String onEventGroovyCode = getDefaultOnEventGroovyCode()
 
+        private Boolean disableSynchronization = Boolean.FALSE;
+        private Boolean onPluginStarted = Boolean.TRUE;
+        private Boolean onPluginStopped = Boolean.TRUE;
+        private Boolean onJobStarted = Boolean.TRUE;
+        private Boolean onJobCompleted = Boolean.TRUE;
+        private Boolean onJobFinalized = Boolean.TRUE;
+        private Boolean onJobDeleted = Boolean.TRUE;
+
+        void setDisableSynchronization(Boolean disableSynchronization) {
+            this.disableSynchronization = disableSynchronization
+        }
+
+        void setOnPluginStarted(Boolean onPluginStarted) {
+            this.onPluginStarted = onPluginStarted
+        }
+
+        void setOnPluginStopped(Boolean onPluginStopped) {
+            this.onPluginStopped = onPluginStopped
+        }
+
+        void setOnJobStarted(Boolean onJobStarted) {
+            this.onJobStarted = onJobStarted
+        }
+
+        void setOnJobCompleted(Boolean onJobCompleted) {
+            this.onJobCompleted = onJobCompleted
+        }
+
+        void setOnJobFinalized(Boolean onJobFinalized) {
+            this.onJobFinalized = onJobFinalized
+        }
+
+        void setOnJobDeleted(Boolean onJobDeleted) {
+            this.onJobDeleted = onJobDeleted
+        }
+
+        Boolean getOnJobDeleted() {
+
+            return onJobDeleted
+        }
+
+        Boolean getOnJobFinalized() {
+            return onJobFinalized
+        }
+
+        Boolean getOnJobCompleted() {
+            return onJobCompleted
+        }
+
+        Boolean getOnJobStarted() {
+            return onJobStarted
+        }
+
+        Boolean getOnPluginStopped() {
+            return onPluginStopped
+        }
+
+        Boolean getOnPluginStarted() {
+            return onPluginStarted
+        }
+
+        Boolean getDisableSynchronization() {
+            return disableSynchronization
+        }
+
         /**
-         * In order to load the persisted global configuration,  you have to
+         * In order to load the persisted global configuration, you have to
          * call load() in the constructor.
          */
         DescriptorImpl(ClassLoader classLoader) {
@@ -79,10 +147,10 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
         }
 
-        DescriptorImpl setContext(Map<Object, Object> context) {
-            this.context = context
-            return this
+        void putToContext(Object key, Object value) {
+            context.put(key, value);
         }
+
 
         String getOnEventGroovyCode() {
             return onEventGroovyCode
@@ -116,7 +184,14 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
 
         @Override
         boolean configure(StaplerRequest req, JSONObject formData) {
-            onEventGroovyCode = formData.getString("onEventGroovyCode")
+            setOnEventGroovyCode(formData.getString("onEventGroovyCode"))
+            setOnPluginStarted(formData.getBoolean("onPluginStarted"))
+            setOnPluginStopped(formData.getBoolean("onPluginStopped"))
+            setOnJobStarted(formData.getBoolean("onJobStarted"))
+            setOnJobCompleted(formData.getBoolean("onJobCompleted"))
+            setOnJobFinalized(formData.getBoolean("onJobFinalized"))
+            setOnJobDeleted(formData.getBoolean("onJobDeleted"))
+            setDisableSynchronization(formData.getBoolean("disableSynchronization"))
             groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
             save() // save configuration
             return super.configure(req, formData)
@@ -134,10 +209,10 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * @param params
          */
         private FormValidation safeExecGroovyCode(
-                Logger log,
-                Script groovyScript,
-                Map<Object, Object> params,
-                boolean testMode = false) {
+                final Logger log,
+                final Script groovyScript,
+                final Map<Object, Object> params,
+                final boolean testMode = false) {
             try {
                 if (groovyScript) {
                     // get the global environment variables...
@@ -169,30 +244,21 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                     def syncStart = System.currentTimeMillis()
                     def executionStart
 
-                    synchronized (groovyScript) {
-                        // add all parameters from the in-memory context...
-                        params.put("context", context)
-                        log.finer(">>> Executing groovy script - parameters: ${params.keySet()}")
-
-                        groovyScript.setBinding(new Binding(params))
-
+                    if (getDisableSynchronization()) {
                         executionStart = System.currentTimeMillis()
-                        def response = groovyScript.run()
-
-                        if (response instanceof Map) {
-                            // if response, add the values to the in-memory context...
-                            Map responseMap = (Map) response
-                            log.finer(">>> Adding keys to context: ${response.keySet()}")
-                            context.putAll(responseMap)
-                        } else {
-                            log.finer(">>> Ignoring response - value is null or not a Map. response=$response")
+                        runScript(params, log, groovyScript)
+                    }
+                    else {
+                        synchronized (groovyScript) {
+                            executionStart = System.currentTimeMillis()
+                            runScript(params, log, groovyScript)
                         }
                     }
 
                     def totalDurationMillis = System.currentTimeMillis() - syncStart
                     def executionDurationMillis = System.currentTimeMillis() - executionStart
                     def synchronizationMillis=totalDurationMillis-executionDurationMillis
-
+                    
                     log.finer(">>> Executing groovy script completed successfully. "+
                             "totalDurationMillis='$totalDurationMillis'," +
                             "executionDurationMillis='$executionDurationMillis'," +
@@ -205,6 +271,25 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                 if (testMode) {
                     return FormValidation.error("\nAn exception was caught.\n\n" + stringifyException(t))
                 }
+            }
+        }
+
+        private void runScript(final Map<Object, Object> params, final Logger log, final Script groovyScript) {
+            // add all parameters from the in-memory context...
+            params.put("context", context)
+            log.finer(">>> Executing groovy script - parameters: ${params.keySet()}")
+
+            groovyScript.setBinding(new Binding(params))
+
+            def response = groovyScript.run()
+
+            if (response instanceof Map) {
+                // if response, add the values to the in-memory context...
+                Map responseMap = (Map) response
+                log.finer(">>> Adding keys to context: ${response.keySet()}")
+                context.putAll(responseMap)
+            } else {
+                log.finer(">>> Ignoring response - value is null or not a Map. response=$response")
             }
         }
 

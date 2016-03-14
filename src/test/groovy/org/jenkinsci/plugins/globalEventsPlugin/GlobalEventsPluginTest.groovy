@@ -35,7 +35,7 @@ class GlobalEventsPluginTest {
     @Test
     void testCounter(){
         int expectedValue = 1000
-        plugin.context = [total:0]
+        plugin.putToContext("total", 0)
         plugin.setOnEventGroovyCode("context.total += 1")
         for(int i=0; i<expectedValue; i++) {
             plugin.safeExecOnEventGroovyCode(logger, [:])
@@ -47,24 +47,16 @@ class GlobalEventsPluginTest {
     @Test
     void testConcurrentCounter(){
         int expectedValue = 1000
-        plugin.context = [total:0]
-        plugin.setOnEventGroovyCode("context.total += 1")
-        Callable<Integer> callable = new Callable() {
-            @Override
-            Integer call() throws Exception {
-                for(int i=0; i<expectedValue/5; i++) {
-                    plugin.safeExecOnEventGroovyCode(logger, [:])
-                }
-                return 0;
-            };
-        };
+        plugin.putToContext("total", 0)
+        plugin.setDisableSynchronization(false)
+        plugin.setOnEventGroovyCode("context.total += 1;")
 
         ExecutorService executors = Executors.newFixedThreadPool(5);
-        FutureTask task1 = new FutureTask(callable);
-        FutureTask task2 = new FutureTask(callable);
-        FutureTask task3 = new FutureTask(callable);
-        FutureTask task4 = new FutureTask(callable);
-        FutureTask task5 = new FutureTask(callable);
+        FutureTask task1 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
+        FutureTask task2 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
+        FutureTask task3 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
+        FutureTask task4 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
+        FutureTask task5 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
         executors.execute(task1);
         executors.execute(task2);
         executors.execute(task3);
@@ -82,4 +74,40 @@ class GlobalEventsPluginTest {
         assert plugin.context == [total:expectedValue]
     }
 
+    @Test
+    void testDisableSynchronizationCounter(){
+        int expectedValue = 10000
+        plugin.putToContext("total", 0)
+        plugin.setDisableSynchronization(true)
+        plugin.setOnEventGroovyCode("context.total += 1;")
+        Callable<Integer> callable = callCodeMultipleTimes(expectedValue/2 as int)
+
+        ExecutorService executors = Executors.newFixedThreadPool(2);
+        FutureTask task1 = new FutureTask(callable);
+        FutureTask task2 = new FutureTask(callable);
+        executors.execute(task1);
+        executors.execute(task2);
+
+        while (true) {
+            if (task1.isDone() && task2.isDone()) {
+                break;
+            }
+
+            Thread.sleep(1000);
+        }
+
+        assert plugin.context != [total:expectedValue]
+    }
+
+    private Callable<Integer> callCodeMultipleTimes(int number) {
+        return new Callable() {
+            @Override
+            Integer call() throws Exception {
+                for(int i=0; i<number; i++) {
+                    plugin.safeExecOnEventGroovyCode(logger, [:])
+                }
+                return 0;
+            };
+        };
+    }
 }
