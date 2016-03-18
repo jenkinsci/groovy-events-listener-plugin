@@ -20,13 +20,13 @@ Overview
 ---
 
 The reason I created the plugin was because I wanted to integrate Jenkins with an external application.
-Invoking a Jenkins jobs via the REST api was simple, but getting Jenkins to callback the external application wasn't
+Invoking a Jenkins jobs via the REST API was simple, but getting Jenkins to callback the external application wasn't
 straight forward.
 
 All the plugins I'd seen either had to be individually configured per job (i.e. in a post build step), or their features
 were limited to making a HTTP GET/POST request (a bit restrictive).
 
-Bascially:
+Basically:
 
 - I wanted to be able to write my own code
 - I didn't want to repeat myself
@@ -97,7 +97,7 @@ there's now a `Test Groovy Code` button, which will execute the code with the `e
 The plugin actually injects a couple of variables, which you can use in your code. Here's some examples using the `event`
 and `env` variables.
 
-This code limits the logging to only occur when a Job is completed!
+This code limits the logging to only occur when a Job is completed! (N.B. this behaviour can also be replicated using the configuration options)
 
 ```Groovy
 if (event == Event.JOB_STARTED){
