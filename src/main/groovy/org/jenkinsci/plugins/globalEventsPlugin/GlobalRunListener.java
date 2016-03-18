@@ -37,36 +37,44 @@ public class GlobalRunListener extends RunListener<Run> {
 
     @Override
     public void onDeleted(final Run run) {
-        this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-            put("run", run);
-            put("event", Event.JOB_DELETED);
-        }});
+        if (getParentPluginDescriptor().getOnJobDeleted()) {
+            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
+                put("run", run);
+                put("event", Event.JOB_DELETED);
+            }});
+        }
     }
 
     @Override
     public void onStarted(final Run run, final TaskListener listener) {
-        this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-            put("run", run);
-            put("listener", listener);
-            put("event", Event.JOB_STARTED);
-        }});
+        if (getParentPluginDescriptor().getOnJobStarted()) {
+            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
+                put("run", run);
+                put("listener", listener);
+                put("event", Event.JOB_STARTED);
+            }});
+        }
     }
 
     @Override
     public void onFinalized(final Run run) {
-        this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-            put("run", run);
-            put("event", Event.JOB_FINALIZED);
-        }});
+        if (getParentPluginDescriptor().getOnJobFinalized()) {
+            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
+                put("run", run);
+                put("event", Event.JOB_FINALIZED);
+            }});
+        }
     }
 
     @Override
     public void onCompleted(final Run run, final @Nonnull TaskListener listener) {
-        this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-            put("run", run);
-            put("listener", listener);
-            put("event", Event.JOB_COMPLETED);
-        }});
+        if (getParentPluginDescriptor().getOnJobCompleted()) {
+            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
+                put("run", run);
+                put("listener", listener);
+                put("event", Event.JOB_COMPLETED);
+            }});
+        }
     }
 
 }
