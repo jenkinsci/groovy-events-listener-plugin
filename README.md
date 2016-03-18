@@ -97,7 +97,7 @@ there's now a `Test Groovy Code` button, which will execute the code with the `e
 The plugin actually injects a couple of variables, which you can use in your code. Here's some examples using the `event`
 and `env` variables.
 
-This code limits the logging to only occur when a Job is completed! (N.B. this behaviour can also be replicated using the configuration options)
+This code limits the logging to only occur when a Job is completed! **N.B.** this behaviour can also be replicated using the configuration options.
 
 ```Groovy
 if (event == Event.JOB_STARTED){
