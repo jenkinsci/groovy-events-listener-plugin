@@ -163,7 +163,8 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         void setScheduleTime(int scheduleTime) {
             this.scheduleTime = scheduleTime
         }
-/**
+
+        /**
          * In order to load the persisted global configuration, you have to
          * call load() in the constructor.
          */
