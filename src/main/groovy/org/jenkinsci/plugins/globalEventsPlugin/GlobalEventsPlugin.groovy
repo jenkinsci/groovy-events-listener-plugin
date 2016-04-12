@@ -12,6 +12,7 @@ import org.kohsuke.stapler.QueryParameter
 import org.kohsuke.stapler.StaplerRequest
 import org.kohsuke.stapler.export.ExportedBean
 
+import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -23,11 +24,29 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
     @Extension
     public final static DescriptorImpl descriptor = getStaticDescriptor()
 
+    private final static Scheduler scheduler = new Scheduler(
+            new Runnable() {
+                @Override
+                public void run() {
+                    descriptor.safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {
+                        {
+                            put("run", null);
+                            put("event", Event.PLUGIN_SCHEDULE);
+                        }
+                    });
+                }
+            }, TimeUnit.MINUTES);
+
     void start() {
         if (descriptor.getOnPluginStarted()) {
             descriptor.safeExecOnEventGroovyCode(log, [event: Event.PLUGIN_STARTED])
         }
         log.fine(">>> Initialising ${this.class.simpleName}... [DONE]")
+
+        final scheduleTime = descriptor.getScheduleTime();
+        if (scheduleTime > 0) {
+            scheduler.run(scheduleTime);
+        }
     }
 
     @Override
@@ -72,72 +91,79 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         protected final transient Map<Object, Object> context = new HashMap<Object, Object>()
         protected String onEventGroovyCode = getDefaultOnEventGroovyCode()
 
-        private Boolean disableSynchronization = Boolean.FALSE;
-        private Boolean onPluginStarted = Boolean.TRUE;
-        private Boolean onPluginStopped = Boolean.TRUE;
-        private Boolean onJobStarted = Boolean.TRUE;
-        private Boolean onJobCompleted = Boolean.TRUE;
-        private Boolean onJobFinalized = Boolean.TRUE;
-        private Boolean onJobDeleted = Boolean.TRUE;
+        private boolean disableSynchronization = false;
+        private boolean onPluginStarted = true;
+        private boolean onPluginStopped = true;
+        private boolean onJobStarted = true;
+        private boolean onJobCompleted = true;
+        private boolean onJobFinalized = true;
+        private boolean onJobDeleted = true;
+        private int scheduleTime = 0;
 
-        void setDisableSynchronization(Boolean disableSynchronization) {
+        void setDisableSynchronization(boolean disableSynchronization) {
             this.disableSynchronization = disableSynchronization
         }
 
-        void setOnPluginStarted(Boolean onPluginStarted) {
+        void setOnPluginStarted(boolean onPluginStarted) {
             this.onPluginStarted = onPluginStarted
         }
 
-        void setOnPluginStopped(Boolean onPluginStopped) {
+        void setOnPluginStopped(boolean onPluginStopped) {
             this.onPluginStopped = onPluginStopped
         }
 
-        void setOnJobStarted(Boolean onJobStarted) {
+        void setOnJobStarted(boolean onJobStarted) {
             this.onJobStarted = onJobStarted
         }
 
-        void setOnJobCompleted(Boolean onJobCompleted) {
+        void setOnJobCompleted(boolean onJobCompleted) {
             this.onJobCompleted = onJobCompleted
         }
 
-        void setOnJobFinalized(Boolean onJobFinalized) {
+        void setOnJobFinalized(boolean onJobFinalized) {
             this.onJobFinalized = onJobFinalized
         }
 
-        void setOnJobDeleted(Boolean onJobDeleted) {
+        void setOnJobDeleted(boolean onJobDeleted) {
             this.onJobDeleted = onJobDeleted
         }
 
-        Boolean getOnJobDeleted() {
-
+        boolean getOnJobDeleted() {
             return onJobDeleted
         }
 
-        Boolean getOnJobFinalized() {
+        boolean getOnJobFinalized() {
             return onJobFinalized
         }
 
-        Boolean getOnJobCompleted() {
+        boolean getOnJobCompleted() {
             return onJobCompleted
         }
 
-        Boolean getOnJobStarted() {
+        boolean getOnJobStarted() {
             return onJobStarted
         }
 
-        Boolean getOnPluginStopped() {
+        boolean getOnPluginStopped() {
             return onPluginStopped
         }
 
-        Boolean getOnPluginStarted() {
+        boolean getOnPluginStarted() {
             return onPluginStarted
         }
 
-        Boolean getDisableSynchronization() {
+        boolean getDisableSynchronization() {
             return disableSynchronization
         }
 
-        /**
+        int getScheduleTime() {
+            return scheduleTime
+        }
+
+        void setScheduleTime(int scheduleTime) {
+            this.scheduleTime = scheduleTime
+        }
+/**
          * In order to load the persisted global configuration, you have to
          * call load() in the constructor.
          */
@@ -192,8 +218,19 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             setOnJobFinalized(formData.getBoolean("onJobFinalized"))
             setOnJobDeleted(formData.getBoolean("onJobDeleted"))
             setDisableSynchronization(formData.getBoolean("disableSynchronization"))
+            setScheduleTime(formData.getInt("scheduleTime"))
             groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
             save() // save configuration
+
+            if (scheduleTime > 0) {
+                scheduler.run(scheduleTime)
+                log.finer(">>> Enable sheduler. Schedule time is " + scheduleTime)
+            }
+            else {
+                scheduler.stop()
+                log.finer(">>> Scheduler was stopped")
+            }
+
             return super.configure(req, formData)
         }
 
@@ -323,8 +360,4 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         t.printStackTrace(new PrintWriter(sw))
         sw.toString()
     }
-
 }
-
-
-
