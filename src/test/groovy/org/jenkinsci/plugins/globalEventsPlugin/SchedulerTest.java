@@ -41,6 +41,14 @@ public class SchedulerTest {
     }
 
     @Test
+    public void testStopWithoutRun() {
+        final AtomicInteger counter = new AtomicInteger();
+        final Scheduler scheduler = new Scheduler(new Runner(counter), TimeUnit.MILLISECONDS);
+
+        scheduler.stop();
+    }
+
+    @Test
     public void testStopAndStart() {
         final AtomicInteger counter = new AtomicInteger();
         final Scheduler scheduler = new Scheduler(new Runner(counter), TimeUnit.MILLISECONDS);

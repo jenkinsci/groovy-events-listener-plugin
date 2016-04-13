@@ -21,6 +21,8 @@ public class Scheduler {
     }
 
     public void stop() {
-        scheduledRun.cancel(false);
+        if (scheduledRun != null) {
+            scheduledRun.cancel(false);
+        }
     }
 }
