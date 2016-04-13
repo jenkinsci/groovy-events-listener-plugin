@@ -99,6 +99,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         private boolean onJobFinalized = true;
         private boolean onJobDeleted = true;
         private int scheduleTime = 0;
+        private String classPath = null;
 
         void setDisableSynchronization(boolean disableSynchronization) {
             this.disableSynchronization = disableSynchronization
@@ -164,14 +165,30 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             this.scheduleTime = scheduleTime
         }
 
-        /**
+        String getClassPath() {
+            return classPath
+        }
+
+        void setClassPath(String classPath) {
+            this.classPath = classPath
+        }
+/**
          * In order to load the persisted global configuration, you have to
          * call load() in the constructor.
          */
         DescriptorImpl(ClassLoader classLoader) {
             load()
             groovyClassLoader = new GroovyClassLoader(classLoader);
+            updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
+        }
+
+        private updateClasspath() {
+            if (classPath !=null) {
+                for (String path : classPath.split(",")) {
+                    groovyClassLoader.addClasspath(path)
+                }
+            }
         }
 
         void putToContext(Object key, Object value) {
@@ -220,7 +237,11 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             setOnJobDeleted(formData.getBoolean("onJobDeleted"))
             setDisableSynchronization(formData.getBoolean("disableSynchronization"))
             setScheduleTime(formData.getInt("scheduleTime"))
+            setClassPath(formData.getString("classPath"))
+
+            updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
+
             save() // save configuration
 
             if (scheduleTime > 0) {
