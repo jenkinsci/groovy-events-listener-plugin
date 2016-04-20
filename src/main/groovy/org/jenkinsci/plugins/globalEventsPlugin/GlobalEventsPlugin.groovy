@@ -12,6 +12,8 @@ import org.kohsuke.stapler.QueryParameter
 import org.kohsuke.stapler.StaplerRequest
 import org.kohsuke.stapler.export.ExportedBean
 
+import java.lang.instrument.Instrumentation
+import java.lang.reflect.Field
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -105,30 +107,6 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             this.disableSynchronization = disableSynchronization
         }
 
-        void setOnPluginStarted(boolean onPluginStarted) {
-            this.onPluginStarted = onPluginStarted
-        }
-
-        void setOnPluginStopped(boolean onPluginStopped) {
-            this.onPluginStopped = onPluginStopped
-        }
-
-        void setOnJobStarted(boolean onJobStarted) {
-            this.onJobStarted = onJobStarted
-        }
-
-        void setOnJobCompleted(boolean onJobCompleted) {
-            this.onJobCompleted = onJobCompleted
-        }
-
-        void setOnJobFinalized(boolean onJobFinalized) {
-            this.onJobFinalized = onJobFinalized
-        }
-
-        void setOnJobDeleted(boolean onJobDeleted) {
-            this.onJobDeleted = onJobDeleted
-        }
-
         boolean getOnJobDeleted() {
             return onJobDeleted
         }
@@ -161,18 +139,16 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return scheduleTime
         }
 
-        void setScheduleTime(int scheduleTime) {
-            this.scheduleTime = scheduleTime
-        }
-
         String getClassPath() {
             return classPath
         }
 
         void setClassPath(String classPath) {
             this.classPath = classPath
+            updateClasspath()
         }
-/**
+
+        /**
          * In order to load the persisted global configuration, you have to
          * call load() in the constructor.
          */
@@ -186,7 +162,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         private updateClasspath() {
             if (classPath !=null) {
                 for (String path : classPath.split(",")) {
-                    groovyClassLoader.addClasspath(path)
+                    groovyClassLoader.addClasspath(path.trim())
                 }
             }
         }
@@ -228,16 +204,16 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
 
         @Override
         boolean configure(StaplerRequest req, JSONObject formData) {
-            setOnEventGroovyCode(formData.getString("onEventGroovyCode"))
-            setOnPluginStarted(formData.getBoolean("onPluginStarted"))
-            setOnPluginStopped(formData.getBoolean("onPluginStopped"))
-            setOnJobStarted(formData.getBoolean("onJobStarted"))
-            setOnJobCompleted(formData.getBoolean("onJobCompleted"))
-            setOnJobFinalized(formData.getBoolean("onJobFinalized"))
-            setOnJobDeleted(formData.getBoolean("onJobDeleted"))
-            setDisableSynchronization(formData.getBoolean("disableSynchronization"))
-            setScheduleTime(formData.getInt("scheduleTime"))
-            setClassPath(formData.getString("classPath"))
+            onEventGroovyCode = formData.getString("onEventGroovyCode")
+            onPluginStarted = formData.getBoolean("onPluginStarted")
+            onPluginStopped = formData.getBoolean("onPluginStopped")
+            onJobStarted = formData.getBoolean("onJobStarted")
+            onJobCompleted = formData.getBoolean("onJobCompleted")
+            onJobFinalized = formData.getBoolean("onJobFinalized")
+            onJobDeleted = formData.getBoolean("onJobDeleted")
+            disableSynchronization = formData.getBoolean("disableSynchronization")
+            scheduleTime = formData.getInt("scheduleTime")
+            classPath = formData.getString("classPath")
 
             updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)

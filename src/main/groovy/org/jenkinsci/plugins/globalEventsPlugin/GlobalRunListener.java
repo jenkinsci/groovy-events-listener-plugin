@@ -9,7 +9,6 @@ import jenkins.model.Jenkins;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.logging.Logger;
-
 /**
  * Warning: This MUST stay a Java class, Groovy cannot compile (for some reason??).
  */
