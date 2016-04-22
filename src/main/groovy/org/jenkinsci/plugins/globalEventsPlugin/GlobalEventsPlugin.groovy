@@ -12,6 +12,8 @@ import org.kohsuke.stapler.QueryParameter
 import org.kohsuke.stapler.StaplerRequest
 import org.kohsuke.stapler.export.ExportedBean
 
+import java.lang.instrument.Instrumentation
+import java.lang.reflect.Field
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -99,33 +101,10 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         private boolean onJobFinalized = true;
         private boolean onJobDeleted = true;
         private int scheduleTime = 0;
+        private String classPath = null;
 
         void setDisableSynchronization(boolean disableSynchronization) {
             this.disableSynchronization = disableSynchronization
-        }
-
-        void setOnPluginStarted(boolean onPluginStarted) {
-            this.onPluginStarted = onPluginStarted
-        }
-
-        void setOnPluginStopped(boolean onPluginStopped) {
-            this.onPluginStopped = onPluginStopped
-        }
-
-        void setOnJobStarted(boolean onJobStarted) {
-            this.onJobStarted = onJobStarted
-        }
-
-        void setOnJobCompleted(boolean onJobCompleted) {
-            this.onJobCompleted = onJobCompleted
-        }
-
-        void setOnJobFinalized(boolean onJobFinalized) {
-            this.onJobFinalized = onJobFinalized
-        }
-
-        void setOnJobDeleted(boolean onJobDeleted) {
-            this.onJobDeleted = onJobDeleted
         }
 
         boolean getOnJobDeleted() {
@@ -160,8 +139,13 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return scheduleTime
         }
 
-        void setScheduleTime(int scheduleTime) {
-            this.scheduleTime = scheduleTime
+        String getClassPath() {
+            return classPath
+        }
+
+        void setClassPath(String classPath) {
+            this.classPath = classPath
+            updateClasspath()
         }
 
         /**
@@ -171,7 +155,16 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         DescriptorImpl(ClassLoader classLoader) {
             load()
             groovyClassLoader = new GroovyClassLoader(classLoader);
+            updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
+        }
+
+        private updateClasspath() {
+            if (classPath !=null) {
+                for (String path : classPath.split(",")) {
+                    groovyClassLoader.addClasspath(path.trim())
+                }
+            }
         }
 
         void putToContext(Object key, Object value) {
@@ -211,16 +204,20 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
 
         @Override
         boolean configure(StaplerRequest req, JSONObject formData) {
-            setOnEventGroovyCode(formData.getString("onEventGroovyCode"))
-            setOnPluginStarted(formData.getBoolean("onPluginStarted"))
-            setOnPluginStopped(formData.getBoolean("onPluginStopped"))
-            setOnJobStarted(formData.getBoolean("onJobStarted"))
-            setOnJobCompleted(formData.getBoolean("onJobCompleted"))
-            setOnJobFinalized(formData.getBoolean("onJobFinalized"))
-            setOnJobDeleted(formData.getBoolean("onJobDeleted"))
-            setDisableSynchronization(formData.getBoolean("disableSynchronization"))
-            setScheduleTime(formData.getInt("scheduleTime"))
+            onEventGroovyCode = formData.getString("onEventGroovyCode")
+            onPluginStarted = formData.getBoolean("onPluginStarted")
+            onPluginStopped = formData.getBoolean("onPluginStopped")
+            onJobStarted = formData.getBoolean("onJobStarted")
+            onJobCompleted = formData.getBoolean("onJobCompleted")
+            onJobFinalized = formData.getBoolean("onJobFinalized")
+            onJobDeleted = formData.getBoolean("onJobDeleted")
+            disableSynchronization = formData.getBoolean("disableSynchronization")
+            scheduleTime = formData.getInt("scheduleTime")
+            classPath = formData.getString("classPath")
+
+            updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
+
             save() // save configuration
 
             if (scheduleTime > 0) {

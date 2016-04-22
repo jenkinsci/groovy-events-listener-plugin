@@ -60,6 +60,11 @@
                   <f:textbox field="scheduleTime" />
                 </f:entry>
             </f:section>
+            <f:section title="Classpath">
+                <f:entry title="Path" description="Add comma-separated list of directories to classpath" field="classPath">
+                  <f:textbox />
+                </f:entry>
+            </f:section>
         </f:advanced>
     </f:section>
 </j:jelly>

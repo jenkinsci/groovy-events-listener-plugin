@@ -1,19 +1,28 @@
 package org.jenkinsci.plugins.globalEventsPlugin
 
+import org.apache.tools.ant.taskdefs.TempFile
+import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.FutureTask
+
+import static groovy.test.GroovyAssert.shouldFail
+
 /**
  * Created by nickgrealy@gmail.com.
  */
 class GlobalEventsPluginTest {
+    private GlobalEventsPlugin.DescriptorImpl plugin
+    private LoggerTrap logger
 
-    GlobalEventsPlugin.DescriptorImpl plugin
-    LoggerTrap logger
+    @Rule
+    public TemporaryFolder folder= new TemporaryFolder();
 
     @Before
     void setup(){
@@ -30,6 +39,41 @@ class GlobalEventsPluginTest {
             [success:true]
             """), [aaa:111])
         assert plugin.context == [success:true]
+    }
+
+    @Test
+    void testImportFromTwoNewClasses(){
+        File folder1 = folder.newFolder()
+        PrintWriter writer = new PrintWriter(folder1.absolutePath + "/Class1.groovy", "UTF-8");
+        writer.println("public class Class1 { public static int A = 1; }");
+        writer.close()
+
+        File folder2 = folder.newFolder()
+        writer = new PrintWriter(folder2.absolutePath + "/Class2.groovy", "UTF-8");
+        writer.println("public class Class2 { public static int A = 2; }");
+        writer.close()
+
+        writer = new PrintWriter(folder2.absolutePath + "/Class3.groovy", "UTF-8");
+        writer.println("public class Class3 { public static int A = 3; }");
+        writer.close()
+
+        plugin.setClassPath(folder1.absolutePath + "  ,  " + folder2.absolutePath);
+        plugin.setOnEventGroovyCode("import Class1;" +
+                "import Class2;" +
+                "import Class3;" +
+                "context.c1 = Class1.A;" +
+                "context.c2 = Class2.A;" +
+                "context.c3 = Class3.A")
+        plugin.safeExecOnEventGroovyCode(logger, [:])
+
+        assert plugin.context == [c1: 1, c2: 2, c3: 3]
+    }
+
+    @Test
+    void testFailToImport(){
+        shouldFail MultipleCompilationErrorsException, {
+            plugin.setOnEventGroovyCode("import test.TestClass")
+        }
     }
 
     @Test

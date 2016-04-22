@@ -1,0 +1,19 @@
+<div>
+    If you have some complicated code and you don't want to store it in Jenkins configuration page,
+    you can easily extract it to groovy file, save in folder and add this folder to class path.
+
+    After that you will be able to import this class from your code.
+
+    Example:
+    <pre><code>
+        > cd /var/lib/jenkins
+        > mkdir groovy_scripts
+        > echo "class Constants { public static final int TIMEOUT = 10; }" > groovy_scripts/Constants.groovy
+    </code></pre>
+
+    Now you cad add <code>/var/lib/jenkins/groovy_scripts</code> folder to classpath and do something like this:
+    <pre><code>
+        import Constants
+        log.info Constants.TIMEOUT
+    </code></pre>
+</div>
