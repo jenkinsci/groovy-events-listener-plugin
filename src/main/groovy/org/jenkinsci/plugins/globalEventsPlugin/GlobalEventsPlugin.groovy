@@ -12,15 +12,12 @@ import org.kohsuke.stapler.QueryParameter
 import org.kohsuke.stapler.StaplerRequest
 import org.kohsuke.stapler.export.ExportedBean
 
-import java.lang.instrument.Instrumentation
-import java.lang.reflect.Field
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 
 @ExportedBean
 class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugin> {
-
     private final static Logger log = Logger.getLogger(GlobalEventsPlugin.class.getName())
 
     @Extension
@@ -88,7 +85,8 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * <p/>
          * If you don't want fields to be persisted, use <tt>transient</tt>.
          */
-        private final transient GroovyClassLoader groovyClassLoader
+        private transient GroovyClassLoader groovyClassLoader
+        private final transient ClassLoader parentClassLoader
         private transient Script groovyScript
         protected final transient Map<Object, Object> context = new HashMap<Object, Object>()
         protected String onEventGroovyCode = getDefaultOnEventGroovyCode()
@@ -139,6 +137,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return scheduleTime
         }
 
+        @SuppressWarnings("GroovyUnusedDeclaration")
         String getClassPath() {
             return classPath
         }
@@ -154,12 +153,14 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          */
         DescriptorImpl(ClassLoader classLoader) {
             load()
-            groovyClassLoader = new GroovyClassLoader(classLoader);
+            parentClassLoader = classLoader;
             updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
         }
 
         private updateClasspath() {
+            groovyClassLoader = new GroovyClassLoader(parentClassLoader);
+
             if (classPath !=null) {
                 for (String path : classPath.split(",")) {
                     groovyClassLoader.addClasspath(path.trim())
@@ -185,6 +186,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return '''log.info("Fired event '${event}'.")'''
         }
 
+        @SuppressWarnings("GroovyUnusedDeclaration")
         boolean isApplicable(Class<? extends AbstractProject> aClass) {
             // Indicates that this builder can be used with all kinds of project types
             return true
@@ -328,8 +330,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             }
         }
 
-        public FormValidation doTestGroovyCode(@QueryParameter("onEventGroovyCode") final String onEventGroovyCode
-        ) {
+        public FormValidation doTestGroovyCode(@QueryParameter("onEventGroovyCode") final String onEventGroovyCode) {
             FormValidation validationResult;
             try {
                 Script script = getScriptReadyToBeExecuted(onEventGroovyCode);
