@@ -110,6 +110,34 @@
             <td><code>RunListener.onDeleted</code></td>
             <td>Called right before a build is going to be deleted.</td>
         </tr>
+        <tr>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="http://javadoc.jenkins-ci.org/hudson/slaves/ComputerListener.html">ComputerListener</a></code></th>
+        </tr>
+        <tr>
+            <td><code>ComputerListener.onLaunchFailure</code></td>
+            <td>Called when the slave agent fails to connect
+            </td>
+        </tr>
+        <tr>
+            <td><code>ComputerListener.onOnline</code></td>
+            <td>Called when a node comes online
+            </td>
+        </tr>
+        <tr>
+            <td><code>ComputerListener.onOffline</code></td>
+            <td>Called when a node goes offline
+            </td>
+        </tr>
+        <tr>
+            <td><code>ComputerListener.onTemporarilyOnline</code></td>
+            <td>Called when a node is marked temporarilyOnline by a user
+            </td>
+        </tr>
+        <tr>
+            <td><code>ComputerListener.onTemporarilyOffline</code></td>
+            <td>Called when a node is marked temporarilyOffline by a user
+            </td>
+        </tr>
         </tbody>
     </table>
     <br/><br/>
