@@ -72,6 +72,20 @@
                     <f:checkbox field="onNodeTempOffline" checked="${onNodeTempOffline}"/>
                 </f:entry>
             </f:section>
+            <f:section title="Job Queue">
+                <f:entry title="Waiting">
+                    <f:checkbox field="onQueueWaiting" checked="${onQueueWaiting}"/>
+                </f:entry>
+                <f:entry title="Blocked">
+                    <f:checkbox field="onQueueBlocked" checked="${onQueueBlocked}"/>
+                </f:entry>
+                <f:entry title="Buildable">
+                    <f:checkbox field="onQueueBuildable" checked="${onQueueBuildable}"/>
+                </f:entry>
+                <f:entry title="Left">
+                    <f:checkbox field="onQueueLeft" checked="${onQueueLeft}"/>
+                </f:entry>
+            </f:section>
             <f:section title="Scheduler">
                 <f:entry title="Schedule time" description="Raise PLUGIN_SCHEDULE event every $scheduledTime minutes. 0 - disabled">
                   <f:textbox field="scheduleTime" />

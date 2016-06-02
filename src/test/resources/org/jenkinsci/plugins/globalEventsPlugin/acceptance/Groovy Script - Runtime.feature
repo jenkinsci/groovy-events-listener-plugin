@@ -25,16 +25,20 @@ Feature: Groovy Script - Runtime
     Then the log level info should display '<Value>'
 
     Examples:
-      | Event                       | Key      | Value                                  |
-      | Run.onStarted               | actEvent | -> RunListener.onStarted               |
-      | Run.onCompleted             | actEvent | -> RunListener.onCompleted             |
-      | Run.onFinalized             | actEvent | -> RunListener.onFinalized             |
-      | Run.onDeleted               | actEvent | -> RunListener.onDeleted               |
-      | Computer.onLaunchFailure    | actEvent | -> ComputerListener.onLaunchFailure    |
-      | Computer.onOnline           | actEvent | -> ComputerListener.onOnline           |
-      | Computer.onOffline          | actEvent | -> ComputerListener.onOffline          |
+      | Event                         | Key      | Value                                    |
+      | Run.onStarted                 | actEvent | -> RunListener.onStarted                 |
+      | Run.onCompleted               | actEvent | -> RunListener.onCompleted               |
+      | Run.onFinalized               | actEvent | -> RunListener.onFinalized               |
+      | Run.onDeleted                 | actEvent | -> RunListener.onDeleted                 |
+      | Computer.onLaunchFailure      | actEvent | -> ComputerListener.onLaunchFailure      |
+      | Computer.onOnline             | actEvent | -> ComputerListener.onOnline             |
+      | Computer.onOffline            | actEvent | -> ComputerListener.onOffline            |
       | Computer.onTemporarilyOnline  | actEvent | -> ComputerListener.onTemporarilyOnline  |
       | Computer.onTemporarilyOffline | actEvent | -> ComputerListener.onTemporarilyOffline |
+      | Queue.onEnterWaiting          | actEvent | -> QueueListener.onEnterWaiting          |
+      | Queue.onEnterBlocked          | actEvent | -> QueueListener.onEnterBlocked          |
+      | Queue.onEnterBuildable        | actEvent | -> QueueListener.onEnterBuildable        |
+      | Queue.onLeft                  | actEvent | -> QueueListener.onLeft                  |
 
 
   Scenario: The plugin's package should be imported by default, so that I can make use of the 'Event' convenience class.

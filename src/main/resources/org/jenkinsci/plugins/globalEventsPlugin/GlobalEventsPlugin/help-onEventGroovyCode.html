@@ -138,6 +138,29 @@
             <td>Called when a node is marked temporarilyOffline by a user
             </td>
         </tr>
+        <tr>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="http://javadoc.jenkins-ci.org/hudson/model/queue/QueueListener.html">QueueListener</a></code></th>
+        </tr>
+        <tr>
+            <td><code>QueueListener.onEnterWaiting</code></td>
+            <td>Called when a job enters the queue
+            </td>
+        </tr>
+        <tr>
+            <td><code>QueueListener.onEnterBlocked</code></td>
+            <td>Called when a job isn't ready to start for some reason other than executor availability
+            </td>
+        </tr>
+        <tr>
+            <td><code>QueueListener.onEnterBuildable</code></td>
+            <td>Called when a queued job is ready to run when an executor is available
+            </td>
+        </tr>
+        <tr>
+            <td><code>QueueListener.onLeft</code></td>
+            <td>Called when a job leaves the queue after starting or being cancelled
+            </td>
+        </tr>
         </tbody>
     </table>
     <br/><br/>
