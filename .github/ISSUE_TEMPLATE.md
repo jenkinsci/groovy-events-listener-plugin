@@ -6,9 +6,9 @@ Also, please check the backlog of open issues, in case the issue has already bee
 
 ### Steps to reproduce
 How can we reproduce the issue
-1. ...
-2. ...
-3. ...
+1. foo
+2. bar
+3. foo
 
 ### Expected behaviour
 Tell us what should happen
@@ -17,8 +17,11 @@ Tell us what should happen
 Tell us what happens instead
 
 ### Server configuration
+
 **Operating system**:
+
 **Jenkins Version**:
+
 **Plugin Version**:
 
 ### Additional Steps/Questions
@@ -28,4 +31,4 @@ Tell us what happens instead
 - [ ] What log messages do you receive, when you press the "Test Connection" button?
 - [ ] Have you followed the [troubleshooting section on the plugin page](https://github.com/jenkinsci/poll-mailbox-trigger-plugin#troubleshooting)?
 
-If there's not enough information still, we can try [setting up a LogRecorder for the Jenkins plugin](https://wiki.jenkins-ci.org/display/JENKINS/Logging) (the logger package name will be something like "org.jenkinsci.plugins.pollmailboxtrigger")
+If you're feeling ambitious, you can also try [setting up a LogRecorder for the Jenkins plugin](https://wiki.jenkins-ci.org/display/JENKINS/Logging) (the logger package name will be something like "org.jenkinsci.plugins.pollmailboxtrigger"). This may provide extra insight into why your issue is occurring.
