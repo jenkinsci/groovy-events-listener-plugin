@@ -23,12 +23,3 @@ Tell us what happens instead
 **Jenkins Version**:
 
 **Plugin Version**:
-
-### Additional Steps/Questions
-
-- [ ] Can you please provide all the configuration details you're using (hide sensitive fields) and any other information which may help? (does it match the [examples here](https://github.com/jenkinsci/poll-mailbox-trigger-plugin#office-365)?)
-- [ ] Do you know if you're you able to connect to to your mail server via IMAP?
-- [ ] What log messages do you receive, when you press the "Test Connection" button?
-- [ ] Have you followed the [troubleshooting section on the plugin page](https://github.com/jenkinsci/poll-mailbox-trigger-plugin#troubleshooting)?
-
-If you're feeling ambitious, you can also try [setting up a LogRecorder for the Jenkins plugin](https://wiki.jenkins-ci.org/display/JENKINS/Logging) (the logger package name will be something like "org.jenkinsci.plugins.pollmailboxtrigger"). This may provide extra insight into why your issue is occurring.
