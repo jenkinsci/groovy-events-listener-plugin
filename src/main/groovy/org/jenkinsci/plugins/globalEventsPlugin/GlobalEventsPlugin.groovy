@@ -98,6 +98,11 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         private boolean onJobCompleted = true;
         private boolean onJobFinalized = true;
         private boolean onJobDeleted = true;
+        private boolean onNodeLaunchFailure = true;
+        private boolean onNodeOnline = true;
+        private boolean onNodeOffline = true;
+        private boolean onNodeTempOnline = true;
+        private boolean onNodeTempOffline = true;
         private int scheduleTime = 0;
         private String classPath = null;
 
@@ -119,6 +124,26 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
 
         boolean getOnJobStarted() {
             return onJobStarted
+        }
+
+        boolean getOnNodeLaunchFailure() {
+            return onNodeLaunchFailure
+        }
+
+        boolean getOnNodeOnline() {
+            return onNodeOnline
+        }
+
+        boolean getOnNodeOffline() {
+            return onNodeOffline
+        }
+
+        boolean getOnNodeTempOnline() {
+            return onNodeTempOnline
+        }
+
+        boolean getOnNodeTempOffline() {
+            return onNodeTempOffline
         }
 
         boolean getOnPluginStopped() {
@@ -213,6 +238,11 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             onJobCompleted = formData.getBoolean("onJobCompleted")
             onJobFinalized = formData.getBoolean("onJobFinalized")
             onJobDeleted = formData.getBoolean("onJobDeleted")
+            onNodeLaunchFailure = formData.getBoolean("onNodeLaunchFailure")
+            onNodeOnline = formData.getBoolean("onNodeOnline")
+            onNodeOffline = formData.getBoolean("onNodeOffline")
+            onNodeTempOnline = formData.getBoolean("onNodeTempOnline")
+            onNodeTempOffline = formData.getBoolean("onNodeTempOffline")
             disableSynchronization = formData.getBoolean("disableSynchronization")
             scheduleTime = formData.getInt("scheduleTime")
             classPath = formData.getString("classPath")
@@ -295,7 +325,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                     def totalDurationMillis = System.currentTimeMillis() - syncStart
                     def executionDurationMillis = System.currentTimeMillis() - executionStart
                     def synchronizationMillis=totalDurationMillis-executionDurationMillis
-                    
+
                     log.finer(">>> Executing groovy script completed successfully. "+
                             "totalDurationMillis='$totalDurationMillis'," +
                             "executionDurationMillis='$executionDurationMillis'," +
