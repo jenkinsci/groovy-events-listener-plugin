@@ -36,56 +36,41 @@ public class GlobalComputerListener extends ComputerListener {
 
     @Override
     public void onLaunchFailure(final Computer computer, final TaskListener listener) {
-        if (getParentPluginDescriptor().getOnNodeLaunchFailure()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("computer", computer);
-                put("listener", listener);
-                put("event", Event.NODE_LAUNCH_FAILURE);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.NODE_LAUNCH_FAILURE, log, new HashMap<Object, Object>() {{
+            put("computer", computer);
+            put("listener", listener);
+        }});
     }
 
     @Override
     public void onOnline(final Computer computer, final TaskListener listener) {
-        if (getParentPluginDescriptor().getOnNodeOnline()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("computer", computer);
-                put("listener", listener);
-                put("event", Event.NODE_ONLINE);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.NODE_ONLINE, log, new HashMap<Object, Object>() {{
+            put("computer", computer);
+            put("listener", listener);
+        }});
     }
 
     @Override
     public void onOffline(final Computer computer, final OfflineCause cause) {
-        if (getParentPluginDescriptor().getOnNodeOffline()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("computer", computer);
-                put("cause", cause);
-                put("event", Event.NODE_OFFLINE);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.NODE_OFFLINE, log, new HashMap<Object, Object>() {{
+            put("computer", computer);
+            put("cause", cause);
+        }});
     }
 
     @Override
     public void onTemporarilyOnline(final Computer computer) {
-        if (getParentPluginDescriptor().getOnNodeTempOnline()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("computer", computer);
-                put("event", Event.NODE_TEMP_ONLINE);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.NODE_TEMP_ONLINE, log, new HashMap<Object, Object>() {{
+            put("computer", computer);
+        }});
     }
 
     @Override
     public void onTemporarilyOffline(final Computer computer, final OfflineCause cause) {
-        if (getParentPluginDescriptor().getOnNodeTempOffline()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("computer", computer);
-                put("cause", cause);
-                put("event", Event.NODE_TEMP_OFFLINE);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.NODE_TEMP_OFFLINE, log, new HashMap<Object, Object>() {{
+            put("computer", computer);
+            put("cause", cause);
+        }});
     }
 
 }

@@ -37,42 +37,30 @@ public class GlobalQueueListener extends QueueListener {
 
     @Override
     public void onEnterWaiting(final WaitingItem item) {
-        if (getParentPluginDescriptor().getOnQueueWaiting()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("item", item);
-                put("event", Event.QUEUE_WAITING);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.QUEUE_WAITING, log, new HashMap<Object, Object>() {{
+            put("item", item);
+        }});
     }
 
     @Override
     public void onEnterBlocked(final BlockedItem item) {
-        if (getParentPluginDescriptor().getOnQueueBlocked()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("item", item);
-                put("event", Event.QUEUE_BLOCKED);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.QUEUE_BLOCKED, log, new HashMap<Object, Object>() {{
+            put("item", item);
+        }});
     }
 
     @Override
     public void onEnterBuildable(final BuildableItem item) {
-        if (getParentPluginDescriptor().getOnQueueBuildable()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("item", item);
-                put("event", Event.QUEUE_BUILDABLE);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.QUEUE_BUILDABLE, log, new HashMap<Object, Object>() {{
+            put("item", item);
+        }});
     }
 
     @Override
     public void onLeft(final LeftItem item) {
-        if (getParentPluginDescriptor().getOnQueueLeft()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("item", item);
-                put("event", Event.QUEUE_LEFT);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.QUEUE_LEFT, log, new HashMap<Object, Object>() {{
+            put("item", item);
+        }});
     }
 }
 

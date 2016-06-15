@@ -34,7 +34,7 @@ class GlobalEventsPluginTest {
 
     @Test
     void testPassingInputs(){
-        plugin.safeExecGroovyCode(logger, plugin.getScriptReadyToBeExecuted("""
+        plugin.safeExecGroovyCode("dummy_event", logger, plugin.getScriptReadyToBeExecuted("""
             assert aaa == 111
             [success:true]
             """), [aaa:111])
@@ -58,14 +58,14 @@ class GlobalEventsPluginTest {
         writer.close()
 
         plugin.setClassPath(folder1.absolutePath + "  ,  " + folder2.absolutePath);
+
         plugin.setOnEventGroovyCode("import Class1;" +
                 "import Class2;" +
                 "import Class3;" +
                 "context.c1 = Class1.A;" +
                 "context.c2 = Class2.A;" +
                 "context.c3 = Class3.A")
-        plugin.safeExecOnEventGroovyCode(logger, [:])
-
+        plugin.processEvent("dummy_event", logger, [:])
         assert plugin.context == [c1: 1, c2: 2, c3: 3]
     }
 
@@ -82,7 +82,7 @@ class GlobalEventsPluginTest {
         plugin.putToContext("total", 0)
         plugin.setOnEventGroovyCode("context.total += 1")
         for(int i=0; i<expectedValue; i++) {
-            plugin.safeExecOnEventGroovyCode(logger, [:])
+            plugin.processEvent("dummy_event", logger, [:])
             assert plugin.context == [total: i+1]
         }
         assert plugin.context == [total:expectedValue]
@@ -148,7 +148,7 @@ class GlobalEventsPluginTest {
             @Override
             Integer call() throws Exception {
                 for(int i=0; i<number; i++) {
-                    plugin.safeExecOnEventGroovyCode(logger, [:])
+                    plugin.processEvent("dummy_event", logger, [:])
                 }
                 return 0;
             };

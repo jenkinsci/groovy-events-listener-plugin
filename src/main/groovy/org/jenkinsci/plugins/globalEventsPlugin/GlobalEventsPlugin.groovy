@@ -37,9 +37,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             }, TimeUnit.MINUTES);
 
     void start() {
-        if (descriptor.getOnPluginStarted()) {
-            descriptor.safeExecOnEventGroovyCode(log, [event: Event.PLUGIN_STARTED])
-        }
+        descriptor.processEvent(Event.PLUGIN_STARTED, log, [:])
         log.fine(">>> Initialising ${this.class.simpleName}... [DONE]")
 
         final scheduleTime = descriptor.getScheduleTime();
@@ -51,9 +49,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
     @Override
     void stop() {
         super.stop()
-        if (descriptor.getOnPluginStopped()) {
-            getDescriptor().safeExecOnEventGroovyCode(log, [event: Event.PLUGIN_STOPPED])
-        }
+        getDescriptor().processEvent(Event.PLUGIN_STOPPED, log, [:])
     }
 
     DescriptorImpl getDescriptor() {
@@ -114,66 +110,6 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             this.disableSynchronization = disableSynchronization
         }
 
-        boolean getOnJobDeleted() {
-            return onJobDeleted
-        }
-
-        boolean getOnJobFinalized() {
-            return onJobFinalized
-        }
-
-        boolean getOnJobCompleted() {
-            return onJobCompleted
-        }
-
-        boolean getOnJobStarted() {
-            return onJobStarted
-        }
-
-        boolean getOnNodeLaunchFailure() {
-            return onNodeLaunchFailure
-        }
-
-        boolean getOnNodeOnline() {
-            return onNodeOnline
-        }
-
-        boolean getOnNodeOffline() {
-            return onNodeOffline
-        }
-
-        boolean getOnNodeTempOnline() {
-            return onNodeTempOnline
-        }
-
-        boolean getOnNodeTempOffline() {
-            return onNodeTempOffline
-        }
-
-        boolean getOnQueueWaiting() {
-            return onQueueWaiting
-        }
-
-        boolean getOnQueueBlocked() {
-            return onQueueBlocked
-        }
-
-        boolean getOnQueueBuildable() {
-            return onQueueBuildable
-        }
-
-        boolean getOnQueueLeft() {
-            return onQueueLeft
-        }
-
-        boolean getOnPluginStopped() {
-            return onPluginStopped
-        }
-
-        boolean getOnPluginStarted() {
-            return onPluginStarted
-        }
-
         boolean getDisableSynchronization() {
             return disableSynchronization
         }
@@ -216,7 +152,6 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         void putToContext(Object key, Object value) {
             context.put(key, value);
         }
-
 
         String getOnEventGroovyCode() {
             return onEventGroovyCode
@@ -288,8 +223,32 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return super.configure(req, formData)
         }
 
-        void safeExecOnEventGroovyCode(Logger log, Map<Object, Object> params) {
-            safeExecGroovyCode(log, groovyScript, params)
+        private Boolean isEventEnabled(String event) {
+            switch(event) {
+                case Event.PLUGIN_STARTED: return onPluginStarted;
+                case Event.PLUGIN_STOPPED: return onPluginStopped;
+                case Event.PLUGIN_SCHEDULE: return onJobStarted;
+                case Event.JOB_DELETED: return onJobDeleted;
+                case Event.JOB_STARTED: return onJobStarted;
+                case Event.JOB_FINALIZED: return onJobFinalized;
+                case Event.JOB_COMPLETED: return onJobCompleted;
+                case Event.NODE_LAUNCH_FAILURE: return onNodeLaunchFailure;
+                case Event.NODE_ONLINE: return onNodeOnline;
+                case Event.NODE_OFFLINE: return onNodeOffline;
+                case Event.NODE_TEMP_ONLINE: return onNodeTempOnline;
+                case Event.NODE_TEMP_OFFLINE: return onNodeTempOffline;
+                case Event.QUEUE_WAITING: return onQueueWaiting;
+                case Event.QUEUE_BLOCKED: return onQueueBlocked;
+                case Event.QUEUE_BUILDABLE: return onQueueBuildable;
+                case Event.QUEUE_LEFT: return onQueueLeft;
+            }
+            return true
+        }
+
+        void processEvent(String event, Logger log, Map<Object, Object> params) {
+            if (isEventEnabled(event)) {
+                safeExecGroovyCode(event, log, groovyScript, params)
+            }
         }
 
         /**
@@ -300,6 +259,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * @param params
          */
         private FormValidation safeExecGroovyCode(
+                final String event,
                 final Logger log,
                 final Script groovyScript,
                 final Map<Object, Object> params,
@@ -328,9 +288,10 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                             }
                         }
                     }
-                    params.put("env", envVars);
+                    params.put("env", envVars)
                     params.put("jenkins", jenkins)
                     params.put("log", log)
+                    params.put("event", event)
 
                     def syncStart = System.currentTimeMillis()
                     def executionStart
@@ -389,8 +350,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             try {
                 Script script = getScriptReadyToBeExecuted(onEventGroovyCode);
                 LoggerTrap logger = new LoggerTrap(GlobalEventsPlugin.name)
-                validationResult = safeExecGroovyCode(logger, script, [
-                        event: Event.JOB_STARTED,
+                validationResult = safeExecGroovyCode(Event.JOB_STARTED, logger, script, [
                         env  : [:],
                         run  : [:],
                 ], true)
