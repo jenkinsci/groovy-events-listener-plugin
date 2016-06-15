@@ -9,6 +9,7 @@ import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPlugin
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPluginTest
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalRunListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalComputerListener
+import org.jenkinsci.plugins.globalEventsPlugin.GlobalQueueListener
 import org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap
 
 import static org.hamcrest.Matchers.equalTo
@@ -20,6 +21,7 @@ class StepDefs {
     GlobalEventsPlugin.DescriptorImpl plugin
     GlobalRunListener runListener
     GlobalComputerListener computerListener
+    GlobalQueueListener queueListener
     LoggerTrap logger
     String groovyScript
     FormValidation validationResponse
@@ -40,6 +42,9 @@ class StepDefs {
         computerListener = new GlobalComputerListener()
         computerListener.parentPluginDescriptorOverride = plugin
         computerListener.log = logger
+        queueListener = new GlobalQueueListener()
+        queueListener.parentPluginDescriptorOverride = plugin
+        queueListener.log = logger
 
     }
 
@@ -100,6 +105,18 @@ class StepDefs {
                     break;
                 case "Computer.onTemporarilyOffline":
                     computerListener.onTemporarilyOffline(null, null)
+                    break;
+                case "Queue.onEnterWaiting":
+                    queueListener.onEnterWaiting(null)
+                    break;
+                case "Queue.onEnterBlocked":
+                    queueListener.onEnterBlocked(null)
+                    break;
+                case "Queue.onEnterBuildable":
+                    queueListener.onEnterBuildable(null)
+                    break;
+                case "Queue.onLeft":
+                    queueListener.onLeft(null)
                     break;
             }
         } catch (Throwable t){

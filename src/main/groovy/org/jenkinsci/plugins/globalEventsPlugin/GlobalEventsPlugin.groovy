@@ -103,6 +103,10 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         private boolean onNodeOffline = true;
         private boolean onNodeTempOnline = true;
         private boolean onNodeTempOffline = true;
+        private boolean onQueueWaiting = true;
+        private boolean onQueueBlocked = true;
+        private boolean onQueueBuildable = true;
+        private boolean onQueueLeft = true;
         private int scheduleTime = 0;
         private String classPath = null;
 
@@ -144,6 +148,22 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
 
         boolean getOnNodeTempOffline() {
             return onNodeTempOffline
+        }
+
+        boolean getOnQueueWaiting() {
+            return onQueueWaiting
+        }
+
+        boolean getOnQueueBlocked() {
+            return onQueueBlocked
+        }
+
+        boolean getOnQueueBuildable() {
+            return onQueueBuildable
+        }
+
+        boolean getOnQueueLeft() {
+            return onQueueLeft
         }
 
         boolean getOnPluginStopped() {
@@ -243,6 +263,10 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             onNodeOffline = formData.getBoolean("onNodeOffline")
             onNodeTempOnline = formData.getBoolean("onNodeTempOnline")
             onNodeTempOffline = formData.getBoolean("onNodeTempOffline")
+            onQueueWaiting = formData.getBoolean("onQueueWaiting")
+            onQueueBlocked = formData.getBoolean("onQueueBlocked")
+            onQueueBuildable = formData.getBoolean("onQueueBuildable")
+            onQueueLeft = formData.getBoolean("onQueueLeft")
             disableSynchronization = formData.getBoolean("disableSynchronization")
             scheduleTime = formData.getInt("scheduleTime")
             classPath = formData.getString("classPath")
