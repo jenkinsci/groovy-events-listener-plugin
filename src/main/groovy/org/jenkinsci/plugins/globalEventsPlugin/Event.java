@@ -16,4 +16,14 @@ public final class Event {
     public static final String JOB_FINALIZED = "RunListener.onFinalized";
     public static final String JOB_COMPLETED = "RunListener.onCompleted";
 
+    public static final String NODE_LAUNCH_FAILURE = "ComputerListener.onLaunchFailure";
+    public static final String NODE_ONLINE = "ComputerListener.onOnline";
+    public static final String NODE_OFFLINE = "ComputerListener.onOffline";
+    public static final String NODE_TEMP_ONLINE = "ComputerListener.onTemporarilyOnline";
+    public static final String NODE_TEMP_OFFLINE = "ComputerListener.onTemporarilyOffline";
+
+    public static final String QUEUE_WAITING = "QueueListener.onEnterWaiting";
+    public static final String QUEUE_BLOCKED = "QueueListener.onEnterBlocked";
+    public static final String QUEUE_BUILDABLE = "QueueListener.onEnterBuildable";
+    public static final String QUEUE_LEFT = "QueueListener.onLeft";
 }
