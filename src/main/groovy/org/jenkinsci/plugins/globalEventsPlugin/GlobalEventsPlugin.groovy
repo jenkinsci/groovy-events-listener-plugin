@@ -88,23 +88,10 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         protected String onEventGroovyCode = getDefaultOnEventGroovyCode()
 
         private boolean disableSynchronization = false;
-        private boolean onPluginStarted = true;
-        private boolean onPluginStopped = true;
-        private boolean onJobStarted = true;
-        private boolean onJobCompleted = true;
-        private boolean onJobFinalized = true;
-        private boolean onJobDeleted = true;
-        private boolean onNodeLaunchFailure = true;
-        private boolean onNodeOnline = true;
-        private boolean onNodeOffline = true;
-        private boolean onNodeTempOnline = true;
-        private boolean onNodeTempOffline = true;
-        private boolean onQueueWaiting = true;
-        private boolean onQueueBlocked = true;
-        private boolean onQueueBuildable = true;
-        private boolean onQueueLeft = true;
         private int scheduleTime = 0;
         private String classPath = null;
+
+        private Map<String, Boolean> eventsEnabled = new HashMap<String, Boolean>()
 
         void setDisableSynchronization(boolean disableSynchronization) {
             this.disableSynchronization = disableSynchronization
@@ -184,30 +171,26 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return clazz.newInstance();
         }
 
-        @Override
-        boolean configure(StaplerRequest req, JSONObject formData) {
+        void update(JSONObject formData) {
+            Event.getAll().each { event ->
+                String formField = event.replace('.', '__')
+                if (formData.has(formField)) {
+                    eventsEnabled.put(event, formData.getBoolean(formField))
+                }
+            }
+
             onEventGroovyCode = formData.getString("onEventGroovyCode")
-            onPluginStarted = formData.getBoolean("onPluginStarted")
-            onPluginStopped = formData.getBoolean("onPluginStopped")
-            onJobStarted = formData.getBoolean("onJobStarted")
-            onJobCompleted = formData.getBoolean("onJobCompleted")
-            onJobFinalized = formData.getBoolean("onJobFinalized")
-            onJobDeleted = formData.getBoolean("onJobDeleted")
-            onNodeLaunchFailure = formData.getBoolean("onNodeLaunchFailure")
-            onNodeOnline = formData.getBoolean("onNodeOnline")
-            onNodeOffline = formData.getBoolean("onNodeOffline")
-            onNodeTempOnline = formData.getBoolean("onNodeTempOnline")
-            onNodeTempOffline = formData.getBoolean("onNodeTempOffline")
-            onQueueWaiting = formData.getBoolean("onQueueWaiting")
-            onQueueBlocked = formData.getBoolean("onQueueBlocked")
-            onQueueBuildable = formData.getBoolean("onQueueBuildable")
-            onQueueLeft = formData.getBoolean("onQueueLeft")
             disableSynchronization = formData.getBoolean("disableSynchronization")
             scheduleTime = formData.getInt("scheduleTime")
             classPath = formData.getString("classPath")
 
             updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
+        }
+
+        @Override
+        boolean configure(StaplerRequest req, JSONObject formData) {
+            update(formData)
 
             save() // save configuration
 
@@ -223,26 +206,12 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return super.configure(req, formData)
         }
 
-        private Boolean isEventEnabled(String event) {
-            switch(event) {
-                case Event.PLUGIN_STARTED: return onPluginStarted;
-                case Event.PLUGIN_STOPPED: return onPluginStopped;
-                case Event.PLUGIN_SCHEDULE: return onJobStarted;
-                case Event.JOB_DELETED: return onJobDeleted;
-                case Event.JOB_STARTED: return onJobStarted;
-                case Event.JOB_FINALIZED: return onJobFinalized;
-                case Event.JOB_COMPLETED: return onJobCompleted;
-                case Event.NODE_LAUNCH_FAILURE: return onNodeLaunchFailure;
-                case Event.NODE_ONLINE: return onNodeOnline;
-                case Event.NODE_OFFLINE: return onNodeOffline;
-                case Event.NODE_TEMP_ONLINE: return onNodeTempOnline;
-                case Event.NODE_TEMP_OFFLINE: return onNodeTempOffline;
-                case Event.QUEUE_WAITING: return onQueueWaiting;
-                case Event.QUEUE_BLOCKED: return onQueueBlocked;
-                case Event.QUEUE_BUILDABLE: return onQueueBuildable;
-                case Event.QUEUE_LEFT: return onQueueLeft;
+        public Boolean isEventEnabled(String event) {
+            if (eventsEnabled.containsKey(event)) {
+                return eventsEnabled.get(event)
+            } else {
+                return true
             }
-            return true
         }
 
         void processEvent(String event, Logger log, Map<Object, Object> params) {

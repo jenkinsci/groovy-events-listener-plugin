@@ -35,55 +35,100 @@
             </f:entry>
             <f:section title="Plugin">
                 <f:entry title="Started">
-                    <f:checkbox field="onPluginStarted" checked="${onPluginStarted}"/>
+                    <f:checkbox
+                        field="GlobalEventsPlugin__start"
+                        checked="${descriptor.isEventEnabled('GlobalEventsPlugin.start')}"
+                    />
                 </f:entry>
                 <f:entry title="Stopped">
-                    <f:checkbox field="onPluginStopped" checked="${onPluginStopped}"/>
+                    <f:checkbox
+                        field="GlobalEventsPlugin__stop"
+                        checked="${descriptor.isEventEnabled('GlobalEventsPlugin.stop')}"
+                    />
                 </f:entry>
             </f:section>
             <f:section title="Job run">
                 <f:entry title="Started">
-                    <f:checkbox field="onJobStarted" checked="${onJobStarted}"/>
+                    <f:checkbox
+                        field="RunListener__onStarted"
+                        checked="${descriptor.isEventEnabled('RunListener.onStarted')}"
+                    />
                 </f:entry>
                 <f:entry title="Completed">
-                    <f:checkbox field="onJobCompleted" checked="${onJobCompleted}"/>
+                    <f:checkbox
+                        field="RunListener__onCompleted"
+                        checked="${descriptor.isEventEnabled('RunListener.onCompleted')}"
+                    />
                 </f:entry>
                 <f:entry title="Finalized">
-                    <f:checkbox field="onJobFinalized" checked="${onJobFinalized}"/>
+                    <f:checkbox
+                        field="RunListener__onFinalized"
+                        checked="${descriptor.isEventEnabled('RunListener.onFinalized')}"
+                    />
                 </f:entry>
                 <f:entry title="Deleted">
-                    <f:checkbox field="onJobDeleted" checked="${onJobDeleted}"/>
+                    <f:checkbox
+                        field="RunListener__onDeleted"
+                        checked="${descriptor.isEventEnabled('RunListener.onDeleted')}"
+                    />
                 </f:entry>
             </f:section>
             <f:section title="Node Activity">
                 <f:entry title="Launch Failure">
-                    <f:checkbox field="onNodeLaunchFailure" checked="${onNodeLaunchFailure}"/>
+                    <f:checkbox
+                        field="ComputerListener__onLaunchFailure"
+                        checked="${descriptor.isEventEnabled('ComputerListener.onLaunchFailure')}"
+                    />
                 </f:entry>
                 <f:entry title="Online">
-                    <f:checkbox field="onNodeOnline" checked="${onNodeOnline}"/>
+                    <f:checkbox
+                        field="ComputerListener__onOnline"
+                        checked="${descriptor.isEventEnabled('ComputerListener.onOnline')}"
+                    />
                 </f:entry>
                 <f:entry title="Offline">
-                    <f:checkbox field="onNodeOffline" checked="${onNodeOffline}"/>
+                    <f:checkbox
+                        field="ComputerListener__onOffline"
+                        checked="${descriptor.isEventEnabled('ComputerListener.onOffline')}"
+                    />
                 </f:entry>
                 <f:entry title="Temp Online">
-                    <f:checkbox field="onNodeTempOnline" checked="${onNodeTempOnline}"/>
+                    <f:checkbox
+                        field="ComputerListener__onTemporarilyOnline"
+                        checked="${descriptor.isEventEnabled('ComputerListener.onTemporarilyOnline')}"
+                    />
                 </f:entry>
                 <f:entry title="Temp Offline">
-                    <f:checkbox field="onNodeTempOffline" checked="${onNodeTempOffline}"/>
+                    <f:checkbox
+                        field="ComputerListener__onTemporarilyOffline"
+                        checked="${descriptor.isEventEnabled('ComputerListener.onTemporarilyOffline')}"
+                    />
                 </f:entry>
             </f:section>
             <f:section title="Job Queue">
                 <f:entry title="Waiting">
-                    <f:checkbox field="onQueueWaiting" checked="${onQueueWaiting}"/>
+                    <f:checkbox
+                        field="QueueListener__onEnterWaiting"
+                        checked="${descriptor.isEventEnabled('QueueListener.onEnterWaiting')}"
+                    />
                 </f:entry>
                 <f:entry title="Blocked">
-                    <f:checkbox field="onQueueBlocked" checked="${onQueueBlocked}"/>
+                    <f:checkbox
+                        field="QueueListener__onEnterBlocked"
+                        checked="${descriptor.isEventEnabled('QueueListener.onEnterBlocked')}"
+                    />
                 </f:entry>
                 <f:entry title="Buildable">
-                    <f:checkbox field="onQueueBuildable" checked="${onQueueBuildable}"/>
+                    <f:checkbox
+                        field="QueueListener__onEnterBuildable"
+                        checked="${descriptor.isEventEnabled('QueueListener.onEnterBuildable')}"
+                    />
                 </f:entry>
                 <f:entry title="Left">
-                    <f:checkbox field="onQueueLeft" checked="${onQueueLeft}"/>
+                    <f:checkbox
+                        field="QueueListener__onLeft"
+                        checked="${descriptor.isEventEnabled('QueueListener.onLeft')}"
+                    />
                 </f:entry>
             </f:section>
             <f:section title="Scheduler">

@@ -11,6 +11,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.FutureTask
+import net.sf.json.JSONObject
 
 import static groovy.test.GroovyAssert.shouldFail
 
@@ -141,6 +142,31 @@ class GlobalEventsPluginTest {
         }
 
         assert plugin.context != [total:expectedValue]
+    }
+
+    @Test
+    void testEventsEnabledDefault() {
+        assert plugin.isEventEnabled("nonexistent_event") == true
+    }
+
+    @Test
+    void testUpdateConfig() {
+        JSONObject formData = new JSONObject([
+            "onEventGroovyCode": "",
+            "disableSynchronization": false,
+            "scheduleTime": 0,
+            "classPath": "",
+        ])
+
+        assert plugin.isEventEnabled("GlobalEventsPlugin.start") == true
+        formData.put("GlobalEventsPlugin__start", false)
+        plugin.update(formData)
+        assert plugin.isEventEnabled("GlobalEventsPlugin.start") == false
+
+        assert plugin.isEventEnabled("GlobalEventsPlugin.start") == false
+        formData.put("GlobalEventsPlugin__start", true)
+        plugin.update(formData)
+        assert plugin.isEventEnabled("GlobalEventsPlugin.start") == true
     }
 
     private Callable<Integer> callCodeMultipleTimes(int number) {
