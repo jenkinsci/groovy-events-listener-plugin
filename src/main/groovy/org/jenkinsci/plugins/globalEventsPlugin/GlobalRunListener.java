@@ -36,44 +36,32 @@ public class GlobalRunListener extends RunListener<Run> {
 
     @Override
     public void onDeleted(final Run run) {
-        if (getParentPluginDescriptor().getOnJobDeleted()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("run", run);
-                put("event", Event.JOB_DELETED);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.JOB_DELETED, log, new HashMap<Object, Object>() {{
+            put("run", run);
+        }});
     }
 
     @Override
     public void onStarted(final Run run, final TaskListener listener) {
-        if (getParentPluginDescriptor().getOnJobStarted()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("run", run);
-                put("listener", listener);
-                put("event", Event.JOB_STARTED);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.JOB_STARTED, log, new HashMap<Object, Object>() {{
+            put("run", run);
+            put("listener", listener);
+        }});
     }
 
     @Override
     public void onFinalized(final Run run) {
-        if (getParentPluginDescriptor().getOnJobFinalized()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("run", run);
-                put("event", Event.JOB_FINALIZED);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.JOB_FINALIZED, log, new HashMap<Object, Object>() {{
+            put("run", run);
+        }});
     }
 
     @Override
     public void onCompleted(final Run run, final @Nonnull TaskListener listener) {
-        if (getParentPluginDescriptor().getOnJobCompleted()) {
-            this.getParentPluginDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {{
-                put("run", run);
-                put("listener", listener);
-                put("event", Event.JOB_COMPLETED);
-            }});
-        }
+        this.getParentPluginDescriptor().processEvent(Event.JOB_COMPLETED, log, new HashMap<Object, Object>() {{
+            put("run", run);
+            put("listener", listener);
+        }});
     }
 
 }

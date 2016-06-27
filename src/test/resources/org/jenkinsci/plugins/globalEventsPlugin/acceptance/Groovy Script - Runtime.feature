@@ -9,7 +9,7 @@ Feature: Groovy Script - Runtime
     """
     log.info('Hello world!')
     """
-    When the onStarted event is triggered
+    When the Run.onStarted event is triggered
     Then the log level info should display 'Hello world!'
 
 
@@ -25,11 +25,20 @@ Feature: Groovy Script - Runtime
     Then the log level info should display '<Value>'
 
     Examples:
-      | Event       | Key      | Value                      |
-      | onStarted   | actEvent | -> RunListener.onStarted   |
-      | onCompleted | actEvent | -> RunListener.onCompleted |
-      | onFinalized | actEvent | -> RunListener.onFinalized |
-      | onDeleted   | actEvent | -> RunListener.onDeleted   |
+      | Event                         | Key      | Value                                    |
+      | Run.onStarted                 | actEvent | -> RunListener.onStarted                 |
+      | Run.onCompleted               | actEvent | -> RunListener.onCompleted               |
+      | Run.onFinalized               | actEvent | -> RunListener.onFinalized               |
+      | Run.onDeleted                 | actEvent | -> RunListener.onDeleted                 |
+      | Computer.onLaunchFailure      | actEvent | -> ComputerListener.onLaunchFailure      |
+      | Computer.onOnline             | actEvent | -> ComputerListener.onOnline             |
+      | Computer.onOffline            | actEvent | -> ComputerListener.onOffline            |
+      | Computer.onTemporarilyOnline  | actEvent | -> ComputerListener.onTemporarilyOnline  |
+      | Computer.onTemporarilyOffline | actEvent | -> ComputerListener.onTemporarilyOffline |
+      | Queue.onEnterWaiting          | actEvent | -> QueueListener.onEnterWaiting          |
+      | Queue.onEnterBlocked          | actEvent | -> QueueListener.onEnterBlocked          |
+      | Queue.onEnterBuildable        | actEvent | -> QueueListener.onEnterBuildable        |
+      | Queue.onLeft                  | actEvent | -> QueueListener.onLeft                  |
 
 
   Scenario: The plugin's package should be imported by default, so that I can make use of the 'Event' convenience class.
@@ -37,7 +46,7 @@ Feature: Groovy Script - Runtime
     """
     log.info("-> " + Event.JOB_STARTED)
     """
-    When the onCompleted event is triggered
+    When the Run.onCompleted event is triggered
     Then the log level info should display '-> RunListener.onStarted'
 
 
@@ -47,7 +56,7 @@ Feature: Groovy Script - Runtime
     """
     log.info("${log.class}, $listener, $jenkins, $context, $run, $event, $env")
     """
-    When the onStarted event is triggered
+    When the Run.onStarted event is triggered
     Then the log level info should display 'class org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap, null, null, [:], null, RunListener.onStarted, [:]'
 
 
@@ -56,10 +65,10 @@ Feature: Groovy Script - Runtime
     """
     [curr: event, prev: context.curr]
     """
-    When the onStarted event is triggered
+    When the Run.onStarted event is triggered
     Then the context should contain curr = RunListener.onStarted
     Then the context should contain prev = null
-    When the onCompleted event is triggered
+    When the Run.onCompleted event is triggered
     Then the context should contain curr = RunListener.onCompleted
     Then the context should contain prev = RunListener.onStarted
 
@@ -71,7 +80,7 @@ Feature: Groovy Script - Runtime
     import wslite.soap.*
     log.info(SOAPClient.canonicalName)
     """
-    When the onStarted event is triggered
+    When the Run.onStarted event is triggered
     Then the log level info should display 'wslite.soap.SOAPClient'
 
 
@@ -83,7 +92,7 @@ Feature: Groovy Script - Runtime
     System.err.println('Foobar3');
     log.info('Foobar4');
     """
-    When the onStarted event is triggered
+    When the Run.onStarted event is triggered
     Then the log level info should display 'Foobar4'
 
 
@@ -93,7 +102,7 @@ Feature: Groovy Script - Runtime
     """
     log.info('Hello
     """
-    When the onStarted event is triggered
+    When the Run.onStarted event is triggered
     Then an exception should be thrown with the message 'expecting ''', found '<EOF>' @ line 2, column 16'
 
 
@@ -102,6 +111,6 @@ Feature: Groovy Script - Runtime
     """
     throw new RuntimeException('foobar')
     """
-    When the onStarted event is triggered
+    When the Run.onStarted event is triggered
     Then no exception should be thrown
     Then the log level severe should display '>>> Caught unhandled exception! foobar'

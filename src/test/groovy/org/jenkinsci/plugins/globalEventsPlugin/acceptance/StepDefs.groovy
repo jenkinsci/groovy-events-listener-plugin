@@ -8,6 +8,8 @@ import hudson.util.FormValidation
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPlugin
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPluginTest
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalRunListener
+import org.jenkinsci.plugins.globalEventsPlugin.GlobalComputerListener
+import org.jenkinsci.plugins.globalEventsPlugin.GlobalQueueListener
 import org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap
 
 import static org.hamcrest.Matchers.equalTo
@@ -17,7 +19,9 @@ import static org.junit.Assert.assertThat
 class StepDefs {
 
     GlobalEventsPlugin.DescriptorImpl plugin
-    GlobalRunListener listener
+    GlobalRunListener runListener
+    GlobalComputerListener computerListener
+    GlobalQueueListener queueListener
     LoggerTrap logger
     String groovyScript
     FormValidation validationResponse
@@ -30,10 +34,18 @@ class StepDefs {
         GlobalEventsPlugin.DescriptorImpl.metaClass.load = {}
         plugin = new GlobalEventsPlugin.DescriptorImpl(ClassLoader.getSystemClassLoader())
         logger = new LoggerTrap(GlobalEventsPluginTest.name)
-        // setup a new listener, with an overridden parent descriptor and logger...
-        listener = new GlobalRunListener()
-        listener.parentPluginDescriptorOverride = plugin
-        listener.log = logger
+
+        // setup new listeners, with an overridden parent descriptor and logger...
+        runListener = new GlobalRunListener()
+        runListener.parentPluginDescriptorOverride = plugin
+        runListener.log = logger
+        computerListener = new GlobalComputerListener()
+        computerListener.parentPluginDescriptorOverride = plugin
+        computerListener.log = logger
+        queueListener = new GlobalQueueListener()
+        queueListener.parentPluginDescriptorOverride = plugin
+        queueListener.log = logger
+
     }
 
     @Given('^the script$')
@@ -66,20 +78,47 @@ class StepDefs {
     @When('^the (.+) event is triggered$')
     public void the_event_is_triggered(String method) {
         try {
-        switch (method){
-            case "onStarted":
-                listener.onStarted(null, null)
-                break;
-            case "onCompleted":
-                listener.onCompleted(null, null)
-                break;
-            case "onFinalized":
-                listener.onFinalized(null)
-                break;
-            case "onDeleted":
-                listener.onDeleted(null)
-                break;
-        }
+            switch (method){
+                case "Run.onStarted":
+                    runListener.onStarted(null, null)
+                    break;
+                case "Run.onCompleted":
+                    runListener.onCompleted(null, null)
+                    break;
+                case "Run.onFinalized":
+                    runListener.onFinalized(null)
+                    break;
+                case "Run.onDeleted":
+                    runListener.onDeleted(null)
+                    break;
+                case "Computer.onLaunchFailure":
+                    computerListener.onLaunchFailure(null, null)
+                    break;
+                case "Computer.onOnline":
+                    computerListener.onOnline(null, null)
+                    break;
+                case "Computer.onOffline":
+                    computerListener.onOffline(null, null)
+                    break;
+                case "Computer.onTemporarilyOnline":
+                    computerListener.onTemporarilyOnline(null)
+                    break;
+                case "Computer.onTemporarilyOffline":
+                    computerListener.onTemporarilyOffline(null, null)
+                    break;
+                case "Queue.onEnterWaiting":
+                    queueListener.onEnterWaiting(null)
+                    break;
+                case "Queue.onEnterBlocked":
+                    queueListener.onEnterBlocked(null)
+                    break;
+                case "Queue.onEnterBuildable":
+                    queueListener.onEnterBuildable(null)
+                    break;
+                case "Queue.onLeft":
+                    queueListener.onLeft(null)
+                    break;
+            }
         } catch (Throwable t){
             t.printStackTrace()
             runtimeException = t
