@@ -36,6 +36,9 @@ public class SchedulerTest {
         final int counterAfterStop = counter.get();
         waitALittleBit();
 
+        // test non-deterministic?
+        // java.lang.AssertionError: Values should be different. Actual: 0
+        // https://jenkins.ci.cloudbees.com/job/plugins/job/groovy-events-listener-plugin/57/console
         assertNotEquals(counter.get(), 0);
         assertEquals(counterAfterStop, counter.get());
     }
