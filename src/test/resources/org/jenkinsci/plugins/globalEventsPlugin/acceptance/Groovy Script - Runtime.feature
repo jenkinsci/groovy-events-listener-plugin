@@ -4,7 +4,7 @@ Feature: Groovy Script - Runtime
   So that I can have an action performed
 
 
-  Scenario: I should be able to create a script, so that an action is performed.
+  Scenario: I should be able to create a script, so that an action is performed
     Given the script
     """
     log.info('Hello world!')
@@ -14,7 +14,7 @@ Feature: Groovy Script - Runtime
 
 
   # todo test Plugin Started / Stopped events
-  Scenario Outline: Different event triggers should reflect in the 'event' parameter value, so that I can respond to specific events.
+  Scenario Outline: Different event triggers should reflect in the 'event' parameter value, so that I can respond to specific events
     Given the script
     """
     log.info("-> " + event)
@@ -41,7 +41,7 @@ Feature: Groovy Script - Runtime
       | Queue.onLeft                  | actEvent | -> QueueListener.onLeft                  |
 
 
-  Scenario: The plugin's package should be imported by default, so that I can make use of the 'Event' convenience class.
+  Scenario: The plugin's package should be imported by default, so that I can make use of the 'Event' convenience class
     Given the script
     """
     log.info("-> " + Event.JOB_STARTED)
@@ -51,7 +51,7 @@ Feature: Groovy Script - Runtime
 
 
   # todo Add mock Run, Listener, Jenkins, env vars etc
-  Scenario: All relevant job parameters should passed into the script, so that I don't have to manually retrieve data.
+  Scenario: All relevant job parameters should passed into the script, so that I don't have to manually retrieve data
     Given the script
     """
     log.info("${log.class}, $listener, $jenkins, $context, $run, $event, $env")
@@ -60,7 +60,7 @@ Feature: Groovy Script - Runtime
     Then the log level info should display 'class org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap, null, null, [:], null, RunListener.onStarted, [:]'
 
 
-  Scenario: If the script outputs a map, it should be placed into the cache for subsequent executions, so that the script can keep "memory".
+  Scenario: If the script outputs a map, it should be placed into the cache for subsequent executions, so that the script can keep "memory"
     Given the script
     """
     [curr: event, prev: context.curr]
@@ -73,7 +73,7 @@ Feature: Groovy Script - Runtime
     Then the context should contain prev = RunListener.onStarted
 
 
-  Scenario: The script should be able to import external dependencies, so that I don't have to reinvent the wheel.
+  Scenario: The script should be able to import external dependencies, so that I don't have to reinvent the wheel
     Given the script
     """
     @Grab('com.github.groovy-wslite:groovy-wslite:1.1.2')
@@ -84,7 +84,7 @@ Feature: Groovy Script - Runtime
     Then the log level info should display 'wslite.soap.SOAPClient'
 
 
-  Scenario: Logging should be captured, so that there is an audit trail for me to debug retrospectively.
+  Scenario: Logging should be captured, so that there is an audit trail for me to debug retrospectively
     Given the script
     """
     println 'Foobar1';
@@ -97,7 +97,7 @@ Feature: Groovy Script - Runtime
 
 
   # todo I wouldn't call throwing the exception graceful... should this be the expected behaviour?
-  Scenario: Compilation exceptions should be handled gracefully, so that Jenkins doesn't have to.
+  Scenario: Compilation exceptions should be handled gracefully, so that Jenkins doesn't have to
     Given the script with exception
     """
     log.info('Hello
@@ -106,7 +106,7 @@ Feature: Groovy Script - Runtime
     Then an exception should be thrown with the message 'expecting ''', found '<EOF>' @ line 2, column 16'
 
 
-  Scenario: Runtime exceptions should be handled gracefully, so that Jenkins doesn't have to.
+  Scenario: Runtime exceptions should be handled gracefully, so that Jenkins doesn't have to
     Given the script
     """
     throw new RuntimeException('foobar')
