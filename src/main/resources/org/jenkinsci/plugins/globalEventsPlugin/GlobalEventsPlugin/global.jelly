@@ -14,9 +14,13 @@
       so it should be straightforward to find them.
     -->
     <f:section title="Groovy Events Listener Plugin">
-        <f:entry title="${%Groovy Code}" field="onEventGroovyCode"
-                 description="This Groovy code is executed every time an event occurs.">
+        <f:entry
+            title="${%Groovy Code}"
+            field="onEventGroovyCode"
+            description="This Groovy code is executed every time an event occurs.">
+
             <f:textarea
+                    id="gelpCode"
                     default="${descriptor.getDefaultOnEventGroovyCode()}"
                     codemirror-mode="groovy"
                     codemirror-config="mode: 'text/x-groovy',
@@ -26,8 +30,10 @@
         </f:entry>
 
         <f:validateButton
-                title="${%Test Groovy Code}" progress="${%Executing...}"
-                method="testGroovyCode" with="onEventGroovyCode"/>
+                title="${%Test Groovy Code}"
+                progress="${%Executing...}"
+                method="testGroovyCode"
+                with="onEventGroovyCode"/>
 
         <f:advanced>
             <f:entry title="Disable Synchronization">

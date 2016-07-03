@@ -4,7 +4,7 @@ Feature: Groovy Script - User Testing
   I want to be able to test my groovy script
   So that I get instant feedback on compilation errors/runtime errors/behaviour anomalies/etc
 
-  @wip
+
   Scenario: I should be able to create a script, so that an action is performed
     Given the script
     """

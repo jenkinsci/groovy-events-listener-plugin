@@ -84,6 +84,16 @@ Feature: Groovy Script - Runtime
     Then the log level info should display 'wslite.soap.SOAPClient'
 
 
+    @wip
+  Scenario: The script should have access to the Ivy ResolveReport class, So that @Grab works
+    Given the script
+    """
+    log.info("-> ${Class.forName('org.apache.ivy.core.report.ResolveReport').canonicalName}")
+    """
+    When the Run.onStarted event is triggered
+    Then the log level info should display '-> org.apache.ivy.core.report.ResolveReport'
+
+
   Scenario: Logging should be captured, so that there is an audit trail for me to debug retrospectively
     Given the script
     """
