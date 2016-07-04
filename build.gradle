@@ -33,6 +33,8 @@ repositories {
     }
 }
 
+ext."jenkins.httpPort" = 19091
+
 jacocoTestReport {
     reports {
         xml.enabled = true
@@ -96,15 +98,11 @@ dependencies {
     testCompile 'org.mockito:mockito-all:1.10.19'
     testCompile "info.cukes:cucumber-junit:1.2.4"
     testCompile "info.cukes:cucumber-java:1.2.4"
-    testCompile "org.seleniumhq.selenium:selenium-java:2.53.1"
-//    testCompile "org.seleniumhq.selenium:selenium-htmlunit-driver:2.53.1"
-    // todo Exclude all the other unused selenium deps...
-    testCompile("net.sourceforge.htmlunit:htmlunit:2.17"){ force = true }
-//    testCompile("org.apache.httpcomponents:httpcore:4.3.2"){ force = true }
+    testCompile('org.codehaus.groovy.modules.http-builder:http-builder:0.7')
 }
 
 task deleteTarget(type: Delete) {
-    delete 'target', 'out'
+    delete 'target', 'out', 'work'
 }
 
 clean.dependsOn deleteTarget
@@ -126,12 +124,11 @@ configurations.all {
         // e.g. multiple different versions of the same dependency (group and name are equal)
         // failOnVersionConflict()
 
-//        eachDependency { DependencyResolveDetails details ->
-//            //specifying a fixed version for all libraries with 'org.gradle' group
-//            if (details.requested.group == 'net.sourceforge.htmlunit') {
-//                details.useVersion '2.17'
-//            }
-//        }
+        eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'xalan') {
+                details.useVersion '2.7.2'
+            }
+        }
     }
 }
 
@@ -166,6 +163,7 @@ class JenkinsServerTask extends DefaultTask {
 
         List<String> args = []
         String port = project.properties[HTTP_PORT] ?: System.properties[HTTP_PORT]
+        println "Using port: $port"
         if (port) {
             args << "--httpPort=${port}"
         }

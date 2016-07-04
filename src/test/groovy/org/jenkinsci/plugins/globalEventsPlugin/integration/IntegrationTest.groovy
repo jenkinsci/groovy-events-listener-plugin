@@ -1,54 +1,38 @@
 package org.jenkinsci.plugins.globalEventsPlugin.integration
 
-import org.hamcrest.core.Is
+import groovy.util.slurpersupport.NodeChild
+import groovyx.net.http.ContentType
+import groovyx.net.http.RESTClient
+import org.junit.Assert
 import org.junit.Test
-import org.openqa.selenium.By
-import org.openqa.selenium.firefox.FirefoxDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.WebDriverWait
 
-import static org.hamcrest.MatcherAssert.assertThat
-
-public class IntegrationTest {
+/**
+ * Created by nickpersonal on 5/07/2016.
+ */
+class IntegrationTest {
 
     @Test
-    public void seleniumTest() {
-        def driver = new HtmlUnitDriver()
-//        def driver = new FirefoxDriver()
-        try {
-            // open page...
-            def wait = new WebDriverWait(driver, 60)
-            driver.get("http://localhost:8080/")
-            wait.until(ExpectedConditions.textToBePresentInElementLocated(By.tagName("body"), "Welcome to Jenkins!"))
-            driver.get("http://localhost:8080/configure")
-            wait.until(ExpectedConditions.textToBePresentInElementLocated(By.tagName("body"), "Groovy Events Listener Plugin"))
+    public void testFoobar(){
+        def client = new RESTClient('http://localhost:19091/' )
 
-            // set the groovy code...
-            driver.executeScript("document.getElementById('gelpCode').value = arguments[0]", "log.info('FOOBAR')")
-//            driver.executeScript("document.getElementById('gelpCode').codemirrorObject.setValue(arguments[0])", "log.info('FOOBAR')")
+        def resp = client.post(
+                path: '/descriptorByName/org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPlugin/testGroovyCode',
+                body: [ onEventGroovyCode: 'log.info("FOOBAR")' ],
+                requestContentType: ContentType.URLENC )
 
-            // do "test code"...
-            assertThat(driver.findElementsByXPath("//div[@class='ok']").size(), Is.is(0))
-            assertThat(driver.findElementsByXPath("//div[@class='error']").size(), Is.is(0))
-            driver.findElementByXPath("//button[.='Test Groovy Code']").click()
-
-            // verify output...
-            assertThat(driver.findElementsByXPath("//div[@class='ok']").size(), Is.is(1))
-            assertThat(driver.findElementByXPath("//div[@class='ok']").getText().replaceAll("\\d+", "X"), Is.is('''Execution completed successfully!
-
+        assert resp.status == 200
+        NodeChild text = resp.data
+        assert text.text().replaceAll("\\d+", "X") == '''Execution completed successfully!
 >>> Executing groovy script - parameters: [env, run, jenkins, log, event, context]
-
 FOOBAR
-
 >>> Ignoring response - value is null or not a Map. response=null
+>>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis=`X`'''.replaceAll("\\r?\\n", "")
+    }
 
->>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis=`X`'''))
-        } finally {
-            driver.windowHandles.each {
-                driver.switchTo().window(it).close()
-            }
-            driver.quit()
+    public static void waitUntil(Closure isTrue, int seconds){
+        for (int i = 0; i < seconds; i++){
+
         }
     }
+
 }
