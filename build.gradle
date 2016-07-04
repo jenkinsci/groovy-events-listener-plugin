@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.15.0'
+        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.18.1'
     }
 }
 
@@ -42,6 +42,32 @@ jacocoTestReport {
 
 check.dependsOn jacocoTestReport
 
+// Integration Test Structure
+test {
+    exclude '**/integration/**'
+    reports {
+        junitXml.enabled = false
+        html.enabled = false
+    }
+}
+
+task integTest(type: Test) {
+    testClassesDir = sourceSets.test.output.classesDir
+    classpath = sourceSets.test.runtimeClasspath
+    include '**/integration/**'
+    outputs.upToDateWhen { false }
+    reports {
+        junitXml.enabled = false
+        html.enabled = false
+    }
+}
+
+task startJenkins(type: JenkinsServerTask){}
+
+integTest.dependsOn startJenkins
+
+check.dependsOn integTest
+
 jenkinsPlugin {
     coreVersion = '1.581' // >= 1.592 contains fix for https://issues.jenkins-ci.org/browse/JENKINS-29359
     shortName = project.name
@@ -62,15 +88,26 @@ jenkinsPlugin {
 configurations { forceGroovy }
 
 dependencies {
-    forceGroovy "org.codehaus.groovy:groovy-all:2.4.6"
+    forceGroovy "org.codehaus.groovy:groovy-all:2.4.7"
 	compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
+
     testCompile('org.hamcrest:hamcrest-core:1.3') { force = true }
     testCompile('junit:junit:4.12') { force = true }
     testCompile 'org.mockito:mockito-all:1.10.19'
-    // bdd testing
     testCompile "info.cukes:cucumber-junit:1.2.4"
     testCompile "info.cukes:cucumber-java:1.2.4"
+    testCompile "org.seleniumhq.selenium:selenium-java:2.53.1"
+//    testCompile "org.seleniumhq.selenium:selenium-htmlunit-driver:2.53.1"
+    // todo Exclude all the other unused selenium deps...
+    testCompile("net.sourceforge.htmlunit:htmlunit:2.17"){ force = true }
+//    testCompile("org.apache.httpcomponents:httpcore:4.3.2"){ force = true }
 }
+
+task deleteTarget(type: Delete) {
+    delete 'target', 'out'
+}
+
+clean.dependsOn deleteTarget
 
 jpi {
     classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grap work
@@ -91,7 +128,84 @@ configurations.all {
 
 //        eachDependency { DependencyResolveDetails details ->
 //            //specifying a fixed version for all libraries with 'org.gradle' group
-//            if (details.requested.group == 'xalan') { details.useVersion '2.7.1' }
+//            if (details.requested.group == 'net.sourceforge.htmlunit') {
+//                details.useVersion '2.17'
+//            }
 //        }
     }
+}
+
+
+import java.util.jar.JarFile
+
+/**
+ * Task that starts Jenkins in place with the current plugin.
+ *
+ * @author Kohsuke Kawaguchi
+ */
+class JenkinsServerTask extends DefaultTask {
+    private static final String HTTP_PORT = 'jenkins.httpPort'
+
+    @TaskAction
+    def start() {
+        def c = project.configurations.getByName(org.jenkinsci.gradle.plugins.jpi.JpiPlugin.WAR_DEPENDENCY_CONFIGURATION_NAME)
+        def files = c.resolve()
+        if (files.isEmpty()) {
+            throw new GradleException('No jenkins.war dependency is specified')
+        }
+        File war = files.toArray()[0]
+
+        generateHpl()
+        copyPluginDependencies()
+
+        def conv = project.extensions.getByType(org.jenkinsci.gradle.plugins.jpi.JpiExtension)
+        System.setProperty('JENKINS_HOME', conv.workDir.absolutePath)
+        setSystemPropertyIfEmpty('stapler.trace', 'true')
+        setSystemPropertyIfEmpty('stapler.jelly.noCache', 'true')
+        setSystemPropertyIfEmpty('debug.YUI', 'true')
+
+        List<String> args = []
+        String port = project.properties[HTTP_PORT] ?: System.properties[HTTP_PORT]
+        if (port) {
+            args << "--httpPort=${port}"
+        }
+
+        def cl = new URLClassLoader([war.toURI().toURL()] as URL[])
+        def mainClass = new JarFile(war).manifest.mainAttributes.getValue('Main-Class')
+        cl.loadClass(mainClass).main(args as String[])
+
+        // make the thread hang
+//        Thread.currentThread().join()
+    }
+
+    void generateHpl() {
+        def m = new org.jenkinsci.gradle.plugins.jpi.JpiHplManifest(project)
+        def conv = project.extensions.getByType(org.jenkinsci.gradle.plugins.jpi.JpiExtension)
+
+        def hpl = new File(conv.workDir, "plugins/${conv.shortName}.hpl")
+        hpl.parentFile.mkdirs()
+        hpl.withOutputStream { m.write(it) }
+    }
+
+    private copyPluginDependencies() {
+        // create new configuration with plugin dependencies, ignoring the (jar) extension to get the HPI/JPI files
+        Configuration plugins = project.configurations.create('plugins')
+        project.configurations.getByName(org.jenkinsci.gradle.plugins.jpi.JpiPlugin.PLUGINS_DEPENDENCY_CONFIGURATION_NAME).dependencies.each {
+            project.dependencies.add(plugins.name, "${it.group}:${it.name}:${it.version}")
+        }
+
+        // copy the resolved HPI/JPI files to the plugins directory
+        def workDir = project.extensions.getByType(org.jenkinsci.gradle.plugins.jpi.JpiExtension).workDir
+        plugins.resolvedConfiguration.resolvedArtifacts.findAll { it.extension in ['hpi', 'jpi'] }.each {
+            GFileUtils.copyFile(it.file, new File(workDir, "plugins/${it.name}.${it.extension}"))
+        }
+    }
+
+    private static void setSystemPropertyIfEmpty(String name, String value) {
+        if (!System.getProperty(name)) {
+            System.setProperty(name, value)
+        }
+    }
+
+    public static final String TASK_NAME = 'server'
 }

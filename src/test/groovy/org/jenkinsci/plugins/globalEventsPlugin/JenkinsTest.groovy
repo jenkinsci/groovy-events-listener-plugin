@@ -3,18 +3,46 @@ package org.jenkinsci.plugins.globalEventsPlugin
 import com.gargoylesoftware.htmlunit.WebAssert
 import com.gargoylesoftware.htmlunit.html.HtmlDivision
 import com.gargoylesoftware.htmlunit.html.HtmlPage
+import hudson.tools.ToolProperty
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.jvnet.hudson.test.JenkinsRule
+import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxProfile
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.WebDriverWait
 
+@Ignore
 public class JenkinsTest {
+
+    static {
+        def jdk = System.getenv("JDK8_HOME")
+        println "\n\n---->>>> Using JDK: $jdk"
+        System.setProperty("java.home", jdk)
+    }
 
     @Rule
     public JenkinsRule j = new JenkinsRule()
 
     @Test
     public void testConfig() throws Exception {
+
+//        WebDriver driver = new FirefoxDriver(new FirefoxProfile(new File(System.getProperty("java.io.tmpdir"), "selenium")))
+//        try {
+//            def url = j.getURL().toString() + "/configure"
+//            driver.get(url)
+//            WebDriverWait wait = new WebDriverWait(driver, 30)
+//            wait.until(ExpectedConditions.presenceOfElementLocated(By.id('gelpCode')))
+//
+//            Thread.sleep(20000);
+//        } finally {
+//            driver.close()
+//        }
 
         // open config page...
         HtmlPage configPage = j.createWebClient().goTo("configure");
@@ -23,8 +51,9 @@ public class JenkinsTest {
         WebAssert.assertTextPresent(configPage, "Groovy Events Listener Plugin");
 
         // set the script content...
-        configPage.executeJavaScript('document.getElementById(\'gelpCode\').value = \'log.info("${Class.forName(\'org.apache.ivy.core.report.ResolveReport\').canonicalName}")\'')
-//        configPage.executeJavaScript("document.getElementById('gelpCode').value = 'log.info(\"FOOBAR\")'")
+//        configPage.executeJavaScript('document.getElementById(\'gelpCode\').value = \'log.info("${Class.forName(\'org.apache.ivy.core.report.ResolveReport\').canonicalName}")\'')
+//        configPage.executeJavaScript('document.getElementById(\'gelpCode\').value = \'log.info("${Class.forName(\'org.apache.ivy.core.report.ResolveReport\').canonicalName}")\'')
+        configPage.executeJavaScript("document.getElementById('gelpCode').value = 'log.info(\"FOOBAR\")'")
 //        configPage.executeJavaScript("document.getElementById('gelpCode').codemirrorObject.setValue('log.info(\"FOOBAR\")')")
 
         // click "Test"...
