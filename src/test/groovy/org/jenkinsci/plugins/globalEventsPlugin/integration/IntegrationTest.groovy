@@ -21,7 +21,7 @@ class IntegrationTest {
 
         // Causes -> An exception was caught.java.lang.NoClassDefFoundError: org/apache/ivy/core/report/ResolveReport
         String groovyCodeInput = '''
-@Grab('org.codehaus.groovy.modules.http-builder:http-builder:0.7.1')
+//@Grab('org.codehaus.groovy.modules.http-builder:http-builder:0.7.1')
 def test = 123
 log.info("FOOBAR")
 '''

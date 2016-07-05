@@ -118,19 +118,19 @@ configurations.findAll {!it.name.endsWith('junit-dep')}.each { conf ->
     conf.exclude group: "junit", module: "junit-dep"
 }
 
-configurations.all {
-    resolutionStrategy {
-        // fail eagerly on version conflict (includes transitive dependencies)
-        // e.g. multiple different versions of the same dependency (group and name are equal)
-        // failOnVersionConflict()
-
-        eachDependency { DependencyResolveDetails details ->
-            if (details.requested.group == 'xalan') {
-                details.useVersion '2.7.2'
-            }
-        }
-    }
-}
+//configurations.all {
+//    resolutionStrategy {
+//        // fail eagerly on version conflict (includes transitive dependencies)
+//        // e.g. multiple different versions of the same dependency (group and name are equal)
+//        // failOnVersionConflict()
+//
+//        eachDependency { DependencyResolveDetails details ->
+//            if (details.requested.group == 'xalan') {
+//                details.useVersion '2.7.2'
+//            }
+//        }
+//    }
+//}
 
 
 import java.util.jar.JarFile
