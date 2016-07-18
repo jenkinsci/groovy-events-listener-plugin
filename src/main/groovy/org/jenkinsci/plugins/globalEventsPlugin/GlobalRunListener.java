@@ -5,10 +5,15 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
 import jenkins.model.Jenkins;
+import java.util.concurrent.*;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import org.jenkinsci.plugins.workflow.flow.FlowExecution;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Warning: This MUST stay a Java class, Groovy cannot compile (for some reason??).
  */
@@ -16,6 +21,7 @@ import java.util.logging.Logger;
 public class GlobalRunListener extends RunListener<Run> {
 
     protected static Logger log = Logger.getLogger(GlobalRunListener.class.getName());
+    private ExecutorService executor = new ThreadPoolExecutor(0, 5, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
     /**
      * This class is lazy loaded (as required).
@@ -47,6 +53,22 @@ public class GlobalRunListener extends RunListener<Run> {
             put("run", run);
             put("listener", listener);
         }});
+        if (run instanceof WorkflowRun) {
+            ListenableFuture<FlowExecution> promise = ((WorkflowRun) run).getExecutionPromise();
+            promise.addListener(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FlowExecution ex = ((WorkflowRun) run).getExecutionPromise().get();
+                        ex.addListener(new GlobalWorkflowListener(run));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, executor);
+        }
     }
 
     @Override

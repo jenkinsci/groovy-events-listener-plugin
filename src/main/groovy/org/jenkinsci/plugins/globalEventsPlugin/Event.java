@@ -27,6 +27,8 @@ public final class Event {
     public static final String QUEUE_BUILDABLE = "QueueListener.onEnterBuildable";
     public static final String QUEUE_LEFT = "QueueListener.onLeft";
 
+    public static final String WORKFLOW_ACTION = "GraphListener.onNewHead";
+
     public static String[] getAll() {
         return new String[] {
             PLUGIN_STARTED,
@@ -45,6 +47,7 @@ public final class Event {
             QUEUE_BLOCKED,
             QUEUE_BUILDABLE,
             QUEUE_LEFT,
+            WORKFLOW_ACTION
         };
     }
 }

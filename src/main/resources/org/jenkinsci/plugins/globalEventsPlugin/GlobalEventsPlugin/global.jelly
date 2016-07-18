@@ -47,6 +47,14 @@
                     />
                 </f:entry>
             </f:section>
+            <f:section title="Pipeline events">
+                <f:entry title="New head">
+                    <f:checkbox
+                        field="GraphListener__onNewHead"
+                        checked="${descriptor.isEventEnabled('GraphListener.onNewHead')}"
+                    />
+                </f:entry>
+            </f:section>
             <f:section title="Job run">
                 <f:entry title="Started">
                     <f:checkbox
