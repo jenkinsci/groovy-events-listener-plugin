@@ -59,12 +59,17 @@ jenkinsPlugin {
     }
 }
 
+
 configurations { forceGroovy }
+
 
 dependencies {
     jenkinsPlugins 'org.jenkins-ci.plugins.workflow:workflow-api:2.1@jar'
     jenkinsPlugins 'org.jenkins-ci.plugins.workflow:workflow-job:2.3@jar'
     jenkinsPlugins 'org.jenkins-ci.plugins.workflow:workflow-aggregator:2.2@jar'
+    jenkinsPlugins 'org.jenkins-ci.plugins.workflow:workflow-step-api:2.2@jar' //AbstractStepExecutionImpl for StageStepExecution
+    jenkinsPlugins 'org.jenkins-ci.plugins:pipeline-stage-step:2.1@jar' //StageStepExecution
+
 
     forceGroovy "org.codehaus.groovy:groovy-all:2.4.6"
 	compile 'org.apache.ivy:ivy:2.4.0' // For @Grab

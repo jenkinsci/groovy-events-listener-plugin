@@ -88,6 +88,15 @@
             <td>Called every $scheduledTime minutes.</td>
         </tr>
         <tr>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="https://github.com/jenkinsci/workflow-api-plugin/blob/master/src/main/java/org/jenkinsci/plugins/workflow/flow/GraphListener.java">GlobalWorkflowListener</a></code></th>
+        </tr>
+        <tr>
+            <td><code>GraphListener.onNewHead</code></td>
+            <td>Called when a new stage or a new parallel step is started. Available objects are <a href="http://javadoc.jenkins-ci.org/hudson/model/Run.html">run</a>,
+                <a href="https://github.com/jenkinsci/workflow-api-plugin/blob/master/src/main/java/org/jenkinsci/plugins/workflow/graph/FlowNode.java">flowNode</a>
+                and <a href="http://javadoc.jenkins-ci.org/hudson/model/Action.html">action</a></td>
+        </tr>
+        <tr>
             <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="http://javadoc.jenkins-ci.org/hudson/model/listeners/RunListener.html">RunListener</a></code></th>
         </tr>
         <tr>
