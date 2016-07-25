@@ -41,7 +41,7 @@ public class GlobalRunListener extends RunListener<Run> {
     }
 
     private void addWorkflowListener(final Run run, final TaskListener listener) {
-        if (this.getParentPluginDescriptor().isEventEnabled(Event.WORKFLOW_ACTION).booleanValue()) {
+        if (this.getParentPluginDescriptor().isEventEnabled(Event.WORKFLOW_ACTION)) {
             ListenableFuture<FlowExecution> promise = ((WorkflowRun) run).getExecutionPromise();
             promise.addListener(new Runnable() {
                 @Override
@@ -54,10 +54,10 @@ public class GlobalRunListener extends RunListener<Run> {
                     * but requires -source 1.7 flag.
                     */
                     } catch (InterruptedException e){
-                        e.printStackTrace();
+                        e.printStackTrace(listener.getLogger());
                         listener.error("Not able to get Workflow listener for this job");
                     } catch (ExecutionException  e){
-                        e.printStackTrace();
+                        e.printStackTrace(listener.getLogger());
                         listener.error("Not able to get Workflow listener for this job");
                     }
                 }
