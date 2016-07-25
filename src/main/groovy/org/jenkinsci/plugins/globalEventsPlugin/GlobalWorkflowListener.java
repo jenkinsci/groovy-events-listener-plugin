@@ -35,8 +35,7 @@ public class GlobalWorkflowListener implements GraphListener {
 
     @Override
     public void onNewHead(final FlowNode node) {
-       System.err.println("Starting run for " + node.getId());
-       this.getParentPluginDescriptor().processEvent(Event.WORKFLOW_ACTION, log, new HashMap<Object, Object>() {{
+       this.getParentPluginDescriptor().processEvent(Event.WORKFLOW_NEW_HEAD, log, new HashMap<Object, Object>() {{
             put("flowNode", node);
             put("run", run);
         }});

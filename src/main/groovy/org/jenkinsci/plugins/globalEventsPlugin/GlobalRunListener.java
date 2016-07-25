@@ -41,30 +41,27 @@ public class GlobalRunListener extends RunListener<Run> {
     }
 
     private void addWorkflowListener(final Run run, final TaskListener listener) {
-        if (this.getParentPluginDescriptor().isEventEnabled(Event.WORKFLOW_ACTION)) {
-            ListenableFuture<FlowExecution> promise = ((WorkflowRun) run).getExecutionPromise();
-            promise.addListener(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        FlowExecution ex = ((WorkflowRun) run).getExecutionPromise().get();
-                        ex.addListener(new GlobalWorkflowListener(run));
+        ListenableFuture<FlowExecution> promise = ((WorkflowRun) run).getExecutionPromise();
+        promise.addListener(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    FlowExecution ex = ((WorkflowRun) run).getExecutionPromise().get();
+                    ex.addListener(new GlobalWorkflowListener(run));
                     /*
                     * Preferably use catch (InterruptedException | ExecutionException e),
                     * but requires -source 1.7 flag.
                     */
-                    } catch (InterruptedException e){
-                        e.printStackTrace(listener.getLogger());
-                        listener.error("Not able to get Workflow listener for this job");
-                    } catch (ExecutionException  e){
-                        e.printStackTrace(listener.getLogger());
-                        listener.error("Not able to get Workflow listener for this job");
-                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace(listener.getLogger());
+                    listener.error("Not able to get Workflow listener for this job");
+                } catch (ExecutionException e) {
+                    e.printStackTrace(listener.getLogger());
+                    listener.error("Not able to get Workflow listener for this job");
                 }
-            }, executor);
-        }
+            }
+        }, executor);
     }
-
     @Override
     public void onDeleted(final Run run) {
         this.getParentPluginDescriptor().processEvent(Event.JOB_DELETED, log, new HashMap<Object, Object>() {{
@@ -78,7 +75,7 @@ public class GlobalRunListener extends RunListener<Run> {
             put("run", run);
             put("listener", listener);
         }});
-        if (run instanceof WorkflowRun) {
+        if (run instanceof WorkflowRun && this.getParentPluginDescriptor().isEventEnabled(Event.WORKFLOW_NEW_HEAD)) {
             addWorkflowListener(run, listener);
         }
     }
