@@ -52,13 +52,10 @@ public class GlobalRunListener extends RunListener<Run> {
                     * Preferably use catch (InterruptedException | ExecutionException e),
                     * but requires -source 1.7 flag.
                     */
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     e.printStackTrace(listener.getLogger());
                     listener.error("Not able to get Workflow listener for this job");
-                } catch (ExecutionException e) {
-                    e.printStackTrace(listener.getLogger());
-                    listener.error("Not able to get Workflow listener for this job");
-                }
+                } 
             }
         }, executor);
     }
