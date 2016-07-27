@@ -5,10 +5,15 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
 import jenkins.model.Jenkins;
+import java.util.concurrent.*;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import org.jenkinsci.plugins.workflow.flow.FlowExecution;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import com.google.common.util.concurrent.ListenableFuture;
+
 /**
  * Warning: This MUST stay a Java class, Groovy cannot compile (for some reason??).
  */
@@ -16,6 +21,7 @@ import java.util.logging.Logger;
 public class GlobalRunListener extends RunListener<Run> {
 
     protected static Logger log = Logger.getLogger(GlobalRunListener.class.getName());
+    private ExecutorService executor = new ThreadPoolExecutor(0, 5, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
     /**
      * This class is lazy loaded (as required).
@@ -34,6 +40,25 @@ public class GlobalRunListener extends RunListener<Run> {
         }
     }
 
+    private void addWorkflowListener(final Run run, final TaskListener listener) {
+        ListenableFuture<FlowExecution> promise = ((WorkflowRun) run).getExecutionPromise();
+        promise.addListener(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    FlowExecution ex = ((WorkflowRun) run).getExecutionPromise().get();
+                    ex.addListener(new GlobalWorkflowListener(run));
+                    /*
+                    * Preferably use catch (InterruptedException | ExecutionException e),
+                    * but requires -source 1.7 flag.
+                    */
+                } catch (Exception e) {
+                    e.printStackTrace(listener.getLogger());
+                    listener.error("Not able to get Workflow listener for this job");
+                } 
+            }
+        }, executor);
+    }
     @Override
     public void onDeleted(final Run run) {
         this.getParentPluginDescriptor().processEvent(Event.JOB_DELETED, log, new HashMap<Object, Object>() {{
@@ -47,6 +72,9 @@ public class GlobalRunListener extends RunListener<Run> {
             put("run", run);
             put("listener", listener);
         }});
+        if (run instanceof WorkflowRun && this.getParentPluginDescriptor().isEventEnabled(Event.WORKFLOW_NEW_HEAD)) {
+            addWorkflowListener(run, listener);
+        }
     }
 
     @Override
