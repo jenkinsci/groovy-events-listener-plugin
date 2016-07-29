@@ -167,7 +167,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * Can throw compilation exception.
          */
         public Script getScriptReadyToBeExecuted(String groovyCode) {
-            final Class<? extends Script> clazz = groovyClassLoader.parseClass("@Grab('org.codehaus.groovy.modules.http-builder:http-builder:0.7.1')\nimport ${GlobalEventsPlugin.package.name}.*\n" + groovyCode);
+            final Class<? extends Script> clazz = groovyClassLoader.parseClass("import ${GlobalEventsPlugin.package.name}.*\n" + groovyCode);
             return clazz.newInstance();
         }
 
