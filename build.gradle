@@ -43,12 +43,13 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 jenkinsPlugin {
-    coreVersion = '1.581'
+    // only use latest LTS!
+    coreVersion = '2.7.1'
     shortName = project.name
     displayName = jenkinsDisplayName
     url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
     gitHubUrl = "https://github.com/jenkinsci/$project.name"
-    compatibleSinceVersion = '1.20'
+    compatibleSinceVersion = '2.7.1'
     fileExtension = 'hpi'
     developers {
         developer {
