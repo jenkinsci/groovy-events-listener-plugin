@@ -43,13 +43,13 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 jenkinsPlugin {
-    // only use latest LTS!
+    // always use latest LTS!
     coreVersion = '2.7.1'
     shortName = project.name
     displayName = jenkinsDisplayName
     url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
     gitHubUrl = "https://github.com/jenkinsci/$project.name"
-    compatibleSinceVersion = '2.7.1'
+    compatibleSinceVersion = '1.20'
     fileExtension = 'hpi'
     developers {
         developer {
@@ -63,7 +63,7 @@ jenkinsPlugin {
 configurations { forceGroovy }
 
 dependencies {
-    forceGroovy "org.codehaus.groovy:groovy-all:2.4.6"
+    forceGroovy "org.codehaus.groovy:groovy-all:2.4.7"
 	compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
     testCompile('org.hamcrest:hamcrest-core:1.3') { force = true }
     testCompile('junit:junit:4.12') { force = true }
@@ -74,7 +74,7 @@ dependencies {
 }
 
 jpi {
-    classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grap work
+    classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
 }
 
 /**
