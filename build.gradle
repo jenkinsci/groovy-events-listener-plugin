@@ -71,7 +71,8 @@ integTest.dependsOn startJenkins
 check.dependsOn integTest
 
 jenkinsPlugin {
-    coreVersion = '1.581' // >= 1.592 contains fix for https://issues.jenkins-ci.org/browse/JENKINS-29359
+    // always use latest LTS!
+    coreVersion = '2.7.1'
     shortName = project.name
     displayName = jenkinsDisplayName
     url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
@@ -98,7 +99,6 @@ dependencies {
     testCompile 'org.mockito:mockito-all:1.10.19'
     testCompile "info.cukes:cucumber-junit:1.2.4"
     testCompile "info.cukes:cucumber-java:1.2.4"
-    testCompile('org.codehaus.groovy.modules.http-builder:http-builder:0.7')
 }
 
 task deleteTarget(type: Delete) {
@@ -108,7 +108,7 @@ task deleteTarget(type: Delete) {
 clean.dependsOn deleteTarget
 
 jpi {
-    classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grap work
+    classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
 }
 
 /**

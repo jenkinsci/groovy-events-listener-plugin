@@ -158,7 +158,7 @@ class StepDefs {
     public void the_validation_message(String expectedValidationKind, String expectedValidationMessage) {
         assertThat(validationResponse.kind, is(FormValidation.Kind.valueOf(expectedValidationKind)))
         def message = validationResponse.message
-        assertThat(message, message.contains(expectedValidationMessage), equalTo(true))
+        assertThat("Could not find '$expectedValidationMessage' in actual value '$message'.", message.contains(expectedValidationMessage), equalTo(true))
     }
 
 }
