@@ -29,12 +29,6 @@
                     onBlur: function(editor){editor.save()}"/>
         </f:entry>
 
-        <f:validateButton
-                title="${%Test Groovy Code}"
-                progress="${%Executing...}"
-                method="testGroovyCode"
-                with="onEventGroovyCode"/>
-
         <f:advanced>
             <f:entry title="Disable Synchronization">
                 <f:checkbox field="disableSynchronization"/>
@@ -148,5 +142,12 @@
                 </f:entry>
             </f:section>
         </f:advanced>
+
+        <f:validateButton
+                title="${%Test Groovy Code}"
+                progress="${%Executing...}"
+                method="testGroovyCode"
+                with="onEventGroovyCode"/>
+
     </f:section>
 </j:jelly>

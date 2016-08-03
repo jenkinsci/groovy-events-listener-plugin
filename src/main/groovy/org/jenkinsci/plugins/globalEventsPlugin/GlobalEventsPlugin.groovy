@@ -283,7 +283,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                     log.finer(">>> Executing groovy script completed successfully. "+
                             "totalDurationMillis='$totalDurationMillis'," +
                             "executionDurationMillis='$executionDurationMillis'," +
-                            "synchronizationMillis=`$synchronizationMillis`")
+                            "synchronizationMillis='$synchronizationMillis'")
                 } else {
                     log.warning(">>> Skipping execution, Groovy code was null or blank.")
                 }
