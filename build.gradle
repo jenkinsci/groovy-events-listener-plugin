@@ -121,6 +121,8 @@ configurations.findAll {!it.name.endsWith('junit-dep')}.each { conf ->
     conf.exclude group: "junit", module: "junit-dep"
 }
 
+
+import java.nio.file.Files
 import java.util.jar.JarFile
 
 /**
@@ -160,10 +162,12 @@ class JenkinsServerTask extends DefaultTask {
         cl.loadClass(mainClass).main(args as String[])
     }
 
-    void generateHpl() {
+    private static void generateHpl() {
         def from = new File("build/libs/groovy-events-listener-plugin.hpi")
         def to = new File("work/plugins/groovy-events-listener-plugin.hpi")
-        println ">>> Copied file from $from to $to - result=" + ([from.exists(), to.parentFile.mkdirs(), from.renameTo(to)].every() ? "SUCCESS" : "FAILURE")
+        assert [from.exists(), to.parentFile.mkdirs()].every()
+        Files.copy(from.toPath(), to.toPath())
+        println ">>> Copied file from '$from' to '$to'"
     }
 
     private static void setSystemPropertyIfEmpty(String name, String value) {
