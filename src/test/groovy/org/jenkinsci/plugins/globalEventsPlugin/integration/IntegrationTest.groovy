@@ -40,7 +40,7 @@ log.info "Hello ${WordUtils.capitalize('world')}!"
 ''',
                 '''Execution completed successfully!
 >>> Executing groovy script - parameters: [env, run, jenkins, log, event, context]
-Hello WORLD!
+Hello World!
 >>> Ignoring response - value is null or not a Map. response=null
 >>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis='X\''''
         )

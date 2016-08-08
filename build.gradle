@@ -21,6 +21,8 @@ gradlew publish - Deploy your plugin to the Jenkins Maven repository to be inclu
 gradlew server - Start a local instance of Jenkins (http://localhost:8080) with the plugin pre-installed for testing and debugging.
  */
 
+ext.enforceJavaVersion = JavaVersion.VERSION_1_7
+
 apply plugin: 'org.jenkins-ci.jpi'
 apply from: "$rootDir/gradle/common.gradle"
 apply plugin: 'jacoco'	
@@ -53,7 +55,9 @@ test {
     }
 }
 
-task integTest(type: Test) {
+task startJenkins(type: JenkinsServerTask, dependsOn: [jpi, test]){}
+
+task integTest(type: Test, dependsOn: startJenkins) {
     testClassesDir = sourceSets.test.output.classesDir
     classpath = sourceSets.test.runtimeClasspath
     include '**/integration/**'
@@ -63,10 +67,6 @@ task integTest(type: Test) {
         html.enabled = false
     }
 }
-
-task startJenkins(type: JenkinsServerTask){}
-
-integTest.dependsOn startJenkins
 
 check.dependsOn integTest
 
@@ -79,6 +79,7 @@ jenkinsPlugin {
     gitHubUrl = "https://github.com/jenkinsci/$project.name"
     compatibleSinceVersion = '1.20'
     fileExtension = 'hpi'
+    maskClasses = 'groovy.grape'
     developers {
         developer {
             id 'nickg'
@@ -110,6 +111,7 @@ clean.dependsOn deleteTarget
 
 jpi {
     classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
+    manifest.attributes(["PluginFirstClassLoader": "true" ])
 }
 
 /**
@@ -118,21 +120,6 @@ jpi {
 configurations.findAll {!it.name.endsWith('junit-dep')}.each { conf ->
     conf.exclude group: "junit", module: "junit-dep"
 }
-
-//configurations.all {
-//    resolutionStrategy {
-//        // fail eagerly on version conflict (includes transitive dependencies)
-//        // e.g. multiple different versions of the same dependency (group and name are equal)
-//        // failOnVersionConflict()
-//
-//        eachDependency { DependencyResolveDetails details ->
-//            if (details.requested.group == 'xalan') {
-//                details.useVersion '2.7.2'
-//            }
-//        }
-//    }
-//}
-
 
 import java.util.jar.JarFile
 
@@ -154,7 +141,6 @@ class JenkinsServerTask extends DefaultTask {
         File war = files.toArray()[0]
 
         generateHpl()
-        copyPluginDependencies()
 
         def conv = project.extensions.getByType(org.jenkinsci.gradle.plugins.jpi.JpiExtension)
         System.setProperty('JENKINS_HOME', conv.workDir.absolutePath)
@@ -172,32 +158,12 @@ class JenkinsServerTask extends DefaultTask {
         def cl = new URLClassLoader([war.toURI().toURL()] as URL[])
         def mainClass = new JarFile(war).manifest.mainAttributes.getValue('Main-Class')
         cl.loadClass(mainClass).main(args as String[])
-
-        // make the thread hang
-//        Thread.currentThread().join()
     }
 
     void generateHpl() {
-        def m = new org.jenkinsci.gradle.plugins.jpi.JpiHplManifest(project)
-        def conv = project.extensions.getByType(org.jenkinsci.gradle.plugins.jpi.JpiExtension)
-
-        def hpl = new File(conv.workDir, "plugins/${conv.shortName}.hpl")
-        hpl.parentFile.mkdirs()
-        hpl.withOutputStream { m.write(it) }
-    }
-
-    private copyPluginDependencies() {
-        // create new configuration with plugin dependencies, ignoring the (jar) extension to get the HPI/JPI files
-        Configuration plugins = project.configurations.create('plugins')
-        project.configurations.getByName(org.jenkinsci.gradle.plugins.jpi.JpiPlugin.PLUGINS_DEPENDENCY_CONFIGURATION_NAME).dependencies.each {
-            project.dependencies.add(plugins.name, "${it.group}:${it.name}:${it.version}")
-        }
-
-        // copy the resolved HPI/JPI files to the plugins directory
-        def workDir = project.extensions.getByType(org.jenkinsci.gradle.plugins.jpi.JpiExtension).workDir
-        plugins.resolvedConfiguration.resolvedArtifacts.findAll { it.extension in ['hpi', 'jpi'] }.each {
-            GFileUtils.copyFile(it.file, new File(workDir, "plugins/${it.name}.${it.extension}"))
-        }
+        def from = new File("build/libs/groovy-events-listener-plugin.hpi")
+        def to = new File("work/plugins/groovy-events-listener-plugin.hpi")
+        println ">>> Copied file from $from to $to - result=" + ([from.exists(), to.parentFile.mkdirs(), from.renameTo(to)].every() ? "SUCCESS" : "FAILURE")
     }
 
     private static void setSystemPropertyIfEmpty(String name, String value) {
@@ -205,6 +171,4 @@ class JenkinsServerTask extends DefaultTask {
             System.setProperty(name, value)
         }
     }
-
-    public static final String TASK_NAME = 'server'
 }
