@@ -19,6 +19,7 @@ import java.util.logging.Logger
 
 @ExportedBean
 class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugin> {
+
     private final static Logger log = Logger.getLogger(GlobalEventsPlugin.class.getName())
 
     @Extension
@@ -66,7 +67,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         if (SINGLETON_DESCRIPTOR != null) {
             return SINGLETON_DESCRIPTOR
         }
-        // must use the classloader, that loaded this plugin, so that Ivy lib is available...
+        // must use the classloader that loaded this plugin, so that Ivy lib is available...
         return new DescriptorImpl(GlobalEventsPlugin.classLoader);
     }
 

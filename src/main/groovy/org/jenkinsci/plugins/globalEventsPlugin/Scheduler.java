@@ -1,6 +1,9 @@
 package org.jenkinsci.plugins.globalEventsPlugin;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class Scheduler {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -8,12 +11,12 @@ public class Scheduler {
     private final TimeUnit unit;
     private ScheduledFuture<?> scheduledRun;
 
-    public Scheduler(Runnable runnable, TimeUnit unit) {
+    public Scheduler(final Runnable runnable, final TimeUnit unit) {
         this.runnable = runnable;
         this.unit = unit;
     }
 
-    public void run(int period) {
+    public void run(final int period) {
         if (scheduledRun != null) {
             scheduledRun.cancel(false);
         }

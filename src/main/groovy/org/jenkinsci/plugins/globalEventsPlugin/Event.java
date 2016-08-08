@@ -4,7 +4,7 @@ package org.jenkinsci.plugins.globalEventsPlugin;
  * Contains constants for all available event names.
  */
 public final class Event {
-    private Event(){
+    private Event() {
     }
 
     public static final String PLUGIN_STARTED = "GlobalEventsPlugin.start";
@@ -28,23 +28,23 @@ public final class Event {
     public static final String QUEUE_LEFT = "QueueListener.onLeft";
 
     public static String[] getAll() {
-        return new String[] {
-            PLUGIN_STARTED,
-            PLUGIN_STOPPED,
-            PLUGIN_SCHEDULE,
-            JOB_DELETED,
-            JOB_STARTED,
-            JOB_FINALIZED,
-            JOB_COMPLETED,
-            NODE_LAUNCH_FAILURE,
-            NODE_ONLINE,
-            NODE_OFFLINE,
-            NODE_TEMP_ONLINE,
-            NODE_TEMP_OFFLINE,
-            QUEUE_WAITING,
-            QUEUE_BLOCKED,
-            QUEUE_BUILDABLE,
-            QUEUE_LEFT,
+        return new String[]{
+                PLUGIN_STARTED,
+                PLUGIN_STOPPED,
+                PLUGIN_SCHEDULE,
+                JOB_DELETED,
+                JOB_STARTED,
+                JOB_FINALIZED,
+                JOB_COMPLETED,
+                NODE_LAUNCH_FAILURE,
+                NODE_ONLINE,
+                NODE_OFFLINE,
+                NODE_TEMP_ONLINE,
+                NODE_TEMP_OFFLINE,
+                QUEUE_WAITING,
+                QUEUE_BLOCKED,
+                QUEUE_BUILDABLE,
+                QUEUE_LEFT,
         };
     }
 }
