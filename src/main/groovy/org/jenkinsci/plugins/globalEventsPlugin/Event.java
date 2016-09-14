@@ -4,6 +4,13 @@ package org.jenkinsci.plugins.globalEventsPlugin;
  * Contains constants for all available event names.
  */
 public final class Event {
+    public static final String ITEM_UPDATED = "ItemListener.onUpdated";
+    public static final String ITEM_LOCATION_CHANGED = "ItemListener.onLocationChanged";
+    public static final String ITEM_RENAMED = "ItemListener.onRenamed";
+    public static final String ITEM_DELETED = "ItemListener.onDeleted";
+    public static final String ITEM_COPIED = "ItemListener.onCopied";
+    public static final String ITEM_CREATED = "ItemListener.onCreated";
+
     private Event(){
     }
 
