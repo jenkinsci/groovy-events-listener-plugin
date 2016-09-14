@@ -4,13 +4,6 @@ package org.jenkinsci.plugins.globalEventsPlugin;
  * Contains constants for all available event names.
  */
 public final class Event {
-    public static final String ITEM_UPDATED = "ItemListener.onUpdated";
-    public static final String ITEM_LOCATION_CHANGED = "ItemListener.onLocationChanged";
-    public static final String ITEM_RENAMED = "ItemListener.onRenamed";
-    public static final String ITEM_DELETED = "ItemListener.onDeleted";
-    public static final String ITEM_COPIED = "ItemListener.onCopied";
-    public static final String ITEM_CREATED = "ItemListener.onCreated";
-
     private Event(){
     }
 
@@ -34,6 +27,13 @@ public final class Event {
     public static final String QUEUE_BUILDABLE = "QueueListener.onEnterBuildable";
     public static final String QUEUE_LEFT = "QueueListener.onLeft";
 
+    public static final String ITEM_UPDATED = "ItemListener.onUpdated";
+    public static final String ITEM_LOCATION_CHANGED = "ItemListener.onLocationChanged";
+    public static final String ITEM_RENAMED = "ItemListener.onRenamed";
+    public static final String ITEM_DELETED = "ItemListener.onDeleted";
+    public static final String ITEM_COPIED = "ItemListener.onCopied";
+    public static final String ITEM_CREATED = "ItemListener.onCreated";
+
     public static String[] getAll() {
         return new String[] {
             PLUGIN_STARTED,
@@ -52,6 +52,12 @@ public final class Event {
             QUEUE_BLOCKED,
             QUEUE_BUILDABLE,
             QUEUE_LEFT,
+            ITEM_CREATED,
+            ITEM_COPIED,
+            ITEM_DELETED,
+            ITEM_RENAMED,
+            ITEM_LOCATION_CHANGED,
+            ITEM_UPDATED,
         };
     }
 }
