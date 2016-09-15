@@ -31,8 +31,7 @@ public class GlobalItemListener extends ItemListener
     }
 
     @Override
-    public void onCreated(final Item item)
-    {
+    public void onCreated(final Item item) {
         this.getParentPluginDescriptor().processEvent(Event.ITEM_CREATED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
@@ -40,8 +39,7 @@ public class GlobalItemListener extends ItemListener
     }
 
     @Override
-    public void onCopied(Item src, final Item item)
-    {
+    public void onCopied(Item src, final Item item) {
         this.getParentPluginDescriptor().processEvent(Event.ITEM_COPIED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
@@ -49,8 +47,7 @@ public class GlobalItemListener extends ItemListener
     }
 
     @Override
-    public void onDeleted(final Item item)
-    {
+    public void onDeleted(final Item item) {
         this.getParentPluginDescriptor().processEvent(Event.ITEM_DELETED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
@@ -58,8 +55,7 @@ public class GlobalItemListener extends ItemListener
     }
 
     @Override
-    public void onRenamed(final Item item, String oldName, String newName)
-    {
+    public void onRenamed(final Item item, String oldName, String newName) {
         this.getParentPluginDescriptor().processEvent(Event.ITEM_RENAMED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
@@ -67,8 +63,7 @@ public class GlobalItemListener extends ItemListener
     }
 
     @Override
-    public void onLocationChanged(final Item item, String oldFullName, String newFullName)
-    {
+    public void onLocationChanged(final Item item, String oldFullName, String newFullName) {
         this.getParentPluginDescriptor().processEvent(Event.ITEM_LOCATION_CHANGED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
@@ -76,8 +71,7 @@ public class GlobalItemListener extends ItemListener
     }
 
     @Override
-    public void onUpdated(final Item item)
-    {
+    public void onUpdated(final Item item) {
         this.getParentPluginDescriptor().processEvent(Event.ITEM_UPDATED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
