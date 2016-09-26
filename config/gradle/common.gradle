@@ -1,10 +1,8 @@
-
 apply plugin: 'idea'
 apply plugin: 'groovy'
 apply plugin: 'java'
 
 idea.project?.vcs = 'Git'
-
 
 // --- Setup script specific properties ---
 
@@ -14,7 +12,6 @@ ext {
     javaVersion = project.getProperties().get('enforceJavaVersion') ?: JavaVersion.VERSION_1_6
     compileTasks = [compileJava, compileTestJava, compileGroovy, compileTestGroovy]
 }
-
 
 // --- Setup Global Settings ---
 
@@ -30,7 +27,7 @@ allprojects {
 
     ext {
         groovyVersion = '2.4.4'
-        customJvmArgs = ['-Xmx2g', '-XX:MaxPermSize=2g']
+        customJvmArgs = ['-Xmx1g', '-XX:MaxPermSize=1g']
     }
 
     dependencies {
@@ -45,7 +42,6 @@ allprojects {
     sourceSets.test.compileClasspath += configurations.providedCompile
     sourceSets.test.runtimeClasspath += configurations.providedCompile
 }
-
 
 // --- Customise JVM - Low Memory Profile ---
 
@@ -62,10 +58,10 @@ task wrapper(type: Wrapper) {
 }
 
 allprojects {
-	clean{
-		delete "out"
-		delete ".gradle"
-	}
+    clean {
+        delete "out"
+        delete ".gradle"
+    }
 
     tasks.matching { it instanceof JavaCompile || it instanceof GroovyCompile }.all {
         options.compilerArgs += ["-Xlint:unchecked", "-Xlint:deprecation"]
@@ -93,13 +89,12 @@ allprojects {
     }
 }
 
-
 // --- Custom Tasks ---
 
 task enforceJavaVersionTask << {
-    if (enforceJavaVersionFlag){
+    if (enforceJavaVersionFlag) {
         def foundVersion = JavaVersion.current()
-        if (foundVersion.toString() != enforceJavaVersion.toString()){
+        if (foundVersion.toString() != enforceJavaVersion.toString()) {
             println("\nWARNING: Wrong Java version: required is $enforceJavaVersion, but found $foundVersion \n")
         }
     } else {
@@ -108,14 +103,12 @@ task enforceJavaVersionTask << {
 }
 
 task showMeCache << {
-  configurations.compile.each { println it }
+    configurations.compile.each { println it }
 }
-
 
 // --- Dependencies ---
 
 compileTasks*.dependsOn(enforceJavaVersionTask);
-
 
 // --- Standalone Functions ---
 

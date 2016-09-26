@@ -1,4 +1,3 @@
-
 //apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'checkstyle'
@@ -51,7 +50,7 @@ jdepend {
 }
 
 findbugs {
-    ignoreFailures = true // project.properties["ignoreFailures"]
+    ignoreFailures = project.properties["ignoreFailures"]
     effort = "max"
     toolVersion = '2.0.3'
 }

@@ -1,6 +1,6 @@
 package org.jenkinsci.plugins.globalEventsPlugin
 
-import org.apache.tools.ant.taskdefs.TempFile
+import net.sf.json.JSONObject
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.Before
 import org.junit.Rule
@@ -11,7 +11,6 @@ import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.FutureTask
-import net.sf.json.JSONObject
 
 import static groovy.test.GroovyAssert.shouldFail
 
@@ -23,10 +22,10 @@ class GlobalEventsPluginTest {
     private LoggerTrap logger
 
     @Rule
-    public TemporaryFolder folder= new TemporaryFolder();
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Before
-    void setup(){
+    void setup() {
         // disable load method, create new plugin...
         GlobalEventsPlugin.DescriptorImpl.metaClass.load = {}
         plugin = new GlobalEventsPlugin.DescriptorImpl(ClassLoader.getSystemClassLoader())
@@ -34,16 +33,16 @@ class GlobalEventsPluginTest {
     }
 
     @Test
-    void testPassingInputs(){
+    void testPassingInputs() {
         plugin.safeExecGroovyCode("dummy_event", logger, plugin.getScriptReadyToBeExecuted("""
             assert aaa == 111
             [success:true]
-            """), [aaa:111])
-        assert plugin.context == [success:true]
+            """), [aaa: 111], false)
+        assert plugin.context == [success: true]
     }
 
     @Test
-    void testImportFromTwoNewClasses(){
+    void testImportFromTwoNewClasses() {
         File folder1 = folder.newFolder()
         PrintWriter writer = new PrintWriter(folder1.absolutePath + "/Class1.groovy", "UTF-8");
         writer.println("public class Class1 { public static int A = 1; }");
@@ -71,37 +70,37 @@ class GlobalEventsPluginTest {
     }
 
     @Test
-    void testFailToImport(){
+    void testFailToImport() {
         shouldFail MultipleCompilationErrorsException, {
             plugin.setOnEventGroovyCode("import test.TestClass")
         }
     }
 
     @Test
-    void testCounter(){
+    void testCounter() {
         int expectedValue = 1000
         plugin.putToContext("total", 0)
         plugin.setOnEventGroovyCode("context.total += 1")
-        for(int i=0; i<expectedValue; i++) {
+        for (int i = 0; i < expectedValue; i++) {
             plugin.processEvent("dummy_event", logger, [:])
-            assert plugin.context == [total: i+1]
+            assert plugin.context == [total: i + 1]
         }
-        assert plugin.context == [total:expectedValue]
+        assert plugin.context == [total: expectedValue]
     }
 
     @Test
-    void testConcurrentCounter(){
+    void testConcurrentCounter() {
         int expectedValue = 1000
         plugin.putToContext("total", 0)
         plugin.setDisableSynchronization(false)
         plugin.setOnEventGroovyCode("context.total += 1;")
 
         ExecutorService executors = Executors.newFixedThreadPool(5);
-        FutureTask task1 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
-        FutureTask task2 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
-        FutureTask task3 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
-        FutureTask task4 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
-        FutureTask task5 = new FutureTask(callCodeMultipleTimes(expectedValue/5 as int));
+        FutureTask task1 = new FutureTask(callCodeMultipleTimes(expectedValue / 5 as int));
+        FutureTask task2 = new FutureTask(callCodeMultipleTimes(expectedValue / 5 as int));
+        FutureTask task3 = new FutureTask(callCodeMultipleTimes(expectedValue / 5 as int));
+        FutureTask task4 = new FutureTask(callCodeMultipleTimes(expectedValue / 5 as int));
+        FutureTask task5 = new FutureTask(callCodeMultipleTimes(expectedValue / 5 as int));
         executors.execute(task1);
         executors.execute(task2);
         executors.execute(task3);
@@ -109,23 +108,23 @@ class GlobalEventsPluginTest {
         executors.execute(task5);
 
         while (true) {
-            if (task1.isDone() && task2.isDone() && task3.isDone() && task4.isDone() && task5.isDone() ) {
+            if (task1.isDone() && task2.isDone() && task3.isDone() && task4.isDone() && task5.isDone()) {
                 break;
             }
 
             Thread.sleep(1000);
         }
 
-        assert plugin.context == [total:expectedValue]
+        assert plugin.context == [total: expectedValue]
     }
 
     @Test
-    void testDisableSynchronizationCounter(){
+    void testDisableSynchronizationCounter() {
         int expectedValue = 10000
         plugin.putToContext("total", 0)
         plugin.setDisableSynchronization(true)
         plugin.setOnEventGroovyCode("context.total += 1;")
-        Callable<Integer> callable = callCodeMultipleTimes(expectedValue/2 as int)
+        Callable<Integer> callable = callCodeMultipleTimes(expectedValue / 2 as int)
 
         ExecutorService executors = Executors.newFixedThreadPool(2);
         FutureTask task1 = new FutureTask(callable);
@@ -141,7 +140,7 @@ class GlobalEventsPluginTest {
             Thread.sleep(1000);
         }
 
-        assert plugin.context != [total:expectedValue]
+        assert plugin.context != [total: expectedValue]
     }
 
     @Test
@@ -152,10 +151,10 @@ class GlobalEventsPluginTest {
     @Test
     void testUpdateConfig() {
         JSONObject formData = new JSONObject([
-            "onEventGroovyCode": "",
-            "disableSynchronization": false,
-            "scheduleTime": 0,
-            "classPath": "",
+                "onEventGroovyCode"     : "",
+                "disableSynchronization": false,
+                "scheduleTime"          : 0,
+                "classPath"             : "",
         ])
 
         assert plugin.isEventEnabled("GlobalEventsPlugin.start") == true
@@ -173,7 +172,7 @@ class GlobalEventsPluginTest {
         return new Callable() {
             @Override
             Integer call() throws Exception {
-                for(int i=0; i<number; i++) {
+                for (int i = 0; i < number; i++) {
                     plugin.processEvent("dummy_event", logger, [:])
                 }
                 return 0;

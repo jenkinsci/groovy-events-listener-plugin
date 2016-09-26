@@ -1,9 +1,8 @@
 package org.jenkinsci.plugins.globalEventsPlugin.integration
 
-import org.junit.Ignore
 import org.junit.Test
 
-import static org.jenkinsci.plugins.globalEventsPlugin.integration.IntegrationUtils.*
+import static org.jenkinsci.plugins.globalEventsPlugin.integration.IntegrationUtils.verifyTestGroovyCode
 
 /**
  * N.B. Requires a running Jenkins instance on port '8080'.

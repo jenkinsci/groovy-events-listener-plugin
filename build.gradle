@@ -13,12 +13,12 @@ buildscript {
 defaultTasks 'clean', 'jpi'
 
 /**
-=== Usage ===
+ === Usage ===
 
-gradlew jpi - Build the Jenkins plugin file, which can then be found in the build directory. The file will currently end in ".hpi".
-gradlew publishToMavenLocal - Build the Jenkins plugin and install it into your local Maven repository.
-gradlew publish - Deploy your plugin to the Jenkins Maven repository to be included in the Update Center.
-gradlew server - Start a local instance of Jenkins (http://localhost:8080) with the plugin pre-installed for testing and debugging.
+ gradlew jpi - Build the Jenkins plugin file, which can then be found in the build directory. The file will currently end in ".hpi".
+ gradlew publishToMavenLocal - Build the Jenkins plugin and install it into your local Maven repository.
+ gradlew publish - Deploy your plugin to the Jenkins Maven repository to be included in the Update Center.
+ gradlew server - Start a local instance of Jenkins (http://localhost:8080) with the plugin pre-installed for testing and debugging.
  */
 
 ext.enforceJavaVersion = 1.7
@@ -55,7 +55,7 @@ test {
     }
 }
 
-task startJenkins(type: JenkinsServerTask, dependsOn: [jpi, test]){}
+task startJenkins(type: JenkinsServerTask, dependsOn: [jpi, test]) {}
 
 task integTest(type: Test, dependsOn: startJenkins) {
     testClassesDir = sourceSets.test.output.classesDir
@@ -72,7 +72,7 @@ check.dependsOn integTest
 
 jenkinsPlugin {
     // always use latest LTS!
-    coreVersion = '2.7.1'
+    coreVersion = '2.7.4'
     shortName = project.name
     displayName = jenkinsDisplayName
     url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
@@ -111,18 +111,17 @@ clean.dependsOn deleteTarget
 
 jpi {
     classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
-    manifest.attributes(["PluginFirstClassLoader": "true" ])
+    manifest.attributes(["PluginFirstClassLoader": "true"])
 }
 jpi.outputs.upToDateWhen { false }
 jpi.doLast {
     verifySizeKb(file(jpi.archivePath), 7307)
 }
 
-
 /**
  * We must exclude the junit-dep dependency, because it is clashing with junit when we run the AcceptanceTests.
  */
-configurations.findAll {!it.name.endsWith('junit-dep')}.each { conf ->
+configurations.findAll { !it.name.endsWith('junit-dep') }.each { conf ->
     conf.exclude group: "junit", module: "junit-dep"
 }
 

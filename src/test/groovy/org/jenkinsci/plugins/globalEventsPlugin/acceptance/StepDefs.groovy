@@ -5,12 +5,7 @@ import cucumber.api.java.en.Given
 import cucumber.api.java.en.Then
 import cucumber.api.java.en.When
 import hudson.util.FormValidation
-import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPlugin
-import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPluginTest
-import org.jenkinsci.plugins.globalEventsPlugin.GlobalRunListener
-import org.jenkinsci.plugins.globalEventsPlugin.GlobalComputerListener
-import org.jenkinsci.plugins.globalEventsPlugin.GlobalQueueListener
-import org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap
+import org.jenkinsci.plugins.globalEventsPlugin.*
 
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.is
@@ -78,7 +73,7 @@ class StepDefs {
     @When('^the (.+) event is triggered$')
     public void the_event_is_triggered(String method) {
         try {
-            switch (method){
+            switch (method) {
                 case "Run.onStarted":
                     runListener.onStarted(null, null)
                     break;
@@ -119,7 +114,7 @@ class StepDefs {
                     queueListener.onLeft(null)
                     break;
             }
-        } catch (Throwable t){
+        } catch (Throwable t) {
             t.printStackTrace()
             runtimeException = t
         }
@@ -143,7 +138,7 @@ class StepDefs {
     }
 
     @Then('^no exception should be thrown$')
-    public void no_exception(){
+    public void no_exception() {
         assert compilationException == null
         assert runtimeException == null
     }

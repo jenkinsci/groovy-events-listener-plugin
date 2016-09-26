@@ -1,7 +1,9 @@
 package org.jenkinsci.plugins.globalEventsPlugin
 
 import hudson.Extension
-import hudson.Plugin
+import hudson.init.InitMilestone
+import hudson.init.Initializer
+import hudson.init.Terminator
 import hudson.model.*
 import hudson.slaves.EnvironmentVariablesNodeProperty
 import hudson.util.FormValidation
@@ -18,27 +20,28 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 @ExportedBean
-class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugin> {
+class GlobalEventsPlugin implements Describable<GlobalEventsPlugin> {
 
     private final static Logger log = Logger.getLogger(GlobalEventsPlugin.class.getName())
 
     @Extension
     public final static DescriptorImpl SINGLETON_DESCRIPTOR = getSingletonDescriptor()
 
+    public GlobalEventsPlugin() {
+        // default noop constructor...
+        super();
+    }
+
     private final static Scheduler scheduler = new Scheduler(
             new Runnable() {
                 @Override
                 public void run() {
-                    getDescriptor().safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {
-                        {
-                            put("run", null);
-                            put("event", Event.PLUGIN_SCHEDULE);
-                        }
-                    });
+                    getDescriptor().safeExecOnEventGroovyCode(log, ["run": null, "event": Event.PLUGIN_SCHEDULE]);
                 }
             }, TimeUnit.MINUTES);
 
-    void start() {
+    @Initializer(after = InitMilestone.PLUGINS_PREPARED)
+    public void start() {
         getDescriptor().processEvent(Event.PLUGIN_STARTED, log, [:])
         log.fine(">>> Initialising ${this.class.simpleName}... [DONE]")
 
@@ -48,9 +51,8 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         }
     }
 
-    @Override
-    void stop() {
-        super.stop()
+    @Terminator
+    public void stop() {
         getDescriptor().processEvent(Event.PLUGIN_STOPPED, log, [:])
     }
 
@@ -175,7 +177,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         }
 
         void update(JSONObject formData) {
-            Event.getAll().each { event ->
+            for (String event : Event.getAll()) {
                 String formField = event.replace('.', '__')
                 if (formData.has(formField)) {
                     eventsEnabled.put(event, formData.getBoolean(formField))
@@ -218,7 +220,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
 
         void processEvent(String event, Logger log, Map<Object, Object> params) {
             if (isEventEnabled(event)) {
-                safeExecGroovyCode(event, log, groovyScript, params)
+                safeExecGroovyCode(event, log, groovyScript, params, false)
             }
         }
 
@@ -229,12 +231,12 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * @param groovyCode
          * @param params
          */
-        private FormValidation safeExecGroovyCode(
+        protected FormValidation safeExecGroovyCode(
                 final String event,
                 final Logger log,
                 final Script groovyScript,
                 final Map<Object, Object> params,
-                final boolean testMode = false) {
+                final boolean testMode) {
             try {
                 if (groovyScript) {
                     // get the global environment variables...
