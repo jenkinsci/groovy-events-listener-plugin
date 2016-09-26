@@ -36,7 +36,12 @@ class GlobalEventsPlugin implements Describable<GlobalEventsPlugin> {
             new Runnable() {
                 @Override
                 public void run() {
-                    getDescriptor().safeExecOnEventGroovyCode(log, ["run": null, "event": Event.PLUGIN_SCHEDULE]);
+                    try {
+                        SINGLETON_DESCRIPTOR.processEvent(Event.PLUGIN_SCHEDULE, log, [:])
+                    }
+                    catch (Exception exception) {
+                        log.fine("Failed to run scheduler: " + exception)
+                    }
                 }
             }, TimeUnit.MINUTES);
 
@@ -189,6 +194,16 @@ class GlobalEventsPlugin implements Describable<GlobalEventsPlugin> {
             scheduleTime = formData.getInt("scheduleTime")
             classPath = formData.getString("classPath")
 
+            if (scheduleTime > 0) {
+                scheduler.run(scheduleTime)
+                eventsEnabled.put(Event.PLUGIN_SCHEDULE, Boolean.TRUE)
+                log.finer(">>> Enable scheduler. Schedule time is " + scheduleTime)
+            } else {
+                scheduler.stop()
+                eventsEnabled.put(Event.PLUGIN_SCHEDULE, Boolean.FALSE)
+                log.finer(">>> Scheduler was stopped")
+            }
+
             updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
         }
@@ -198,14 +213,6 @@ class GlobalEventsPlugin implements Describable<GlobalEventsPlugin> {
             update(formData)
 
             save() // save configuration
-
-            if (scheduleTime > 0) {
-                scheduler.run(scheduleTime)
-                log.finer(">>> Enable sheduler. Schedule time is " + scheduleTime)
-            } else {
-                scheduler.stop()
-                log.finer(">>> Scheduler was stopped")
-            }
 
             return super.configure(req, formData)
         }
