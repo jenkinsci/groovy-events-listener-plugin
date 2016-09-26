@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.globalEventsPlugin
 
-import org.apache.tools.ant.taskdefs.TempFile
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 import org.junit.Before
 import org.junit.Rule
@@ -146,27 +145,47 @@ class GlobalEventsPluginTest {
 
     @Test
     void testEventsEnabledDefault() {
-        assert plugin.isEventEnabled("nonexistent_event") == true
+        assert plugin.isEventEnabled("nonexistent_event")
     }
 
     @Test
-    void testUpdateConfig() {
-        JSONObject formData = new JSONObject([
-            "onEventGroovyCode": "",
-            "disableSynchronization": false,
-            "scheduleTime": 0,
-            "classPath": "",
-        ])
+    void testUpdateConfigPluginStart() {
+        JSONObject formData = getDefaultConfig()
 
-        assert plugin.isEventEnabled("GlobalEventsPlugin.start") == true
+        assert plugin.isEventEnabled("GlobalEventsPlugin.start")
+
         formData.put("GlobalEventsPlugin__start", false)
-        plugin.update(formData)
-        assert plugin.isEventEnabled("GlobalEventsPlugin.start") == false
 
-        assert plugin.isEventEnabled("GlobalEventsPlugin.start") == false
+        plugin.update(formData)
+        assert !plugin.isEventEnabled("GlobalEventsPlugin.start")
+
         formData.put("GlobalEventsPlugin__start", true)
         plugin.update(formData)
-        assert plugin.isEventEnabled("GlobalEventsPlugin.start") == true
+        assert plugin.isEventEnabled("GlobalEventsPlugin.start")
+    }
+
+    @Test
+    void testUpdateConfigScheduler() {
+        JSONObject formData = getDefaultConfig()
+
+        assert plugin.isEventEnabled("GlobalEventsPlugin.schedule")
+
+        formData.put("scheduleTime", 0)
+        plugin.update(formData)
+        assert !plugin.isEventEnabled("GlobalEventsPlugin.schedule")
+
+        formData.put("scheduleTime", 1)
+        plugin.update(formData)
+        assert plugin.isEventEnabled("GlobalEventsPlugin.schedule")
+    }
+
+    private static JSONObject getDefaultConfig() {
+        new JSONObject([
+                "onEventGroovyCode"     : "",
+                "disableSynchronization": false,
+                "scheduleTime"          : 0,
+                "classPath"             : "",
+        ])
     }
 
     private Callable<Integer> callCodeMultipleTimes(int number) {
