@@ -8,12 +8,9 @@ import jenkins.model.Jenkins;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-/**
- * Created by Renjith Pillai (i306570) on 15/09/16.
- */
 @Extension
-public class GlobalItemListener extends ItemListener
-{
+public class GlobalItemListener extends ItemListener {
+
     protected static Logger log = Logger.getLogger(GlobalItemListener.class.getName());
 
     public GlobalItemListener() {
@@ -35,7 +32,6 @@ public class GlobalItemListener extends ItemListener
         this.getParentPluginDescriptor().processEvent(Event.ITEM_CREATED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
-        super.onCreated(item);
     }
 
     @Override
@@ -43,7 +39,6 @@ public class GlobalItemListener extends ItemListener
         this.getParentPluginDescriptor().processEvent(Event.ITEM_COPIED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
-        super.onCopied(src, item);
     }
 
     @Override
@@ -51,7 +46,6 @@ public class GlobalItemListener extends ItemListener
         this.getParentPluginDescriptor().processEvent(Event.ITEM_DELETED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
-        super.onDeleted(item);
     }
 
     @Override
@@ -59,7 +53,6 @@ public class GlobalItemListener extends ItemListener
         this.getParentPluginDescriptor().processEvent(Event.ITEM_RENAMED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
-        super.onRenamed(item, oldName, newName);
     }
 
     @Override
@@ -67,7 +60,6 @@ public class GlobalItemListener extends ItemListener
         this.getParentPluginDescriptor().processEvent(Event.ITEM_LOCATION_CHANGED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
-        super.onLocationChanged(item, oldFullName, newFullName);
     }
 
     @Override
@@ -75,6 +67,5 @@ public class GlobalItemListener extends ItemListener
         this.getParentPluginDescriptor().processEvent(Event.ITEM_UPDATED, log, new HashMap<Object, Object>() {{
             put("item", item);
         }});
-        super.onUpdated(item);
     }
 }
