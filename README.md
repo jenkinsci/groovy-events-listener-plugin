@@ -170,8 +170,6 @@ please see the [plugin's help file](https://cdn.rawgit.com/jenkinsci/groovy-even
 Authors
 ---
 
-Nick Grealy - <nickgrealy@gmail.com>
-
 Marky Jackson - <marky.r.jackson@gmail.comn>
 
 License
