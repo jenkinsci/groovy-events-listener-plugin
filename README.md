@@ -172,6 +172,8 @@ Authors
 
 Nick Grealy - <nickgrealy@gmail.com>
 
+Marky Jackson - <marky.r.jackson@gmail.comn>
+
 License
 ---
 
