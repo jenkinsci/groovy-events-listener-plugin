@@ -278,8 +278,9 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                         }
                     }
 
-                    def totalDurationMillis = System.currentTimeMillis() - syncStart
-                    def executionDurationMillis = System.currentTimeMillis() - executionStart
+                    def totalEnd = System.currentTimeMillis()
+                    def totalDurationMillis = totalEnd - syncStart
+                    def executionDurationMillis = totalEnd - executionStart
                     def synchronizationMillis = totalDurationMillis - executionDurationMillis
 
                     log.finer(">>> Executing groovy script completed successfully. " +
