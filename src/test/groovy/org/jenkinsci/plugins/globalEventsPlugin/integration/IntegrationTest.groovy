@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.globalEventsPlugin.integration
 
-import org.junit.Ignore
 import org.junit.Test
 
 import static org.jenkinsci.plugins.globalEventsPlugin.integration.IntegrationUtils.*
@@ -10,39 +9,44 @@ import static org.jenkinsci.plugins.globalEventsPlugin.integration.IntegrationUt
  */
 class IntegrationTest {
 
-    /**
-     * The script should execute with the correct Groovy version...
+    /*
+     * The script should execute with the correct Groovy version.
      */
     @Test
-    public void verifyGroovyVersion() {
+    void groovyVersion() {
+        def groovyCode = 'log.info GroovySystem.version'
 
-        verifyTestGroovyCode(
-                'log.info GroovySystem.version',
-                '''Execution completed successfully!
->>> Executing groovy script - parameters: [env, run, jenkins, log, event, context]
-2.4.8
->>> Ignoring response - value is null or not a Map. response=null
->>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis='X\''''
-        )
+        def expectedOutput = '''
+            Execution completed successfully!
+            >>> Executing groovy script - parameters: [env, run, jenkins, log, event, context]
+            2.4.8
+            >>> Ignoring response - value is null or not a Map. response=null
+            >>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis='X'
+        '''.stripIndent()
+
+        verifyTestGroovyCode(groovyCode, expectedOutput)
     }
 
-    /**
-     * We should be able to use the @Grab annotation to import dependencies...
+    /*
+     * It should be possible to use the @Grab annotation to import dependencies.
+     * See https://github.com/jenkinsci/groovy-events-listener-plugin/issues/21.
      */
     @Test
-    public void issues21() {
-        // Causes -> An exception was caught.java.lang.NoClassDefFoundError: org/apache/ivy/core/report/ResolveReport
-        verifyTestGroovyCode(
-                '''
-@Grab('commons-lang:commons-lang:2.4')
-import org.apache.commons.lang.WordUtils
-log.info "Hello ${WordUtils.capitalize('world')}!"
-''',
-                '''Execution completed successfully!
->>> Executing groovy script - parameters: [env, run, jenkins, log, event, context]
-Hello World!
->>> Ignoring response - value is null or not a Map. response=null
->>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis='X\''''
-        )
+    void importDependenciesWithGrabAnnotation() {
+        def groovyCode = '''
+            @Grab('commons-lang:commons-lang:2.4')
+            import org.apache.commons.lang.WordUtils
+            log.info "Hello ${WordUtils.capitalize('world')}!"
+        '''.stripIndent()
+
+        def expectedOutput = '''
+            Execution completed successfully!
+            >>> Executing groovy script - parameters: [env, run, jenkins, log, event, context]
+            Hello World!
+            >>> Ignoring response - value is null or not a Map. response=null
+            >>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis='X'
+        '''.stripIndent()
+
+        verifyTestGroovyCode(groovyCode, expectedOutput)
     }
 }
