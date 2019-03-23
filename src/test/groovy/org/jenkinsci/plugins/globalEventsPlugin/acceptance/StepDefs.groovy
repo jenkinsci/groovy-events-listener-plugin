@@ -48,13 +48,13 @@ class StepDefs {
     }
 
     @Given('^the script$')
-    public void the_script(String script) {
+    void the_script(String script) {
         this.groovyScript = script
         plugin.setOnEventGroovyCode(script)
     }
 
     @Given('^the script with exception$')
-    public void the_script_with_exception(String script) {
+    void the_script_with_exception(String script) {
         try {
             this.groovyScript = script
             plugin.setOnEventGroovyCode(script)
@@ -65,7 +65,7 @@ class StepDefs {
     }
 
     @When('^I test the script$')
-    public void i_test_the_script() {
+    void i_test_the_script() {
         try {
             validationResponse = plugin.doTestGroovyCode(groovyScript)
         } catch (Throwable t) {
@@ -75,7 +75,7 @@ class StepDefs {
     }
 
     @When('^the (.+) event is triggered$')
-    public void the_event_is_triggered(String method) {
+    void the_event_is_triggered(String method) {
         try {
             switch (method) {
                 case "Run.onStarted":
@@ -125,36 +125,36 @@ class StepDefs {
     }
 
     @Then('^the log level (.+) should display \'(.+)\'$')
-    public void the_log_should_display(String logLevel, String expectedLog) {
+    void the_log_should_display(String logLevel, String expectedLog) {
         def actualLogInfo = logger.properties[logLevel].join("\n")
         assert actualLogInfo.contains(expectedLog)
     }
 
     @Then('^the log should display$')
-    public void the_log_should_display2(String expectedLog) {
+    void the_log_should_display2(String expectedLog) {
         assert logger.all == expectedLog.readLines()
     }
 
     @Then('^the context should contain (.+) = (.+)$')
-    public void the_cache_should_contain(String key, String expectedValue) {
+    void the_cache_should_contain(String key, String expectedValue) {
         def actualValue = plugin.context[key]
         assert actualValue == (expectedValue == 'null' ? null : expectedValue)
     }
 
     @Then('^no exception should be thrown$')
-    public void no_exception(){
+    void no_exception(){
         assert compilationException == null
         assert runtimeException == null
     }
 
     @Then('^an exception should be thrown with the message \'(.+)\'$')
-    public void exception_thrown(String expectedExceptionMessage) {
+    void exception_thrown(String expectedExceptionMessage) {
         def actualMessage = compilationException.message
         assertThat(actualMessage, actualMessage.contains(expectedExceptionMessage), equalTo(true))
     }
 
     @Then('^the validation result should be (.+) with message \'(.+)\'$')
-    public void the_validation_message(String expectedValidationKind, String expectedValidationMessage) {
+    void the_validation_message(String expectedValidationKind, String expectedValidationMessage) {
         assertThat(validationResponse.kind, is(FormValidation.Kind.valueOf(expectedValidationKind)))
         def message = validationResponse.message
         assertThat("Could not find '$expectedValidationMessage' in actual value '$message'.", message.contains(expectedValidationMessage), equalTo(true))
