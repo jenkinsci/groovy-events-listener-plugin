@@ -35,38 +35,37 @@ class GlobalEventsPluginTest {
 
     @Test
     void testPassingInputs() {
-        plugin.safeExecGroovyCode("dummy_event", logger, plugin.getScriptReadyToBeExecuted("""
+        plugin.safeExecGroovyCode("dummy_event", logger, plugin.getScriptReadyToBeExecuted('''
             assert aaa == 111
             [success: true]
-            """), [aaa: 111])
+        '''), [aaa: 111])
         assert plugin.context == [success: true]
     }
 
     @Test
     void testImportFromTwoNewClasses() {
         File folder1 = folder.newFolder()
-        PrintWriter writer = new PrintWriter(folder1.absolutePath + "/Class1.groovy", "UTF-8")
-        writer.println("public class Class1 { public static int A = 1; }")
-        writer.close()
-
         File folder2 = folder.newFolder()
-        writer = new PrintWriter(folder2.absolutePath + "/Class2.groovy", "UTF-8")
-        writer.println("public class Class2 { public static int A = 2; }")
-        writer.close()
 
-        writer = new PrintWriter(folder2.absolutePath + "/Class3.groovy", "UTF-8")
-        writer.println("public class Class3 { public static int A = 3; }")
-        writer.close()
+        File class1File = new File(folder1, "Class1.groovy")
+        class1File.write("class Class1 { public static int A = 1 }" , "UTF-8")
+
+        File class2File = new File(folder2, "Class2.groovy")
+        class2File.write("class Class2 { public static int A = 2 }" , "UTF-8")
+
+        File class3File = new File(folder2, "Class3.groovy")
+        class3File.write("class Class3 { public static int A = 3 }" , "UTF-8")
 
         plugin.setClassPath(folder1.absolutePath + "  ,  " + folder2.absolutePath)
 
-        plugin.setOnEventGroovyCode(
-                "import Class1;" +
-                "import Class2;" +
-                "import Class3;" +
-                "context.c1 = Class1.A;" +
-                "context.c2 = Class2.A;" +
-                "context.c3 = Class3.A;")
+        plugin.setOnEventGroovyCode('''
+                import Class1
+                import Class2
+                import Class3
+                context.c1 = Class1.A
+                context.c2 = Class2.A
+                context.c3 = Class3.A
+        ''')
         plugin.processEvent("dummy_event", logger, [:])
         assert plugin.context == [c1: 1, c2: 2, c3: 3]
     }
@@ -183,10 +182,10 @@ class GlobalEventsPluginTest {
 
     private static JSONObject getDefaultConfig() {
         new JSONObject([
-                "onEventGroovyCode"     : "",
-                "disableSynchronization": false,
-                "scheduleTime"          : 0,
-                "classPath"             : "",
+                onEventGroovyCode     : "",
+                disableSynchronization: false,
+                scheduleTime          : 0,
+                classPath             : "",
         ])
     }
 
@@ -194,7 +193,7 @@ class GlobalEventsPluginTest {
         return new Callable() {
             @Override
             Integer call() throws Exception {
-                for (int i = 0; i < number; i++) {
+                number.times {
                     plugin.processEvent("dummy_event", logger, [:])
                 }
                 return 0
