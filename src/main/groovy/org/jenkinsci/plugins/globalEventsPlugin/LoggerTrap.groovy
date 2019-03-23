@@ -25,22 +25,22 @@ class LoggerTrap extends Logger {
         switch (level) {
             case Level.CONFIG:
                 config << msg
-                break;
+                break
             case Level.FINE:
                 fine << msg
-                break;
+                break
             case Level.FINER:
                 finer << msg
-                break;
+                break
             case Level.FINEST:
                 finest << msg
-                break;
+                break
             case Level.SEVERE:
                 severe << msg
-                break;
+                break
             case Level.WARNING:
                 warning << msg
-                break;
+                break
             default:
                 info << msg
         }

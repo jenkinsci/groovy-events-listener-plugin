@@ -44,7 +44,7 @@ class IntegrationUtils {
      * Waits until the given condition is true.
      */
     private static void waitUntil(String conditionName, int secondsTimeout, Closure conditionIsTrue) {
-        int i;
+        int i
         for (i = 0; i < secondsTimeout && !conditionIsTrue(); i++) {
             println "Condition '$conditionName' not (yet) met, sleeping for 1 second..."
             Thread.sleep(1000)

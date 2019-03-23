@@ -1,5 +1,5 @@
-import hudson.model.*;
-import jenkins.metrics.impl.TimeInQueueAction;
+import hudson.model.*
+import jenkins.metrics.impl.TimeInQueueAction
 
 if (event == 'RunListener.onFinalized') {
     // Current run/build

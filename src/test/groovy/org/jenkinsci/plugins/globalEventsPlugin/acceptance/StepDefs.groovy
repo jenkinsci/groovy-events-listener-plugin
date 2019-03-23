@@ -80,43 +80,43 @@ class StepDefs {
             switch (method) {
                 case "Run.onStarted":
                     runListener.onStarted(null, null)
-                    break;
+                    break
                 case "Run.onCompleted":
                     runListener.onCompleted(null, null)
-                    break;
+                    break
                 case "Run.onFinalized":
                     runListener.onFinalized(null)
-                    break;
+                    break
                 case "Run.onDeleted":
                     runListener.onDeleted(null)
-                    break;
+                    break
                 case "Computer.onLaunchFailure":
                     computerListener.onLaunchFailure(null, null)
-                    break;
+                    break
                 case "Computer.onOnline":
                     computerListener.onOnline(null, null)
-                    break;
+                    break
                 case "Computer.onOffline":
                     computerListener.onOffline(null, null)
-                    break;
+                    break
                 case "Computer.onTemporarilyOnline":
                     computerListener.onTemporarilyOnline(null)
-                    break;
+                    break
                 case "Computer.onTemporarilyOffline":
                     computerListener.onTemporarilyOffline(null, null)
-                    break;
+                    break
                 case "Queue.onEnterWaiting":
                     queueListener.onEnterWaiting(null)
-                    break;
+                    break
                 case "Queue.onEnterBlocked":
                     queueListener.onEnterBlocked(null)
-                    break;
+                    break
                 case "Queue.onEnterBuildable":
                     queueListener.onEnterBuildable(null)
-                    break;
+                    break
                 case "Queue.onLeft":
                     queueListener.onLeft(null)
-                    break;
+                    break
             }
         } catch (Throwable t) {
             t.printStackTrace()

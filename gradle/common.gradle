@@ -84,7 +84,7 @@ task enforceVersion << {
     }
 }
 
-compileTasks*.dependsOn(enforceVersion);
+compileTasks*.dependsOn(enforceVersion)
 
 task showMeCache << {
     configurations.compile.each { println it }
