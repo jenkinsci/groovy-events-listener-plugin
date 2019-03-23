@@ -7,6 +7,7 @@ import cucumber.api.java.en.When
 import hudson.util.FormValidation
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPlugin
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPluginTest
+import org.jenkinsci.plugins.globalEventsPlugin.GlobalItemListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalRunListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalComputerListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalQueueListener
@@ -22,6 +23,7 @@ class StepDefs {
     GlobalRunListener runListener
     GlobalComputerListener computerListener
     GlobalQueueListener queueListener
+    GlobalItemListener itemListener
     LoggerTrap logger
     String groovyScript
     FormValidation validationResponse
@@ -39,12 +41,18 @@ class StepDefs {
         runListener = new GlobalRunListener()
         runListener.parentPluginDescriptorOverride = plugin
         runListener.log = logger
+
         computerListener = new GlobalComputerListener()
         computerListener.parentPluginDescriptorOverride = plugin
         computerListener.log = logger
+
         queueListener = new GlobalQueueListener()
         queueListener.parentPluginDescriptorOverride = plugin
         queueListener.log = logger
+
+        itemListener = new GlobalItemListener()
+        itemListener.parentPluginDescriptorOverride = plugin
+        itemListener.log = logger
     }
 
     @Given('^the script$')
@@ -116,6 +124,24 @@ class StepDefs {
                     break
                 case "Queue.onLeft":
                     queueListener.onLeft(null)
+                    break
+                case "Item.onUpdated":
+                    itemListener.onUpdated(null)
+                    break
+                case "Item.onLocationChanged":
+                    itemListener.onLocationChanged(null, null, null)
+                    break
+                case "Item.onRenamed":
+                    itemListener.onRenamed(null, null, null)
+                    break
+                case "Item.onDeleted":
+                    itemListener.onDeleted(null)
+                    break
+                case "Item.onCopied":
+                    itemListener.onCopied(null, null)
+                    break
+                case "Item.onCreated":
+                    itemListener.onCreated(null)
                     break
             }
         } catch (Throwable t) {
