@@ -35,9 +35,9 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.14'
 
     def jvmOpts = customJvmArgs.join(' ')
-    inputs.property("jvmOpts", jvmOpts)
+    inputs.property('jvmOpts', jvmOpts)
     doLast {
-        def optsEnvVar = "DEFAULT_JVM_OPTS"
+        def optsEnvVar = 'DEFAULT_JVM_OPTS'
         scriptFile.write scriptFile.text.replace("$optsEnvVar=\"\"", "$optsEnvVar=\"$jvmOpts\"")
         batchScript.write batchScript.text.replace("set $optsEnvVar=", "set $optsEnvVar=$jvmOpts")
     }
@@ -45,8 +45,8 @@ task wrapper(type: Wrapper) {
 
 allprojects {
     clean {
-        delete "work"
-        delete ".gradle"
+        delete 'work'
+        delete '.gradle'
     }
 
     tasks.withType(JavaCompile) {
