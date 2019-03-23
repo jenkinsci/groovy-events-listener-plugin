@@ -1,2 +1,2 @@
 <?jelly escape-by-default='true'?>
-<div>A jenkins plugin, which executes groovy code when an event occurs.</div>
+<div>This plugin executes Groovy code when an event occurs.</div>

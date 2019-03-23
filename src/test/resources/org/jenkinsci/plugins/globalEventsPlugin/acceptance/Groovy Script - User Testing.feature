@@ -1,6 +1,6 @@
 Feature: Groovy Script - User Testing
   As a developer
-  I want to be able to test my groovy script
+  I want to be able to test my Groovy script
   So that I get instant feedback on compilation errors/runtime errors/behaviour anomalies/etc
 
 
