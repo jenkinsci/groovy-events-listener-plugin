@@ -1,4 +1,3 @@
-
 Feature: Groovy Script - User Testing
   As a developer
   I want to be able to test my groovy script
@@ -12,7 +11,6 @@ Feature: Groovy Script - User Testing
     """
     When I test the script
     Then the validation result should be OK with message 'Hello world!'
-
 
 
   Scenario: The plugin's package should be imported by default, so that I can make use of the 'Event' convenience class
@@ -52,4 +50,3 @@ Feature: Groovy Script - User Testing
     """
     When I test the script
     Then the validation result should be ERROR with message 'foobar'
-

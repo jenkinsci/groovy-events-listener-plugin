@@ -45,5 +45,4 @@ Hello World!
 >>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis='X\''''
         )
     }
-
 }

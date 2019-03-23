@@ -25,7 +25,7 @@ ext.enforceJavaVersion = JavaVersion.VERSION_1_8
 
 apply plugin: 'org.jenkins-ci.jpi'
 apply from: "$rootDir/gradle/common.gradle"
-apply plugin: 'jacoco'	
+apply plugin: 'jacoco'
 
 repositories {
     mavenCentral()
@@ -55,7 +55,7 @@ test {
     }
 }
 
-task startJenkins(type: JenkinsServerTask, dependsOn: [jpi, test]){}
+task startJenkins(type: JenkinsServerTask, dependsOn: [jpi, test]) {}
 
 task integTest(type: Test, dependsOn: startJenkins) {
     testClassesDir = sourceSets.test.output.classesDir
@@ -110,13 +110,13 @@ clean.dependsOn deleteTarget
 
 jpi {
     classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
-    manifest.attributes(["PluginFirstClassLoader": "true" ])
+    manifest.attributes(["PluginFirstClassLoader": "true"])
 }
 
 /**
  * We must exclude the junit-dep dependency, because it is clashing with junit when we run the AcceptanceTests.
  */
-configurations.findAll {!it.name.endsWith('junit-dep')}.each { conf ->
+configurations.findAll { !it.name.endsWith('junit-dep') }.each { conf ->
     conf.exclude group: "junit", module: "junit-dep"
 }
 

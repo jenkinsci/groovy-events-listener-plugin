@@ -20,7 +20,7 @@ public class GlobalItemListener extends ItemListener {
     GlobalEventsPlugin.DescriptorImpl parentPluginDescriptorOverride = null;
 
     GlobalEventsPlugin.DescriptorImpl getParentPluginDescriptor() {
-        if (parentPluginDescriptorOverride != null){
+        if (parentPluginDescriptorOverride != null) {
             return parentPluginDescriptorOverride;
         } else {
             return Jenkins.getInstance().getPlugin(GlobalEventsPlugin.class).getDescriptor();

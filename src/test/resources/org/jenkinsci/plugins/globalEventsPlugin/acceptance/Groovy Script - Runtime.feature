@@ -84,7 +84,7 @@ Feature: Groovy Script - Runtime
     Then the log level info should display 'wslite.soap.SOAPClient'
 
 
-    @wip
+  @wip
   Scenario: The script should have access to the Ivy ResolveReport class, So that @Grab works
     Given the script
     """

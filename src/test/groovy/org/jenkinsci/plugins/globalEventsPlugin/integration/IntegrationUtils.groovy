@@ -36,7 +36,7 @@ class IntegrationUtils {
         assert tmpExpected == tmpActual
     }
 
-    private static String normaliseNewlines(String message){
+    private static String normaliseNewlines(String message) {
         message.replaceAll("\\r?\\n", "")
     }
 

@@ -18,14 +18,15 @@ import static groovy.test.GroovyAssert.shouldFail
  * Created by nickgrealy@gmail.com.
  */
 class GlobalEventsPluginTest {
+
     private GlobalEventsPlugin.DescriptorImpl plugin
     private LoggerTrap logger
 
     @Rule
-    public TemporaryFolder folder= new TemporaryFolder();
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Before
-    void setup(){
+    void setup() {
         // disable load method, create new plugin...
         GlobalEventsPlugin.DescriptorImpl.metaClass.load = {}
         plugin = new GlobalEventsPlugin.DescriptorImpl(ClassLoader.getSystemClassLoader())
@@ -33,16 +34,16 @@ class GlobalEventsPluginTest {
     }
 
     @Test
-    void testPassingInputs(){
+    void testPassingInputs() {
         plugin.safeExecGroovyCode("dummy_event", logger, plugin.getScriptReadyToBeExecuted("""
             assert aaa == 111
-            [success:true]
-            """), [aaa:111])
-        assert plugin.context == [success:true]
+            [success: true]
+            """), [aaa: 111])
+        assert plugin.context == [success: true]
     }
 
     @Test
-    void testImportFromTwoNewClasses(){
+    void testImportFromTwoNewClasses() {
         File folder1 = folder.newFolder()
         PrintWriter writer = new PrintWriter(folder1.absolutePath + "/Class1.groovy", "UTF-8");
         writer.println("public class Class1 { public static int A = 1; }");
@@ -59,7 +60,8 @@ class GlobalEventsPluginTest {
 
         plugin.setClassPath(folder1.absolutePath + "  ,  " + folder2.absolutePath);
 
-        plugin.setOnEventGroovyCode("import Class1;" +
+        plugin.setOnEventGroovyCode(
+                "import Class1;" +
                 "import Class2;" +
                 "import Class3;" +
                 "context.c1 = Class1.A;" +
@@ -70,26 +72,26 @@ class GlobalEventsPluginTest {
     }
 
     @Test
-    void testFailToImport(){
+    void testFailToImport() {
         shouldFail MultipleCompilationErrorsException, {
             plugin.setOnEventGroovyCode("import test.TestClass")
         }
     }
 
     @Test
-    void testCounter(){
+    void testCounter() {
         int expectedValue = 1000
         plugin.putToContext("total", 0)
         plugin.setOnEventGroovyCode("context.total += 1")
-        for(int i=0; i<expectedValue; i++) {
+        for (int i = 0; i < expectedValue; i++) {
             plugin.processEvent("dummy_event", logger, [:])
-            assert plugin.context == [total: i+1]
+            assert plugin.context == [total: i + 1]
         }
-        assert plugin.context == [total:expectedValue]
+        assert plugin.context == [total: expectedValue]
     }
 
     @Test
-    void testConcurrentCounter(){
+    void testConcurrentCounter() {
         int expectedValue = 1000
         plugin.putToContext("total", 0)
         plugin.setDisableSynchronization(false)
@@ -108,23 +110,23 @@ class GlobalEventsPluginTest {
         executors.execute(task5);
 
         while (true) {
-            if (task1.isDone() && task2.isDone() && task3.isDone() && task4.isDone() && task5.isDone() ) {
-                break;
+            if (task1.isDone() && task2.isDone() && task3.isDone() && task4.isDone() && task5.isDone()) {
+                break
             }
 
             Thread.sleep(1000);
         }
 
-        assert plugin.context == [total:expectedValue]
+        assert plugin.context == [total: expectedValue]
     }
 
     @Test
-    void testDisableSynchronizationCounter(){
+    void testDisableSynchronizationCounter() {
         int expectedValue = 10000
         plugin.putToContext("total", 0)
         plugin.setDisableSynchronization(true)
         plugin.setOnEventGroovyCode("context.total += 1;")
-        Callable<Integer> callable = callCodeMultipleTimes(expectedValue/2 as int)
+        Callable<Integer> callable = callCodeMultipleTimes(expectedValue / 2 as int)
 
         ExecutorService executors = Executors.newFixedThreadPool(2);
         FutureTask task1 = new FutureTask(callable);
@@ -140,7 +142,7 @@ class GlobalEventsPluginTest {
             Thread.sleep(1000);
         }
 
-        assert plugin.context != [total:expectedValue]
+        assert plugin.context != [total: expectedValue]
     }
 
     @Test
@@ -192,7 +194,7 @@ class GlobalEventsPluginTest {
         return new Callable() {
             @Override
             Integer call() throws Exception {
-                for(int i=0; i<number; i++) {
+                for (int i = 0; i < number; i++) {
                     plugin.processEvent("dummy_event", logger, [:])
                 }
                 return 0;

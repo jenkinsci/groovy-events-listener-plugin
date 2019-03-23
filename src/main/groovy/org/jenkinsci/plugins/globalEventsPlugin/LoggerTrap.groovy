@@ -22,7 +22,7 @@ class LoggerTrap extends Logger {
     @Override
     void log(Level level, String msg) {
         all << msg
-        switch (level){
+        switch (level) {
             case Level.CONFIG:
                 config << msg
                 break;

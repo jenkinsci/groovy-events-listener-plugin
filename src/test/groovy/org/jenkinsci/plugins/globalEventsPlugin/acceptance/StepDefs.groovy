@@ -45,7 +45,6 @@ class StepDefs {
         queueListener = new GlobalQueueListener()
         queueListener.parentPluginDescriptorOverride = plugin
         queueListener.log = logger
-
     }
 
     @Given('^the script$')
@@ -78,7 +77,7 @@ class StepDefs {
     @When('^the (.+) event is triggered$')
     public void the_event_is_triggered(String method) {
         try {
-            switch (method){
+            switch (method) {
                 case "Run.onStarted":
                     runListener.onStarted(null, null)
                     break;
@@ -119,7 +118,7 @@ class StepDefs {
                     queueListener.onLeft(null)
                     break;
             }
-        } catch (Throwable t){
+        } catch (Throwable t) {
             t.printStackTrace()
             runtimeException = t
         }
@@ -160,5 +159,4 @@ class StepDefs {
         def message = validationResponse.message
         assertThat("Could not find '$expectedValidationMessage' in actual value '$message'.", message.contains(expectedValidationMessage), equalTo(true))
     }
-
 }
