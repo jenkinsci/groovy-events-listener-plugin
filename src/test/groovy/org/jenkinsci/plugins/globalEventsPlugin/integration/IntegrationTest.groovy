@@ -1,13 +1,20 @@
 package org.jenkinsci.plugins.globalEventsPlugin.integration
 
+import org.junit.BeforeClass
+import org.junit.ClassRule
 import org.junit.Test
+import org.jvnet.hudson.test.JenkinsRule
 
 import static org.jenkinsci.plugins.globalEventsPlugin.integration.IntegrationUtils.*
 
-/**
- * N.B. Requires a running Jenkins instance on port '8080'.
- */
 class IntegrationTest {
+
+    @ClassRule public static JenkinsRule j = new JenkinsRule()
+
+    @BeforeClass
+    static void disableCsrfProtection() {
+        j.jenkins.setCrumbIssuer(null)
+    }
 
     /*
      * The script should execute with the correct Groovy version.
@@ -24,7 +31,7 @@ class IntegrationTest {
             >>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis='X'
         '''.stripIndent()
 
-        verifyTestGroovyCode(groovyCode, expectedOutput)
+        verifyTestGroovyCode(j.getURL(), groovyCode, expectedOutput)
     }
 
     /*
@@ -47,6 +54,6 @@ class IntegrationTest {
             >>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis='X'
         '''.stripIndent()
 
-        verifyTestGroovyCode(groovyCode, expectedOutput)
+        verifyTestGroovyCode(j.getURL(), groovyCode, expectedOutput)
     }
 }
