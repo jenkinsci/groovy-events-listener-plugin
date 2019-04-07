@@ -20,8 +20,8 @@ repositories {
 }
 
 ext {
-    groovyVersion = '2.4.7'
-    customJvmArgs = ['-XX:MaxPermSize=128m', '-Xmx128m']
+    groovyVersion = '2.4.8'
+    customJvmArgs = ['-Xmx128m']
 }
 
 configurations {

@@ -20,7 +20,7 @@ class IntegrationTest {
                 'log.info GroovySystem.version',
                 '''Execution completed successfully!
 >>> Executing groovy script - parameters: [env, run, jenkins, log, event, context]
-2.4.7
+2.4.8
 >>> Ignoring response - value is null or not a Map. response=null
 >>> Executing groovy script completed successfully. totalDurationMillis='X',executionDurationMillis='X',synchronizationMillis='X\''''
         )
