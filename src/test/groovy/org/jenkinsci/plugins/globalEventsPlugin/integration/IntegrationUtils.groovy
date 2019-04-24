@@ -6,24 +6,21 @@ import groovyx.net.http.RESTClient
 
 class IntegrationUtils {
 
-
-    public static final String JENKINS_BASEURL = 'http://localhost:8080/'
-
     /**
      * Invokes the "testGroovyCode" REST service.
      */
-    public static void verifyTestGroovyCode(String groovyCodeInput, String expectedOutput) {
-        def client = new RESTClient(JENKINS_BASEURL)
+    public static void verifyTestGroovyCode(URL jenkinsUrl, String groovyCodeInput, String expectedOutput) {
+        def client = new RESTClient(jenkinsUrl)
 
         // don't throw exceptions for >=400 status codes...
         client.handler.failure = client.handler.success
 
         // wait up to 1 minute for the jenkins server to start...
-        waitUntil("Server is UP", 60, { client.get(path: '/').status == 200 })
+        waitUntil("Server is UP", 60, { client.get(path: '').status == 200 })
 
         // call testGroovyCode service...
         def resp = client.post(
-                path: '/descriptorByName/org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPlugin/testGroovyCode',
+                path: 'descriptorByName/org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPlugin/testGroovyCode',
                 body: [onEventGroovyCode: groovyCodeInput],
                 requestContentType: ContentType.URLENC)
 
@@ -36,7 +33,7 @@ class IntegrationUtils {
         assert tmpExpected == tmpActual
     }
 
-    private static String normaliseNewlines(String message){
+    private static String normaliseNewlines(String message) {
         message.replaceAll("\\r?\\n", "")
     }
 
@@ -44,7 +41,7 @@ class IntegrationUtils {
      * Waits until the given condition is true.
      */
     private static void waitUntil(String conditionName, int secondsTimeout, Closure conditionIsTrue) {
-        int i;
+        int i
         for (i = 0; i < secondsTimeout && !conditionIsTrue(); i++) {
             println "Condition '$conditionName' not (yet) met, sleeping for 1 second..."
             Thread.sleep(1000)

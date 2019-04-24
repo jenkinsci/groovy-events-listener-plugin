@@ -35,15 +35,15 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                         log.fine("Failed to run scheduler: " + exception)
                     }
                 }
-            }, TimeUnit.MINUTES);
+            }, TimeUnit.MINUTES)
 
     void start() {
         getDescriptor().processEvent(Event.PLUGIN_STARTED, log, [:])
         log.fine(">>> Initialising ${this.class.simpleName}... [DONE]")
 
-        final scheduleTime = getDescriptor().getScheduleTime();
+        final scheduleTime = getDescriptor().getScheduleTime()
         if (scheduleTime > 0) {
-            scheduler.run(scheduleTime);
+            scheduler.run(scheduleTime)
         }
     }
 
@@ -67,7 +67,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return SINGLETON_DESCRIPTOR
         }
         // must use the classloader, that loaded this plugin, so that Ivy lib is available...
-        return new DescriptorImpl(GlobalEventsPlugin.classLoader);
+        return new DescriptorImpl(GlobalEventsPlugin.classLoader)
     }
 
     /**
@@ -89,9 +89,9 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         protected final transient Map<Object, Object> context = new HashMap<Object, Object>()
         protected String onEventGroovyCode = getDefaultOnEventGroovyCode()
 
-        private boolean disableSynchronization = false;
-        private int scheduleTime = 0;
-        private String classPath = null;
+        private boolean disableSynchronization = false
+        private int scheduleTime = 0
+        private String classPath = null
 
         private Map<String, Boolean> eventsEnabled = new HashMap<String, Boolean>()
 
@@ -123,13 +123,13 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          */
         DescriptorImpl(ClassLoader classLoader) {
             load()
-            parentClassLoader = classLoader;
+            parentClassLoader = classLoader
             updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
         }
 
         private updateClasspath() {
-            groovyClassLoader = new GroovyClassLoader(parentClassLoader);
+            groovyClassLoader = new GroovyClassLoader(parentClassLoader)
 
             if (StringUtils.isNotEmpty(classPath)) {
                 for (String path : classPath.split(",")) {
@@ -139,7 +139,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         }
 
         void putToContext(Object key, Object value) {
-            context.put(key, value);
+            context.put(key, value)
         }
 
         String getOnEventGroovyCode() {
@@ -169,8 +169,8 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * Can throw compilation exception.
          */
         public Script getScriptReadyToBeExecuted(String groovyCode) {
-            final Class<? extends Script> clazz = groovyClassLoader.parseClass("import ${GlobalEventsPlugin.package.name}.*\n" + groovyCode);
-            return clazz.newInstance();
+            final Class<? extends Script> clazz = groovyClassLoader.parseClass("import ${GlobalEventsPlugin.package.name}.*\n" + groovyCode)
+            return clazz.newInstance()
         }
 
         void update(JSONObject formData) {
@@ -318,9 +318,9 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         }
 
         public FormValidation doTestGroovyCode(@QueryParameter("onEventGroovyCode") final String onEventGroovyCode) {
-            FormValidation validationResult;
+            FormValidation validationResult
             try {
-                Script script = getScriptReadyToBeExecuted(onEventGroovyCode);
+                Script script = getScriptReadyToBeExecuted(onEventGroovyCode)
                 LoggerTrap logger = new LoggerTrap(GlobalEventsPlugin.name)
                 validationResult = safeExecGroovyCode(Event.JOB_STARTED, logger, script, [
                         env: [:],

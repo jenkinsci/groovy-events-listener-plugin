@@ -4,8 +4,8 @@ package org.jenkinsci.plugins.globalEventsPlugin;
  * Contains constants for all available event names.
  */
 public final class Event {
-    private Event(){
-    }
+
+    private Event() {}
 
     public static final String PLUGIN_STARTED = "GlobalEventsPlugin.start";
     public static final String PLUGIN_STOPPED = "GlobalEventsPlugin.stop";

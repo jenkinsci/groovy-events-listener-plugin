@@ -80,7 +80,6 @@ public class SchedulerTest {
         public void run() {
             counter.incrementAndGet();
         }
-
     }
 
     private void waitALittleBit() {

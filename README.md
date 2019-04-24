@@ -100,7 +100,7 @@ and `env` variables.
 This code limits the logging to only occur when a Job is completed! **N.B.** this behaviour can also be replicated using the configuration options.
 
 ```Groovy
-if (event == Event.JOB_STARTED){
+if (event == Event.JOB_STARTED) {
     log.info "hello world!"
 }
 ```
@@ -108,7 +108,7 @@ if (event == Event.JOB_STARTED){
 And this one filters on Job's whose name starts with "Foobar"...
 
 ```Groovy
-if (env.JOB_NAME.startsWith('Foobar')){
+if (env.JOB_NAME.startsWith('Foobar')) {
     log.info "hello world!"
 }
 ```
@@ -117,7 +117,7 @@ There's also a `context` Map variable. You can add your own variables to this Ma
 E.g.
 
 ```Groovy
-if (event == Event.JOB_FINALIZED){
+if (event == Event.JOB_FINALIZED) {
     def newCount = (context.finishCount ?: 0) + 1
     log.info "hello world! finishCount=$newCount"
     return ["finishCount": newCount]
@@ -128,7 +128,7 @@ This will keep a record in memory, of how many times Jobs have finished. You can
 adding variables directly to the Map variable... e.g.
 
 ```Groovy
-if (event == Event.JOB_FINALIZED){
+if (event == Event.JOB_FINALIZED) {
     context.finishCount = (context.finishCount ?: 0) + 1
     log.info "hello world! finishCount=${context.finishCount}"
 }

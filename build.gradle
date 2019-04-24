@@ -25,7 +25,7 @@ ext.enforceJavaVersion = JavaVersion.VERSION_1_8
 
 apply plugin: 'org.jenkins-ci.jpi'
 apply from: "$rootDir/gradle/common.gradle"
-apply plugin: 'jacoco'	
+apply plugin: 'jacoco'
 
 repositories {
     mavenCentral()
@@ -35,7 +35,7 @@ repositories {
     }
 }
 
-ext."jenkins.httpPort" = 8080
+ext.'jenkins.httpPort' = 8080
 
 jacocoTestReport {
     reports {
@@ -55,9 +55,7 @@ test {
     }
 }
 
-task startJenkins(type: JenkinsServerTask, dependsOn: [jpi, test]){}
-
-task integTest(type: Test, dependsOn: startJenkins) {
+task integTest(type: Test, dependsOn: [jpi, test]) {
     testClassesDir = sourceSets.test.output.classesDir
     classpath = sourceSets.test.runtimeClasspath
     include '**/integration/**'
@@ -91,15 +89,17 @@ jenkinsPlugin {
 configurations { forceGroovy }
 
 dependencies {
-    forceGroovy "org.codehaus.groovy:groovy-all:2.4.8"
+    forceGroovy 'org.codehaus.groovy:groovy-all:2.4.8'
     compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
 
     testCompile('org.hamcrest:hamcrest-core:1.3') { force = true }
     testCompile('junit:junit:4.12') { force = true }
     testCompile 'org.mockito:mockito-all:1.10.19'
-    testCompile "info.cukes:cucumber-junit:1.2.4"
-    testCompile "info.cukes:cucumber-java:1.2.4"
-    testCompile "org.codehaus.groovy.modules.http-builder:http-builder:0.7.1"
+    testCompile 'info.cukes:cucumber-junit:1.2.4'
+    testCompile 'info.cukes:cucumber-java:1.2.4'
+    testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+
+    jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.48'
 }
 
 task deleteTarget(type: Delete) {
@@ -110,68 +110,12 @@ clean.dependsOn deleteTarget
 
 jpi {
     classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
-    manifest.attributes(["PluginFirstClassLoader": "true" ])
+    manifest.attributes(['PluginFirstClassLoader': 'true'])
 }
 
 /**
  * We must exclude the junit-dep dependency, because it is clashing with junit when we run the AcceptanceTests.
  */
-configurations.findAll {!it.name.endsWith('junit-dep')}.each { conf ->
-    conf.exclude group: "junit", module: "junit-dep"
-}
-
-
-import java.nio.file.Files
-import java.util.jar.JarFile
-
-/**
- * Task that starts Jenkins in place with the current plugin.
- *
- * @author Kohsuke Kawaguchi
- */
-class JenkinsServerTask extends DefaultTask {
-    private static final String HTTP_PORT = 'jenkins.httpPort'
-
-    @TaskAction
-    def start() {
-        def c = project.configurations.getByName(org.jenkinsci.gradle.plugins.jpi.JpiPlugin.WAR_DEPENDENCY_CONFIGURATION_NAME)
-        def files = c.resolve()
-        if (files.isEmpty()) {
-            throw new GradleException('No jenkins.war dependency is specified')
-        }
-        File war = files.toArray()[0]
-
-        generateHpl()
-
-        def conv = project.extensions.getByType(org.jenkinsci.gradle.plugins.jpi.JpiExtension)
-        System.setProperty('JENKINS_HOME', conv.workDir.absolutePath)
-        setSystemPropertyIfEmpty('stapler.trace', 'true')
-        setSystemPropertyIfEmpty('stapler.jelly.noCache', 'true')
-        setSystemPropertyIfEmpty('debug.YUI', 'true')
-
-        List<String> args = []
-        String port = project.properties[HTTP_PORT] ?: System.properties[HTTP_PORT]
-        println "Using port: $port"
-        if (port) {
-            args << "--httpPort=${port}"
-        }
-
-        def cl = new URLClassLoader([war.toURI().toURL()] as URL[])
-        def mainClass = new JarFile(war).manifest.mainAttributes.getValue('Main-Class')
-        cl.loadClass(mainClass).main(args as String[])
-    }
-
-    private static void generateHpl() {
-        def from = new File("build/libs/groovy-events-listener-plugin.hpi")
-        def to = new File("work/plugins/groovy-events-listener-plugin.hpi")
-        assert [from.exists(), to.parentFile.mkdirs()].every()
-        Files.copy(from.toPath(), to.toPath())
-        println ">>> Copied file from '$from' to '$to'"
-    }
-
-    private static void setSystemPropertyIfEmpty(String name, String value) {
-        if (!System.getProperty(name)) {
-            System.setProperty(name, value)
-        }
-    }
+configurations.findAll { !it.name.endsWith('junit-dep') }.each { conf ->
+    conf.exclude group: 'junit', module: 'junit-dep'
 }

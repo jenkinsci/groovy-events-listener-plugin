@@ -1,4 +1,3 @@
-
 apply plugin: 'idea'
 apply plugin: 'groovy'
 apply plugin: 'java'
@@ -36,32 +35,32 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.14'
 
     def jvmOpts = customJvmArgs.join(' ')
-    inputs.property("jvmOpts", jvmOpts)
+    inputs.property('jvmOpts', jvmOpts)
     doLast {
-        def optsEnvVar = "DEFAULT_JVM_OPTS"
+        def optsEnvVar = 'DEFAULT_JVM_OPTS'
         scriptFile.write scriptFile.text.replace("$optsEnvVar=\"\"", "$optsEnvVar=\"$jvmOpts\"")
         batchScript.write batchScript.text.replace("set $optsEnvVar=", "set $optsEnvVar=$jvmOpts")
     }
 }
 
 allprojects {
-	clean{
-		delete "work"
-		delete ".gradle"
-	}
-	
-	tasks.withType(JavaCompile) {
+    clean {
+        delete 'work'
+        delete '.gradle'
+    }
+
+    tasks.withType(JavaCompile) {
         options.fork = true
         options.forkOptions.jvmArgs += customJvmArgs
-	}
-	
+    }
+
     tasks.withType(GroovyCompile) {
         configure(groovyOptions.forkOptions) {
             memoryMaximumSize = '256m'
             jvmArgs = customJvmArgs
         }
     }
-    
+
     tasks.withType(Test) {
         jvmArgs(customJvmArgs)
         testLogging {
@@ -77,16 +76,16 @@ subprojects {
 // enforce version...
 
 task enforceVersion << {
-    if (enforceVersionFlag){
+    if (enforceVersionFlag) {
         def foundVersion = JavaVersion.current()
-        if (foundVersion != enforceJavaVersion){
+        if (foundVersion != enforceJavaVersion) {
             throw new IllegalStateException("Wrong Java version; required is $enforceJavaVersion, but found $foundVersion")
         }
     }
 }
 
-compileTasks*.dependsOn(enforceVersion);
+compileTasks*.dependsOn(enforceVersion)
 
 task showMeCache << {
-  configurations.compile.each { println it }
+    configurations.compile.each { println it }
 }
