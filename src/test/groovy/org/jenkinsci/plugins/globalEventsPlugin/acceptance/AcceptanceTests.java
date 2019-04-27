@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         strict = false,
         plugin = {"pretty"},
-        tags = {"~@ignore"}
+        tags = {"not @ignore"}
 )
 public class AcceptanceTests {
 }

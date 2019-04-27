@@ -13,10 +13,6 @@ import org.jenkinsci.plugins.globalEventsPlugin.GlobalComputerListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalQueueListener
 import org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap
 
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.is
-import static org.junit.Assert.assertThat
-
 class StepDefs {
 
     GlobalEventsPlugin.DescriptorImpl plugin
@@ -176,13 +172,16 @@ class StepDefs {
     @Then('^an exception should be thrown with the message \'(.+)\'$')
     void exception_thrown(String expectedExceptionMessage) {
         def actualMessage = compilationException.message
-        assertThat(actualMessage, actualMessage.contains(expectedExceptionMessage), equalTo(true))
+        assert actualMessage.contains(expectedExceptionMessage)
     }
 
     @Then('^the validation result should be (.+) with message \'(.+)\'$')
     void the_validation_message(String expectedValidationKind, String expectedValidationMessage) {
-        assertThat(validationResponse.kind, is(FormValidation.Kind.valueOf(expectedValidationKind)))
-        def message = validationResponse.message
-        assertThat("Could not find '$expectedValidationMessage' in actual value '$message'.", message.contains(expectedValidationMessage), equalTo(true))
+        def actualKind = validationResponse.kind
+        def expectedKind = FormValidation.Kind.valueOf(expectedValidationKind)
+        assert actualKind == expectedKind
+
+        def actualMessage = validationResponse.message
+        assert actualMessage.contains(expectedValidationMessage)
     }
 }
