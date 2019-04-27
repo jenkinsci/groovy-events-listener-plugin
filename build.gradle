@@ -50,8 +50,8 @@ check.dependsOn jacocoTestReport
 test {
     exclude '**/integration/**'
     reports {
-        junitXml.enabled = false
-        html.enabled = false
+        junitXml.enabled = true
+        html.enabled = true
     }
 }
 
@@ -61,8 +61,8 @@ task integTest(type: Test, dependsOn: [jpi, test]) {
     include '**/integration/**'
     outputs.upToDateWhen { false }
     reports {
-        junitXml.enabled = false
-        html.enabled = false
+        junitXml.enabled = true
+        html.enabled = true
     }
 }
 
