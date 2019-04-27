@@ -1,6 +1,6 @@
 Feature: Groovy Script - Runtime
   As a developer
-  I want to be able to execute my groovy script
+  I want to be able to execute my Groovy script
   So that I can have an action performed
 
 
