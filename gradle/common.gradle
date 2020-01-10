@@ -19,7 +19,7 @@ repositories {
 }
 
 ext {
-    groovyVersion = '2.4.8'
+    groovyVersion = '2.4.12'
     customJvmArgs = ['-Xmx128m']
 }
 

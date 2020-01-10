@@ -69,7 +69,7 @@ task integTest(type: Test, dependsOn: [jpi, test]) {
 check.dependsOn integTest
 
 jenkinsPlugin {
-    coreVersion = '2.60.3'
+    coreVersion = '2.143'
     shortName = project.name
     displayName = jenkinsDisplayName
     url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
@@ -89,7 +89,7 @@ jenkinsPlugin {
 configurations { forceGroovy }
 
 dependencies {
-    forceGroovy 'org.codehaus.groovy:groovy-all:2.4.8'
+    forceGroovy "org.codehaus.groovy:groovy-all:${groovyVersion}"
     compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
 
     testCompile('org.hamcrest:hamcrest-core:1.3') { force = true }
