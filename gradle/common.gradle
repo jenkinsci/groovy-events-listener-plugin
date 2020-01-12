@@ -23,16 +23,8 @@ ext {
     customJvmArgs = ['-Xmx128m']
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.14'
-
-    def jvmOpts = customJvmArgs.join(' ')
-    inputs.property('jvmOpts', jvmOpts)
-    doLast {
-        def optsEnvVar = 'DEFAULT_JVM_OPTS'
-        scriptFile.write scriptFile.text.replace("$optsEnvVar=\"\"", "$optsEnvVar=\"$jvmOpts\"")
-        batchScript.write batchScript.text.replace("set $optsEnvVar=", "set $optsEnvVar=$jvmOpts")
-    }
+wrapper {
+    gradleVersion = '6.0.1'
 }
 
 allprojects {
@@ -65,19 +57,21 @@ subprojects {
     apply from: "$rootDir/gradle/idea.gradle"
 }
 
-// enforce version...
-
-task enforceVersion << {
-    if (enforceVersionFlag) {
-        def foundVersion = JavaVersion.current()
-        if (foundVersion != enforceJavaVersion) {
-            throw new IllegalStateException("Wrong Java version; required is $enforceJavaVersion, but found $foundVersion")
+tasks.register('enforceVersion') {
+    doLast {
+        if (enforceVersionFlag) {
+            def foundVersion = JavaVersion.current()
+            if (foundVersion != enforceJavaVersion) {
+                throw new IllegalStateException("Wrong Java version; required is $enforceJavaVersion, but found $foundVersion")
+            }
         }
     }
 }
 
-compileTasks*.dependsOn(enforceVersion)
+compileTasks*.dependsOn('enforceVersion')
 
-task showMeCache << {
-    configurations.compile.each { println it }
+tasks.register('showMeCache') {
+    doLast {
+        configurations.compile.each { println it }
+    }
 }
