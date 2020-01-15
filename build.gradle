@@ -1,41 +1,13 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            url 'http://repo.jenkins-ci.org/releases/'
-        }
-    }
-    dependencies {
-        classpath 'org.jenkins-ci.tools:gradle-jpi-plugin:0.18.1'
-    }
+plugins {
+    id 'org.jenkins-ci.jpi' version '0.36.2'
+    id 'jacoco'
 }
 
 defaultTasks 'clean', 'jpi'
 
-/**
-=== Usage ===
-
-gradlew jpi - Build the Jenkins plugin file, which can then be found in the build directory. The file will currently end in ".hpi".
-gradlew publishToMavenLocal - Build the Jenkins plugin and install it into your local Maven repository.
-gradlew publish - Deploy your plugin to the Jenkins Maven repository to be included in the Update Center.
-gradlew server - Start a local instance of Jenkins (http://localhost:8080) with the plugin pre-installed for testing and debugging.
- */
-
 ext.enforceJavaVersion = JavaVersion.VERSION_1_8
 
-apply plugin: 'org.jenkins-ci.jpi'
 apply from: "$rootDir/gradle/common.gradle"
-apply plugin: 'jacoco'
-
-repositories {
-    mavenCentral()
-    jcenter()
-    maven {
-        url 'http://repo.jenkins-ci.org/releases/'
-    }
-}
-
-ext.'jenkins.httpPort' = 8080
 
 jacocoTestReport {
     reports {
@@ -55,8 +27,9 @@ test {
     }
 }
 
-task integTest(type: Test, dependsOn: [jpi, test]) {
-    testClassesDir = sourceSets.test.output.classesDir
+tasks.register('integTest', Test) {
+    dependsOn = [jpi, test]
+    testClassesDirs = sourceSets.test.output.classesDirs
     classpath = sourceSets.test.runtimeClasspath
     include '**/integration/**'
     outputs.upToDateWhen { false }
@@ -66,7 +39,7 @@ task integTest(type: Test, dependsOn: [jpi, test]) {
     }
 }
 
-check.dependsOn integTest
+check.dependsOn 'integTest'
 
 jenkinsPlugin {
     coreVersion = '2.60.3'
@@ -77,6 +50,7 @@ jenkinsPlugin {
     compatibleSinceVersion = '1.20'
     fileExtension = 'hpi'
     maskClasses = 'groovy.grape'
+    pluginFirstClassLoader = true
     developers {
         developer {
             id 'nickg'
@@ -99,20 +73,12 @@ dependencies {
     jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.59'
 }
 
-task deleteTarget(type: Delete) {
+tasks.register('deleteTarget', Delete) {
     delete 'target', 'out', 'work'
 }
 
 clean.dependsOn deleteTarget
 
-jpi {
+war {
     classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
-    manifest.attributes(['PluginFirstClassLoader': 'true'])
-}
-
-/**
- * We must exclude the junit-dep dependency, because it is clashing with junit when we run the AcceptanceTests.
- */
-configurations.findAll { !it.name.endsWith('junit-dep') }.each { conf ->
-    conf.exclude group: 'junit', module: 'junit-dep'
 }
