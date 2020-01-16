@@ -18,9 +18,3 @@ allprojects {
         }
     }
 }
-
-tasks.register('showMeCache') {
-    doLast {
-        configurations.compile.each { println it }
-    }
-}
