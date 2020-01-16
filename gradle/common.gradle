@@ -1,8 +1,3 @@
-apply plugin: 'idea'
-apply plugin: 'groovy'
-apply plugin: 'java'
-
-idea.project?.vcs = 'Git'
 
 ext {
     /* optional - set variable enforceJavaVersion */
