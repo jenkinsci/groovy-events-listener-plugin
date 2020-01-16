@@ -39,10 +39,6 @@ allprojects {
     }
 }
 
-subprojects {
-    apply from: "$rootDir/gradle/idea.gradle"
-}
-
 tasks.register('enforceVersion') {
     doLast {
         if (enforceVersionFlag) {
