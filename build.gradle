@@ -5,7 +5,11 @@ plugins {
 
 defaultTasks 'clean', 'jpi'
 
-ext.enforceJavaVersion = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    throw new GradleException("Build requires Java ${JavaVersion.VERSION_1_8}")
+}
 
 apply from: "$rootDir/gradle/common.gradle"
 

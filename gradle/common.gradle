@@ -1,14 +1,3 @@
-
-ext {
-    /* optional - set variable enforceJavaVersion */
-    enforceVersionFlag = project.getProperties().containsKey('enforceJavaVersion')
-    javaVersion = project.getProperties().get('enforceJavaVersion') ?: JavaVersion.VERSION_1_6
-    compileTasks = [compileJava, compileTestJava, compileGroovy, compileTestGroovy]
-}
-
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
-
 ext {
     groovyVersion = '2.4.8'
 }
@@ -29,19 +18,6 @@ allprojects {
         }
     }
 }
-
-tasks.register('enforceVersion') {
-    doLast {
-        if (enforceVersionFlag) {
-            def foundVersion = JavaVersion.current()
-            if (foundVersion != enforceJavaVersion) {
-                throw new IllegalStateException("Wrong Java version; required is $enforceJavaVersion, but found $foundVersion")
-            }
-        }
-    }
-}
-
-compileTasks*.dependsOn('enforceVersion')
 
 tasks.register('showMeCache') {
     doLast {
