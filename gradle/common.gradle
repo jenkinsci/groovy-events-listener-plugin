@@ -20,7 +20,6 @@ repositories {
 
 ext {
     groovyVersion = '2.4.8'
-    customJvmArgs = ['-Xmx128m']
 }
 
 wrapper {
@@ -33,20 +32,7 @@ allprojects {
         delete '.gradle'
     }
 
-    tasks.withType(JavaCompile) {
-        options.fork = true
-        options.forkOptions.jvmArgs += customJvmArgs
-    }
-
-    tasks.withType(GroovyCompile) {
-        configure(groovyOptions.forkOptions) {
-            memoryMaximumSize = '256m'
-            jvmArgs = customJvmArgs
-        }
-    }
-
     tasks.withType(Test) {
-        jvmArgs(customJvmArgs)
         testLogging {
             exceptionFormat = 'full'
         }
