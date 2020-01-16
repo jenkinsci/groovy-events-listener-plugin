@@ -14,10 +14,6 @@ ext {
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
-repositories {
-    mavenCentral()
-}
-
 ext {
     groovyVersion = '2.4.8'
 }
