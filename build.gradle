@@ -45,6 +45,12 @@ tasks.register('integTest', Test) {
 
 check.dependsOn 'integTest'
 
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
 jenkinsPlugin {
     coreVersion = '2.60.3'
     shortName = project.name
@@ -77,6 +83,11 @@ dependencies {
     jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.59'
 }
 
+clean {
+    delete 'work'
+    delete '.gradle'
+}
+
 tasks.register('deleteTarget', Delete) {
     delete 'target', 'out', 'work'
 }
@@ -85,4 +96,8 @@ clean.dependsOn deleteTarget
 
 war {
     classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
+}
+
+wrapper {
+    gradleVersion = '6.0.1'
 }

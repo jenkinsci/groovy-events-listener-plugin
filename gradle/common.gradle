@@ -1,20 +1,3 @@
 ext {
     groovyVersion = '2.4.8'
 }
-
-wrapper {
-    gradleVersion = '6.0.1'
-}
-
-allprojects {
-    clean {
-        delete 'work'
-        delete '.gradle'
-    }
-
-    tasks.withType(Test) {
-        testLogging {
-            exceptionFormat = 'full'
-        }
-    }
-}
