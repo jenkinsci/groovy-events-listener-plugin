@@ -167,7 +167,7 @@ please see the plugin's [help file](https://cdn.rawgit.com/jenkinsci/groovy-even
 Authors
 ---
 
-Marky Jackson <marky.r.jackson@gmail.comn>
+Marky Jackson <marky.r.jackson@gmail.com>
 
 License
 ---
