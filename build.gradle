@@ -45,7 +45,7 @@ jenkinsPlugin {
     coreVersion = '2.60.3'
     shortName = project.name
     displayName = jenkinsDisplayName
-    url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
+    url = "https://github.com/jenkinsci/$project.name"
     gitHubUrl = "https://github.com/jenkinsci/$project.name"
     compatibleSinceVersion = '1.20'
     fileExtension = 'hpi'
