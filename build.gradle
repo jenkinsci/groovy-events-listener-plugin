@@ -11,8 +11,6 @@ if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
     throw new GradleException("Build requires Java ${JavaVersion.VERSION_1_8}")
 }
 
-apply from: "$rootDir/gradle/common.gradle"
-
 jacocoTestReport {
     reports {
         xml.enabled = true
