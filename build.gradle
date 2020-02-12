@@ -10,7 +10,7 @@ if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
 }
 
 jenkinsPlugin {
-    coreVersion = '2.60.3'
+    coreVersion = '2.143'
     shortName = project.name
     displayName = jenkinsDisplayName
     url = "https://github.com/jenkinsci/$project.name"
@@ -31,7 +31,7 @@ jenkinsPlugin {
 configurations { forceGroovy }
 
 dependencies {
-    forceGroovy 'org.codehaus.groovy:groovy-all:2.4.8'
+    forceGroovy 'org.codehaus.groovy:groovy-all:2.4.12'
     compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
 
     testCompile 'io.cucumber:cucumber-junit:4.8.1'
