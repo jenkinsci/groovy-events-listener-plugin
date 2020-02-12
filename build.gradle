@@ -3,43 +3,11 @@ plugins {
     id 'jacoco'
 }
 
-defaultTasks 'clean', 'jpi'
+sourceCompatibility = JavaVersion.VERSION_1_8
 
-ext.enforceJavaVersion = JavaVersion.VERSION_1_8
-
-apply from: "$rootDir/gradle/common.gradle"
-
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
+if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    throw new GradleException("Build requires Java ${JavaVersion.VERSION_1_8}")
 }
-
-check.dependsOn jacocoTestReport
-
-// Integration Test Structure
-test {
-    exclude '**/integration/**'
-    reports {
-        junitXml.enabled = true
-        html.enabled = true
-    }
-}
-
-tasks.register('integTest', Test) {
-    dependsOn = [jpi, test]
-    testClassesDirs = sourceSets.test.output.classesDirs
-    classpath = sourceSets.test.runtimeClasspath
-    include '**/integration/**'
-    outputs.upToDateWhen { false }
-    reports {
-        junitXml.enabled = true
-        html.enabled = true
-    }
-}
-
-check.dependsOn 'integTest'
 
 jenkinsPlugin {
     coreVersion = '2.60.3'
@@ -73,12 +41,61 @@ dependencies {
     jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.59'
 }
 
+defaultTasks 'clean', 'jpi'
+
+clean {
+    delete 'work'
+    delete '.gradle'
+}
+
 tasks.register('deleteTarget', Delete) {
     delete 'target', 'out', 'work'
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport
+
+// Integration Test Structure
+test {
+    exclude '**/integration/**'
+    reports {
+        junitXml.enabled = true
+        html.enabled = true
+    }
+}
+
+tasks.register('integTest', Test) {
+    dependsOn = [jpi, test]
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    include '**/integration/**'
+    outputs.upToDateWhen { false }
+    reports {
+        junitXml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn 'integTest'
+
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat = 'full'
+    }
 }
 
 clean.dependsOn deleteTarget
 
 war {
     classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
+}
+
+wrapper {
+    gradleVersion = '6.0.1'
 }
