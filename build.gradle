@@ -3,12 +3,53 @@ plugins {
     id 'jacoco'
 }
 
-defaultTasks 'clean', 'jpi'
-
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
     throw new GradleException("Build requires Java ${JavaVersion.VERSION_1_8}")
+}
+
+jenkinsPlugin {
+    coreVersion = '2.60.3'
+    shortName = project.name
+    displayName = jenkinsDisplayName
+    url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
+    gitHubUrl = "https://github.com/jenkinsci/$project.name"
+    compatibleSinceVersion = '1.20'
+    fileExtension = 'hpi'
+    maskClasses = 'groovy.grape'
+    pluginFirstClassLoader = true
+    developers {
+        developer {
+            id 'nickg'
+            name 'Nick Grealy'
+            email 'nickgrealy@gmail.com'
+        }
+    }
+}
+
+configurations { forceGroovy }
+
+dependencies {
+    forceGroovy 'org.codehaus.groovy:groovy-all:2.4.8'
+    compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
+
+    testCompile 'io.cucumber:cucumber-junit:4.8.1'
+    testCompile 'io.cucumber:cucumber-java:4.8.1'
+    testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+
+    jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.59'
+}
+
+defaultTasks 'clean', 'jpi'
+
+clean {
+    delete 'work'
+    delete '.gradle'
+}
+
+tasks.register('deleteTarget', Delete) {
+    delete 'target', 'out', 'work'
 }
 
 jacocoTestReport {
@@ -47,47 +88,6 @@ tasks.withType(Test) {
     testLogging {
         exceptionFormat = 'full'
     }
-}
-
-jenkinsPlugin {
-    coreVersion = '2.60.3'
-    shortName = project.name
-    displayName = jenkinsDisplayName
-    url = "https://wiki.jenkins-ci.org/display/JENKINS/$jenkinsDisplayName"
-    gitHubUrl = "https://github.com/jenkinsci/$project.name"
-    compatibleSinceVersion = '1.20'
-    fileExtension = 'hpi'
-    maskClasses = 'groovy.grape'
-    pluginFirstClassLoader = true
-    developers {
-        developer {
-            id 'nickg'
-            name 'Nick Grealy'
-            email 'nickgrealy@gmail.com'
-        }
-    }
-}
-
-configurations { forceGroovy }
-
-dependencies {
-    forceGroovy 'org.codehaus.groovy:groovy-all:2.4.8'
-    compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
-
-    testCompile 'io.cucumber:cucumber-junit:4.8.1'
-    testCompile 'io.cucumber:cucumber-java:4.8.1'
-    testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
-
-    jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.59'
-}
-
-clean {
-    delete 'work'
-    delete '.gradle'
-}
-
-tasks.register('deleteTarget', Delete) {
-    delete 'target', 'out', 'work'
 }
 
 clean.dependsOn deleteTarget
