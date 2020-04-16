@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jenkins-ci.jpi' version '0.36.2'
+    id 'org.jenkins-ci.jpi' version '0.39.0'
     id 'jacoco'
 }
 
@@ -28,17 +28,13 @@ jenkinsPlugin {
     }
 }
 
-configurations { forceGroovy }
-
 dependencies {
-    forceGroovy 'org.codehaus.groovy:groovy-all:2.4.12'
-    compile 'org.apache.ivy:ivy:2.4.0' // For @Grab
+    implementation 'org.codehaus.groovy:groovy-all:2.4.12' // add the Groovy lib to the plugin to make @Grab work
+    implementation 'org.apache.ivy:ivy:2.4.0'              // required for @Grab
 
-    testCompile 'io.cucumber:cucumber-junit:4.8.1'
-    testCompile 'io.cucumber:cucumber-java:4.8.1'
-    testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
-
-    jenkinsTest 'org.jenkins-ci.main:jenkins-test-harness:2.59'
+    testImplementation 'io.cucumber:cucumber-junit:4.8.1'
+    testImplementation 'io.cucumber:cucumber-java:4.8.1'
+    testImplementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
 }
 
 defaultTasks 'clean', 'jpi'
@@ -91,10 +87,6 @@ tasks.withType(Test) {
 }
 
 clean.dependsOn deleteTarget
-
-war {
-    classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grab work
-}
 
 wrapper {
     gradleVersion = '6.0.1'
