@@ -8,6 +8,7 @@ import hudson.util.FormValidation
 import hudson.util.LogTaskListener
 import jenkins.model.Jenkins
 import net.sf.json.JSONObject
+import org.apache.commons.lang.StringUtils
 import org.kohsuke.stapler.QueryParameter
 import org.kohsuke.stapler.StaplerRequest
 import org.kohsuke.stapler.export.ExportedBean
@@ -21,28 +22,29 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
     private final static Logger log = Logger.getLogger(GlobalEventsPlugin.class.getName())
 
     @Extension
-    public final static DescriptorImpl descriptor = getStaticDescriptor()
+    public final static DescriptorImpl SINGLETON_DESCRIPTOR = getSingletonDescriptor()
 
     private final static Scheduler scheduler = new Scheduler(
             new Runnable() {
                 @Override
                 public void run() {
-                    descriptor.safeExecOnEventGroovyCode(log, new HashMap<Object, Object>() {
-                        {
-                            put("run", null);
-                            put("event", Event.PLUGIN_SCHEDULE);
-                        }
-                    });
+                    try {
+                        SINGLETON_DESCRIPTOR.processEvent(Event.PLUGIN_SCHEDULE, log, [:])
+                    }
+                    catch (Exception exception) {
+                        log.fine("Failed to run scheduler: " + exception)
+                    }
                 }
-            }, TimeUnit.MINUTES);
+            }, TimeUnit.MINUTES)
 
+    @Override
     void start() {
-        descriptor.processEvent(Event.PLUGIN_STARTED, log, [:])
+        getDescriptor().processEvent(Event.PLUGIN_STARTED, log, [:])
         log.fine(">>> Initialising ${this.class.simpleName}... [DONE]")
 
-        final scheduleTime = descriptor.getScheduleTime();
+        final scheduleTime = getDescriptor().getScheduleTime()
         if (scheduleTime > 0) {
-            scheduler.run(scheduleTime);
+            scheduler.run(scheduleTime)
         }
     }
 
@@ -52,20 +54,21 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         getDescriptor().processEvent(Event.PLUGIN_STOPPED, log, [:])
     }
 
+    @Override
     DescriptorImpl getDescriptor() {
-        return descriptor
+        return getSingletonDescriptor()
     }
 
-    private static DescriptorImpl getStaticDescriptor(){
-        if (descriptor == null){
-            if (Jenkins.getInstance() != null) {
-                return new DescriptorImpl(Jenkins.getInstance().getPluginManager().uberClassLoader)
-            } else {
-                // this occurs when code is run outside of a Jenkins context, use this class loader...
-                return new DescriptorImpl(GlobalEventsPlugin.classLoader)
-            }
+    /**
+     * "Reversed" order for singleton initialiser (due to SINGLETON_DESCRIPTOR needing to be final).
+     * @return
+     */
+    public static DescriptorImpl getSingletonDescriptor() {
+        if (SINGLETON_DESCRIPTOR != null) {
+            return SINGLETON_DESCRIPTOR
         }
-        return descriptor;
+        // must use the classloader, that loaded this plugin, so that Ivy lib is available...
+        return new DescriptorImpl(GlobalEventsPlugin.classLoader)
     }
 
     /**
@@ -87,9 +90,9 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         protected final transient Map<Object, Object> context = new HashMap<Object, Object>()
         protected String onEventGroovyCode = getDefaultOnEventGroovyCode()
 
-        private boolean disableSynchronization = false;
-        private int scheduleTime = 0;
-        private String classPath = null;
+        private boolean disableSynchronization = false
+        private int scheduleTime = 0
+        private String classPath = null
 
         private Map<String, Boolean> eventsEnabled = new HashMap<String, Boolean>()
 
@@ -121,15 +124,15 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          */
         DescriptorImpl(ClassLoader classLoader) {
             load()
-            parentClassLoader = classLoader;
+            parentClassLoader = classLoader
             updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(getOnEventGroovyCode())
         }
 
         private updateClasspath() {
-            groovyClassLoader = new GroovyClassLoader(parentClassLoader);
+            groovyClassLoader = new GroovyClassLoader(parentClassLoader)
 
-            if (classPath !=null) {
+            if (StringUtils.isNotEmpty(classPath)) {
                 for (String path : classPath.split(",")) {
                     groovyClassLoader.addClasspath(path.trim())
                 }
@@ -137,7 +140,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         }
 
         void putToContext(Object key, Object value) {
-            context.put(key, value);
+            context.put(key, value)
         }
 
         String getOnEventGroovyCode() {
@@ -167,8 +170,8 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
          * Can throw compilation exception.
          */
         public Script getScriptReadyToBeExecuted(String groovyCode) {
-            final Class<? extends Script> clazz = groovyClassLoader.parseClass("import ${GlobalEventsPlugin.package.name}.*\n" + groovyCode);
-            return clazz.newInstance();
+            final Class<? extends Script> clazz = groovyClassLoader.parseClass("import ${GlobalEventsPlugin.package.name}.*\n" + groovyCode)
+            return clazz.newInstance()
         }
 
         void update(JSONObject formData) {
@@ -184,6 +187,16 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             scheduleTime = formData.getInt("scheduleTime")
             classPath = formData.getString("classPath")
 
+            if (scheduleTime > 0) {
+                scheduler.run(scheduleTime)
+                eventsEnabled.put(Event.PLUGIN_SCHEDULE, Boolean.TRUE)
+                log.finer(">>> Enable scheduler. Schedule time is " + scheduleTime)
+            } else {
+                scheduler.stop()
+                eventsEnabled.put(Event.PLUGIN_SCHEDULE, Boolean.FALSE)
+                log.finer(">>> Scheduler was stopped")
+            }
+
             updateClasspath()
             groovyScript = getScriptReadyToBeExecuted(onEventGroovyCode)
         }
@@ -193,15 +206,6 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             update(formData)
 
             save() // save configuration
-
-            if (scheduleTime > 0) {
-                scheduler.run(scheduleTime)
-                log.finer(">>> Enable sheduler. Schedule time is " + scheduleTime)
-            }
-            else {
-                scheduler.stop()
-                log.finer(">>> Scheduler was stopped")
-            }
 
             return super.configure(req, formData)
         }
@@ -239,7 +243,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                     Map envVars = [:]
                     def jenkins = Jenkins.getInstance()
                     EnvironmentVariablesNodeProperty globalEnvVars = jenkins?.globalNodeProperties?.get(EnvironmentVariablesNodeProperty)
-                    if (globalEnvVars){
+                    if (globalEnvVars) {
                         envVars.putAll(globalEnvVars.envVars)
                     }
                     // get the Job's environment variables (if present)...
@@ -247,12 +251,12 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                         Run run = params.run
                         if (params.listener instanceof TaskListener) {
                             def tmp = run.getEnvironment((TaskListener) params.listener)
-                            if (tmp){
+                            if (tmp) {
                                 envVars.putAll(tmp)
                             }
                         } else {
                             def tmp = run.getEnvironment(new LogTaskListener(log, Level.INFO))
-                            if (tmp){
+                            if (tmp) {
                                 envVars.putAll(tmp)
                             }
                         }
@@ -268,22 +272,22 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
                     if (getDisableSynchronization()) {
                         executionStart = System.currentTimeMillis()
                         runScript(params, log, groovyScript)
-                    }
-                    else {
+                    } else {
                         synchronized (groovyScript) {
                             executionStart = System.currentTimeMillis()
                             runScript(params, log, groovyScript)
                         }
                     }
 
-                    def totalDurationMillis = System.currentTimeMillis() - syncStart
-                    def executionDurationMillis = System.currentTimeMillis() - executionStart
-                    def synchronizationMillis=totalDurationMillis-executionDurationMillis
+                    def totalEnd = System.currentTimeMillis()
+                    def totalDurationMillis = totalEnd - syncStart
+                    def executionDurationMillis = totalEnd - executionStart
+                    def synchronizationMillis = totalDurationMillis - executionDurationMillis
 
-                    log.finer(">>> Executing groovy script completed successfully. "+
+                    log.finer(">>> Executing groovy script completed successfully. " +
                             "totalDurationMillis='$totalDurationMillis'," +
                             "executionDurationMillis='$executionDurationMillis'," +
-                            "synchronizationMillis=`$synchronizationMillis`")
+                            "synchronizationMillis='$synchronizationMillis'")
                 } else {
                     log.warning(">>> Skipping execution, Groovy code was null or blank.")
                 }
@@ -315,18 +319,18 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         }
 
         public FormValidation doTestGroovyCode(@QueryParameter("onEventGroovyCode") final String onEventGroovyCode) {
-            FormValidation validationResult;
+            FormValidation validationResult
             try {
-                Script script = getScriptReadyToBeExecuted(onEventGroovyCode);
+                Script script = getScriptReadyToBeExecuted(onEventGroovyCode)
                 LoggerTrap logger = new LoggerTrap(GlobalEventsPlugin.name)
                 validationResult = safeExecGroovyCode(Event.JOB_STARTED, logger, script, [
-                        env  : [:],
-                        run  : [:],
+                        env: [:],
+                        run: [:],
                 ], true)
                 if (validationResult == null) {
                     validationResult = FormValidation.ok("\nExecution completed successfully!\n\n${logger.all.join("\n\n")}")
                 }
-            } catch (Throwable t){
+            } catch (Throwable t) {
                 validationResult = FormValidation.error("\nAn exception was caught.\n\n" + stringifyException(t))
             }
             validationResult

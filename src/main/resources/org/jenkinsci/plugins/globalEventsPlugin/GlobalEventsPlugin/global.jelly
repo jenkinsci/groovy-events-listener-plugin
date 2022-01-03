@@ -14,9 +14,13 @@
       so it should be straightforward to find them.
     -->
     <f:section title="Groovy Events Listener Plugin">
-        <f:entry title="${%Groovy Code}" field="onEventGroovyCode"
-                 description="This Groovy code is executed every time an event occurs.">
+        <f:entry
+            title="${%Groovy Code}"
+            field="onEventGroovyCode"
+            description="This Groovy code is executed every time an event occurs.">
+
             <f:textarea
+                    id="gelpCode"
                     default="${descriptor.getDefaultOnEventGroovyCode()}"
                     codemirror-mode="groovy"
                     codemirror-config="mode: 'text/x-groovy',
@@ -24,10 +28,6 @@
                     matchBrackets: true,
                     onBlur: function(editor){editor.save()}"/>
         </f:entry>
-
-        <f:validateButton
-                title="${%Test Groovy Code}" progress="${%Executing...}"
-                method="testGroovyCode" with="onEventGroovyCode"/>
 
         <f:advanced>
             <f:entry title="Disable Synchronization">
@@ -131,6 +131,44 @@
                     />
                 </f:entry>
             </f:section>
+            <f:section title="Item Configuration">
+                <f:entry title="Created">
+                    <f:checkbox
+                            field="ItemListener__onCreated"
+                            checked="${descriptor.isEventEnabled('ItemListener.onCreated')}"
+                    />
+                </f:entry>
+                <f:entry title="Copied">
+                    <f:checkbox
+                            field="ItemListener__onCopied"
+                            checked="${descriptor.isEventEnabled('ItemListener.onCopied')}"
+                    />
+                </f:entry>
+                <f:entry title="Deleted">
+                    <f:checkbox
+                            field="ItemListener__onDeleted"
+                            checked="${descriptor.isEventEnabled('ItemListener.onDeleted')}"
+                    />
+                </f:entry>
+                <f:entry title="Renamed">
+                    <f:checkbox
+                            field="ItemListener__onRenamed"
+                            checked="${descriptor.isEventEnabled('ItemListener.onRenamed')}"
+                    />
+                </f:entry>
+                <f:entry title="Location Changed">
+                    <f:checkbox
+                            field="ItemListener__onLocationChanged"
+                            checked="${descriptor.isEventEnabled('ItemListener.onLocationChanged')}"
+                    />
+                </f:entry>
+                <f:entry title="Updated">
+                    <f:checkbox
+                            field="ItemListener__onUpdated"
+                            checked="${descriptor.isEventEnabled('ItemListener.onUpdated')}"
+                    />
+                </f:entry>
+            </f:section>
             <f:section title="Scheduler">
                 <f:entry title="Schedule time" description="Raise PLUGIN_SCHEDULE event every $scheduledTime minutes. 0 - disabled">
                   <f:textbox field="scheduleTime" />
@@ -142,5 +180,12 @@
                 </f:entry>
             </f:section>
         </f:advanced>
+
+        <f:validateButton
+                title="${%Test Groovy Code}"
+                progress="${%Executing...}"
+                method="testGroovyCode"
+                with="onEventGroovyCode"/>
+
     </f:section>
 </j:jelly>

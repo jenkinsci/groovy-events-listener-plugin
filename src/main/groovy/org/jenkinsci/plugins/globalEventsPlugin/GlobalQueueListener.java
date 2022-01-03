@@ -10,6 +10,7 @@ import jenkins.model.Jenkins;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
+
 /**
  * Warning: This MUST stay a Java class, Groovy cannot compile (for some reason??).
  */
@@ -28,7 +29,7 @@ public class GlobalQueueListener extends QueueListener {
     GlobalEventsPlugin.DescriptorImpl parentPluginDescriptorOverride = null;
 
     GlobalEventsPlugin.DescriptorImpl getParentPluginDescriptor() {
-        if (parentPluginDescriptorOverride != null){
+        if (parentPluginDescriptorOverride != null) {
             return parentPluginDescriptorOverride;
         } else {
             return Jenkins.getInstance().getPlugin(GlobalEventsPlugin.class).getDescriptor();

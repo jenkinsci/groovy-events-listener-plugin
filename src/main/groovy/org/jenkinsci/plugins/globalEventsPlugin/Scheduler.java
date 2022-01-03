@@ -3,6 +3,7 @@ package org.jenkinsci.plugins.globalEventsPlugin;
 import java.util.concurrent.*;
 
 public class Scheduler {
+
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final Runnable runnable;
     private final TimeUnit unit;

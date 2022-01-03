@@ -7,14 +7,11 @@ import cucumber.api.java.en.When
 import hudson.util.FormValidation
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPlugin
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPluginTest
+import org.jenkinsci.plugins.globalEventsPlugin.GlobalItemListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalRunListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalComputerListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalQueueListener
 import org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap
-
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.is
-import static org.junit.Assert.assertThat
 
 class StepDefs {
 
@@ -22,6 +19,7 @@ class StepDefs {
     GlobalRunListener runListener
     GlobalComputerListener computerListener
     GlobalQueueListener queueListener
+    GlobalItemListener itemListener
     LoggerTrap logger
     String groovyScript
     FormValidation validationResponse
@@ -39,23 +37,28 @@ class StepDefs {
         runListener = new GlobalRunListener()
         runListener.parentPluginDescriptorOverride = plugin
         runListener.log = logger
+
         computerListener = new GlobalComputerListener()
         computerListener.parentPluginDescriptorOverride = plugin
         computerListener.log = logger
+
         queueListener = new GlobalQueueListener()
         queueListener.parentPluginDescriptorOverride = plugin
         queueListener.log = logger
 
+        itemListener = new GlobalItemListener()
+        itemListener.parentPluginDescriptorOverride = plugin
+        itemListener.log = logger
     }
 
     @Given('^the script$')
-    public void the_script(String script) {
+    void the_script(String script) {
         this.groovyScript = script
         plugin.setOnEventGroovyCode(script)
     }
 
     @Given('^the script with exception$')
-    public void the_script_with_exception(String script) {
+    void the_script_with_exception(String script) {
         try {
             this.groovyScript = script
             plugin.setOnEventGroovyCode(script)
@@ -66,7 +69,7 @@ class StepDefs {
     }
 
     @When('^I test the script$')
-    public void i_test_the_script() {
+    void i_test_the_script() {
         try {
             validationResponse = plugin.doTestGroovyCode(groovyScript)
         } catch (Throwable t) {
@@ -76,89 +79,109 @@ class StepDefs {
     }
 
     @When('^the (.+) event is triggered$')
-    public void the_event_is_triggered(String method) {
+    void the_event_is_triggered(String method) {
         try {
-            switch (method){
+            switch (method) {
                 case "Run.onStarted":
                     runListener.onStarted(null, null)
-                    break;
+                    break
                 case "Run.onCompleted":
                     runListener.onCompleted(null, null)
-                    break;
+                    break
                 case "Run.onFinalized":
                     runListener.onFinalized(null)
-                    break;
+                    break
                 case "Run.onDeleted":
                     runListener.onDeleted(null)
-                    break;
+                    break
                 case "Computer.onLaunchFailure":
                     computerListener.onLaunchFailure(null, null)
-                    break;
+                    break
                 case "Computer.onOnline":
                     computerListener.onOnline(null, null)
-                    break;
+                    break
                 case "Computer.onOffline":
                     computerListener.onOffline(null, null)
-                    break;
+                    break
                 case "Computer.onTemporarilyOnline":
                     computerListener.onTemporarilyOnline(null)
-                    break;
+                    break
                 case "Computer.onTemporarilyOffline":
                     computerListener.onTemporarilyOffline(null, null)
-                    break;
+                    break
                 case "Queue.onEnterWaiting":
                     queueListener.onEnterWaiting(null)
-                    break;
+                    break
                 case "Queue.onEnterBlocked":
                     queueListener.onEnterBlocked(null)
-                    break;
+                    break
                 case "Queue.onEnterBuildable":
                     queueListener.onEnterBuildable(null)
-                    break;
+                    break
                 case "Queue.onLeft":
                     queueListener.onLeft(null)
-                    break;
+                    break
+                case "Item.onUpdated":
+                    itemListener.onUpdated(null)
+                    break
+                case "Item.onLocationChanged":
+                    itemListener.onLocationChanged(null, null, null)
+                    break
+                case "Item.onRenamed":
+                    itemListener.onRenamed(null, null, null)
+                    break
+                case "Item.onDeleted":
+                    itemListener.onDeleted(null)
+                    break
+                case "Item.onCopied":
+                    itemListener.onCopied(null, null)
+                    break
+                case "Item.onCreated":
+                    itemListener.onCreated(null)
+                    break
             }
-        } catch (Throwable t){
+        } catch (Throwable t) {
             t.printStackTrace()
             runtimeException = t
         }
     }
 
     @Then('^the log level (.+) should display \'(.+)\'$')
-    public void the_log_should_display(String logLevel, String expectedLog) {
+    void the_log_should_display(String logLevel, String expectedLog) {
         def actualLogInfo = logger.properties[logLevel].join("\n")
         assert actualLogInfo.contains(expectedLog)
     }
 
     @Then('^the log should display$')
-    public void the_log_should_display2(String expectedLog) {
+    void the_log_should_display2(String expectedLog) {
         assert logger.all == expectedLog.readLines()
     }
 
     @Then('^the context should contain (.+) = (.+)$')
-    public void the_cache_should_contain(String key, String expectedValue) {
+    void the_cache_should_contain(String key, String expectedValue) {
         def actualValue = plugin.context[key]
         assert actualValue == (expectedValue == 'null' ? null : expectedValue)
     }
 
     @Then('^no exception should be thrown$')
-    public void no_exception(){
+    void no_exception(){
         assert compilationException == null
         assert runtimeException == null
     }
 
     @Then('^an exception should be thrown with the message \'(.+)\'$')
-    public void exception_thrown(String expectedExceptionMessage) {
+    void exception_thrown(String expectedExceptionMessage) {
         def actualMessage = compilationException.message
-        assertThat(actualMessage, actualMessage.contains(expectedExceptionMessage), equalTo(true))
+        assert actualMessage.contains(expectedExceptionMessage)
     }
 
     @Then('^the validation result should be (.+) with message \'(.+)\'$')
-    public void the_validation_message(String expectedValidationKind, String expectedValidationMessage) {
-        assertThat(validationResponse.kind, is(FormValidation.Kind.valueOf(expectedValidationKind)))
-        def message = validationResponse.message
-        assertThat(message, message.contains(expectedValidationMessage), equalTo(true))
-    }
+    void the_validation_message(String expectedValidationKind, String expectedValidationMessage) {
+        def actualKind = validationResponse.kind
+        def expectedKind = FormValidation.Kind.valueOf(expectedValidationKind)
+        assert actualKind == expectedKind
 
+        def actualMessage = validationResponse.message
+        assert actualMessage.contains(expectedValidationMessage)
+    }
 }

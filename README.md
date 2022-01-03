@@ -1,8 +1,6 @@
-[![Version](http://sebastian-badge.info/plugins/groovy-events-listener-plugin.svg "Version")](https://wiki.jenkins-ci.org/display/JENKINS/Groovy+Events+Listener+Plugin) [![Build Status](https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/groovy-events-listener-plugin&style=plastic "Build Status")](https://jenkins.ci.cloudbees.com/job/plugins/job/groovy-events-listener-plugin/) [![Dependency Status](https://www.versioneye.com/user/projects/56df737adf573d00352c67e3/badge.svg?style=plastic)](https://www.versioneye.com/user/projects/56df737adf573d00352c67e3) [![codecov](https://codecov.io/github/nickgrealy/global-events/coverage.svg?branch=master)](https://codecov.io/github/nickgrealy/global-events?branch=master) [![chat](https://badges.gitter.im/jenkinsci/groovy-events-listener-plugin.svg)](https://gitter.im/jenkinsci/groovy-events-listener-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 # Groovy Events Listener Plugin
 
-A Jenkins plugin, which executes groovy code when an event occurs.
+A Jenkins plugin, which executes Groovy code when an event occurs.
 
 Table of contents
 ---
@@ -37,14 +35,14 @@ So I wrote this plugin. Along the way, I realised it could have some other appli
 - performance monitoring
 - incident escalation
 - integration with 3rd party applications
-- ???
+- much more...
 
 Building
 ---
 
 Prerequisites:
 
-- JDK 6 (or above)
+- JDK 8 (or above)
 
 To setup for use with Intellij IDEA
 
@@ -91,52 +89,51 @@ So lets get started with the simplest example.
 log.info "hello world!"
 ```
 
-Now save the changes, kick off a Jenkins job, and you will see "hello world!" written to the logs three times. Alternatively, 
+Now save the changes, kick off a Jenkins job, and you will see "hello world!" written to the logs three times. Alternatively,
 there's now a `Test Groovy Code` button, which will execute the code with the `event`=`RunListener.onStarted`.
 
 The plugin actually injects a couple of variables, which you can use in your code. Here's some examples using the `event`
 and `env` variables.
 
-This code limits the logging to only occur when a Job is completed! **N.B.** this behaviour can also be replicated using the configuration options.
+This code limits the logging to only occur when a job is completed! **N.B.** this behaviour can also be replicated using the configuration options.
 
 ```Groovy
-if (event == Event.JOB_STARTED){
+if (event == Event.JOB_STARTED) {
     log.info "hello world!"
 }
 ```
 
-And this one filters on Job's whose name starts with "Foobar"...
+And this one filters on jobs whose name starts with "Foobar":
 
 ```Groovy
-if (env.JOB_NAME.startsWith('Foobar')){
+if (env.JOB_NAME.startsWith('Foobar')) {
     log.info "hello world!"
 }
 ```
 
-There's also a `context` Map variable. You can add your own variables to this Map, by returning a Map from your code.
+There is also a `context` variable of type `Map`. You can add your own entries to it, by returning a `Map` from your code.
 E.g.
 
 ```Groovy
-if (event == Event.JOB_FINALIZED){
+if (event == Event.JOB_FINALIZED) {
     def newCount = (context.finishCount ?: 0) + 1
     log.info "hello world! finishCount=$newCount"
-    return ["finishCount": newCount]
+    return [finishCount: newCount]
 }
 ```
 
-This will keep a record in memory, of how many times Jobs have finished. You can also achieve the same result, by
-adding variables directly to the Map variable... e.g.
+This will keep a record in memory, of how many times jobs have finished. You can achieve the same result by
+adding variables directly to the `context` variable:
 
 ```Groovy
-if (event == Event.JOB_FINALIZED){
+if (event == Event.JOB_FINALIZED) {
     context.finishCount = (context.finishCount ?: 0) + 1
     log.info "hello world! finishCount=${context.finishCount}"
 }
 ```
 
-You can also use `@Grab` annotations ([only where they are valid](https://issues.apache.org/jira/browse/GROOVY-6069))
-if you'd like to import external dependencies (thanks [Daniel](https://github.com/CoreMedia/job-dsl-plugin/commit/830fae7a0fd8a046c620600e46633166804190e3)
-for your solution!).
+You can also use `@Grab` annotations if you'd like to import external dependencies
+(thanks [Daniel](https://github.com/CoreMedia/job-dsl-plugin/commit/830fae7a0fd8a046c620600e46633166804190e3) for your solution!).
 
 ```Groovy
 @Grab('commons-lang:commons-lang:2.4')
@@ -144,7 +141,7 @@ import org.apache.commons.lang.WordUtils
 log.info "Hello ${WordUtils.capitalize('world')}!"
 ```
 
-Not bad! And finally, you can import groovy scripts, so you can hide away some of the heavy lifting... here I'm using 
+Not bad! And finally, you can import Groovy scripts, so you can hide away some of the heavy lifting. Here I'm using
 a [RestClient.groovy](src/main/site/includes/RestClient.groovy) script.
 
 ```Groovy
@@ -160,17 +157,17 @@ def resp = client.post('http://localhost:9200/jenkins/runInstances', [
 assert resp.status == 201
 ```
 
-You can pretty much do what ever you want from here... custom logging to a file, sending performance metrics to
-an elastic server, sending email or messenger notifications, calling a SOAP service... the world's your oyster. If 
+You can pretty much do whatever you want from here: custom logging to a file, sending performance metrics to
+a server, sending email or messenger notifications, calling a SOAP service... The world's your oyster. If
 you've got something cool that you want to share, let me know and I'll add it to the [examples](src/main/site/examples)!
 
 For more details on which events trigger the code, what variables are available and details on configuring logging,
-please see the [plugin's help file](https://cdn.rawgit.com/jenkinsci/groovy-events-listener-plugin/master/src/main/resources/org/jenkinsci/plugins/globalEventsPlugin/GlobalEventsPlugin/help-onEventGroovyCode.html).
+please see the plugin's [help file](https://cdn.rawgit.com/jenkinsci/groovy-events-listener-plugin/master/src/main/resources/org/jenkinsci/plugins/globalEventsPlugin/GlobalEventsPlugin/help-onEventGroovyCode.html).
 
 Authors
 ---
 
-Nick Grealy - <nickgrealy@gmail.com>
+Marky Jackson <marky.r.jackson@gmail.com>
 
 License
 ---

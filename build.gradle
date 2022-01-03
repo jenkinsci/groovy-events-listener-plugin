@@ -1,7 +1,40 @@
-
 plugins {
     id 'org.jenkins-ci.jpi' version '0.43.0'
     id 'jacoco'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+    throw new GradleException("Build requires Java ${JavaVersion.VERSION_1_8}")
+}
+
+jenkinsPlugin {
+    coreVersion = '2.143'
+    shortName = project.name
+    displayName = jenkinsDisplayName
+    url = "https://github.com/jenkinsci/$project.name"
+    gitHubUrl = "https://github.com/jenkinsci/$project.name"
+    compatibleSinceVersion = '1.20'
+    fileExtension = 'hpi'
+    maskClasses = 'groovy.grape'
+    pluginFirstClassLoader = true
+    developers {
+        developer {
+            id 'nickg'
+            name 'Nick Grealy'
+            email 'nickgrealy@gmail.com'
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:2.4.12' // add the Groovy lib to the plugin to make @Grab work
+    implementation 'org.apache.ivy:ivy:2.4.0'              // required for @Grab
+
+    testImplementation 'io.cucumber:cucumber-junit:4.8.1'
+    testImplementation 'io.cucumber:cucumber-java:4.8.1'
+    testImplementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
 }
 
 defaultTasks 'clean', 'jpi'
@@ -11,21 +44,8 @@ clean {
     delete '.gradle'
 }
 
-/**
-=== Usage ===
-
-gradlew jpi - Build the Jenkins plugin file, which can then be found in the build directory. The file will currently end in ".hpi".
-gradlew publishToMavenLocal - Build the Jenkins plugin and install it into your local Maven repository.
-gradlew publish - Deploy your plugin to the Jenkins Maven repository to be included in the Update Center.
-gradlew server - Start a local instance of Jenkins (http://localhost:8080) with the plugin pre-installed for testing and debugging.
- */
-
-apply plugin: 'org.jenkins-ci.jpi'
-apply plugin: 'jacoco'
-
-repositories {
-    mavenCentral()
-    jcenter()
+tasks.register('deleteTarget', Delete) {
+    delete 'target', 'out', 'work'
 }
 
 jacocoTestReport {
@@ -37,44 +57,36 @@ jacocoTestReport {
 
 check.dependsOn jacocoTestReport
 
-jenkinsPlugin {
-    coreVersion = '2.143'
-    shortName = project.name
-    displayName = jenkinsDisplayName
-    url = "https://github.com/jenkinsci/$project.name"
-    gitHubUrl = "https://github.com/jenkinsci/$project.name"
-    compatibleSinceVersion = '1.20'
-    fileExtension = 'hpi'
-    developers {
-        developer {
-            id 'nickg'
-            name 'Nick Grealy'
-            email 'nickgrealy@gmail.com'
-        }
+// Integration Test Structure
+test {
+    exclude '**/integration/**'
+    reports {
+        junitXml.enabled = true
+        html.enabled = true
     }
 }
 
-configurations { forceGroovy }
-
-dependencies {
-    implementation 'org.codehaus.groovy:groovy-all:2.4.12' // add the Groovy lib to the plugin to make @Grab work
-    implementation 'org.apache.ivy:ivy:2.4.0'              // required for @Grab
-
-    testImplementation 'io.cucumber:cucumber-junit:4.8.1'
-    testImplementation 'io.cucumber:cucumber-java:4.8.1'
-    testImplementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+tasks.register('integTest', Test) {
+    dependsOn = [jpi, test]
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    include '**/integration/**'
+    outputs.upToDateWhen { false }
+    reports {
+        junitXml.enabled = true
+        html.enabled = true
+    }
 }
 
-jpi {
-    classpath configurations.forceGroovy // add the Groovy lib to the plugin to make @Grap work
+check.dependsOn 'integTest'
+
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat = 'full'
+    }
 }
 
-/**
- * We must exclude the junit-dep dependency, because it is clashing with junit when we run the AcceptanceTests.
- */
-configurations.findAll {!it.name.endsWith('junit-dep')}.each { conf ->
-    conf.exclude group: "junit", module: "junit-dep"
-}
+clean.dependsOn deleteTarget
 
 wrapper {
     gradleVersion = '7.3.3'

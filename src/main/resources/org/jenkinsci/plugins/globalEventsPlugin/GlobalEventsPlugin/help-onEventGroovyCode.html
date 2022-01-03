@@ -1,15 +1,14 @@
 <div>
-    This plugin executes the supplied Groovy code, every time an event is triggered. You can use <code>@Grab</code>
-    annotations (<a href="https://issues.apache.org/jira/browse/GROOVY-6069">only where they are valid</a>) if you'd
-    like to import external dependencies.<br/><br/>
-
-    <h4>Variables:</h4>
-
-    This plugin injects the following variables, which can be used in your Groovy code.<br/><br/>
-
+    This plugin executes the supplied Groovy code, every time an event is triggered. You can use
+    <a href="http://docs.groovy-lang.org/latest/html/documentation/grape.html">@Grab</a> annotations
+    if you'd like to import external dependencies.
+    <p>
+    <h4 id="variables">Variables:</h4>
+    This plugin injects the following variables, which can be used in your Groovy code.
+    <p>
     Additionally, if you return a <code>java.util.Map</code> object, these variables will be added to the context for
-    any future code invocations.<br/><br/>
-
+    any future code invocations.
+    <p>
     <table border="1" cellpadding="2px">
         <thead>
         <tr>
@@ -22,48 +21,45 @@
         <tr>
             <td><code>log</code></td>
             <td>The plugin's logger instance.</td>
-            <td><a href="http://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html">java.util.Logger</a>
-            </td>
+            <td><a href="http://docs.oracle.com/javase/8/docs/api/java/util/logging/Logger.html">java.util.Logger</a></td>
         </tr>
         <tr>
             <td><code>context</code></td>
-            <td>A Map containing variables, which are persisted between code executions.</td>
-            <td><a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html">java.util.Map</a></td>
+            <td>A map containing variables, which are persisted between code executions.</td>
+            <td><a href="http://docs.oracle.com/javase/8/docs/api/java/util/Map.html">java.util.Map</a></td>
         </tr>
         <tr>
             <td><code>event</code></td>
             <td>The name of the event that triggered the code (see Events below).</td>
-            <td><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/String.html">java.lang.String</a></td>
+            <td><a href="http://docs.oracle.com/javase/8/docs/api/java/lang/String.html">java.lang.String</a></td>
         </tr>
         <tr>
             <td><code>jenkins</code></td>
             <td>The Jenkins instance.</td>
-            <td><a href="http://javadoc.jenkins-ci.org/jenkins/model/Jenkins.html">jenkins.model.Jenkins</a></td>
+            <td><a href="https://javadoc.jenkins.io/jenkins/model/Jenkins.html">jenkins.model.Jenkins</a></td>
         </tr>
         <tr>
             <td><code>env</code></td>
-            <td>(Optional) The EnvVars for a job instance.</td>
-            <td><a href="http://javadoc.jenkins-ci.org/hudson/EnvVars.html">hudson.EnvVars</a></td>
+            <td>(Optional) The environment variables used for a job instance.</td>
+            <td><a href="https://javadoc.jenkins.io/hudson/EnvVars.html">hudson.EnvVars</a></td>
         </tr>
         <tr>
             <td><code>run</code></td>
-            <td>(Optional) The run object associated with this job instance.</td>
-            <td><a href="http://javadoc.jenkins-ci.org/hudson/model/Run.html">hudson.model.Run</a></td>
+            <td>(Optional) The run object associated with a job instance.</td>
+            <td><a href="https://javadoc.jenkins.io/hudson/model/Run.html">hudson.model.Run</a></td>
         </tr>
         <tr>
             <td><code>listener</code></td>
-            <td>(Optional) The task listener associated with the job instance.</td>
-            <td><a href="http://javadoc.jenkins-ci.org/hudson/model/TaskListener.html">hudson.model.TaskListener</a></td>
+            <td>(Optional) The task listener associated with a job instance.</td>
+            <td><a href="https://javadoc.jenkins.io/hudson/model/TaskListener.html">hudson.model.TaskListener</a></td>
         </tr>
         <tr>
         </tbody>
     </table>
-    <br/><br/>
-
-    <h4>Events:</h4>
-
-    This Groovy code is executed when any of the below events occur.<br/><br/>
-
+    <p>
+    <h4 id="events">Events:</h4>
+    This Groovy code is executed when any of the below events occur.
+    <p>
     <table border="1" cellpadding="2px">
         <thead>
         <tr>
@@ -88,13 +84,11 @@
             <td>Called every $scheduledTime minutes.</td>
         </tr>
         <tr>
-            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="http://javadoc.jenkins-ci.org/hudson/model/listeners/RunListener.html">RunListener</a></code></th>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="https://javadoc.jenkins.io/hudson/model/listeners/RunListener.html">RunListener</a></code></th>
         </tr>
         <tr>
             <td><code>RunListener.onStarted</code></td>
-            <td>Called when a build is started (i.e. it was in the queue, and
-                will now start running on an executor).
-            </td>
+            <td>Called when a build is started (i.e. it was in the queue, and will now start running on an executor).</td>
         </tr>
         <tr>
             <td><code>RunListener.onCompleted</code></td>
@@ -102,74 +96,87 @@
         </tr>
         <tr>
             <td><code>RunListener.onFinalized</code></td>
-            <td>Called after a build is moved to the Run.State.COMPLETED
-                state.
-            </td>
+            <td>Called after a build is moved to the Run.State.COMPLETED state.</td>
         </tr>
         <tr>
             <td><code>RunListener.onDeleted</code></td>
             <td>Called right before a build is going to be deleted.</td>
         </tr>
         <tr>
-            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="http://javadoc.jenkins-ci.org/hudson/slaves/ComputerListener.html">ComputerListener</a></code></th>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="https://javadoc.jenkins.io/hudson/slaves/ComputerListener.html">ComputerListener</a></code></th>
         </tr>
         <tr>
             <td><code>ComputerListener.onLaunchFailure</code></td>
-            <td>Called when the slave agent fails to connect
-            </td>
+            <td>Called when the agent fails to connect.</td>
         </tr>
         <tr>
             <td><code>ComputerListener.onOnline</code></td>
-            <td>Called when a node comes online
-            </td>
+            <td>Called when a node comes online.</td>
         </tr>
         <tr>
             <td><code>ComputerListener.onOffline</code></td>
-            <td>Called when a node goes offline
-            </td>
+            <td>Called when a node goes offline.</td>
         </tr>
         <tr>
             <td><code>ComputerListener.onTemporarilyOnline</code></td>
-            <td>Called when a node is marked temporarilyOnline by a user
-            </td>
+            <td>Called when a node is marked temporarilyOnline by a user.</td>
         </tr>
         <tr>
             <td><code>ComputerListener.onTemporarilyOffline</code></td>
-            <td>Called when a node is marked temporarilyOffline by a user
-            </td>
+            <td>Called when a node is marked temporarilyOffline by a user.</td>
         </tr>
         <tr>
-            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="http://javadoc.jenkins-ci.org/hudson/model/queue/QueueListener.html">QueueListener</a></code></th>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="https://javadoc.jenkins.io/hudson/model/queue/QueueListener.html">QueueListener</a></code></th>
         </tr>
         <tr>
             <td><code>QueueListener.onEnterWaiting</code></td>
-            <td>Called when a job enters the queue
-            </td>
+            <td>Called when a job enters the queue.</td>
         </tr>
         <tr>
             <td><code>QueueListener.onEnterBlocked</code></td>
-            <td>Called when a job isn't ready to start for some reason other than executor availability
-            </td>
+            <td>Called when a job isn't ready to start for some reason other than executor availability.</td>
         </tr>
         <tr>
             <td><code>QueueListener.onEnterBuildable</code></td>
-            <td>Called when a queued job is ready to run when an executor is available
-            </td>
+            <td>Called when a queued job is ready to run when an executor is available.</td>
         </tr>
         <tr>
             <td><code>QueueListener.onLeft</code></td>
-            <td>Called when a job leaves the queue after starting or being cancelled
-            </td>
+            <td>Called when a job leaves the queue after starting or being cancelled.</td>
+        </tr>
+        <tr>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="https://javadoc.jenkins.io/hudson/model/listeners/ItemListener.html">ItemListener</a></code></th>
+        </tr>
+        <tr>
+            <td><code>ItemListener.onCreated</code></td>
+            <td>Called after a new job is created and added to Jenkins, before the initial configuration page is provided.</td>
+        </tr>
+        <tr>
+            <td><code>ItemListener.onCopied</code></td>
+            <td>Called after a new job is created by copying from an existing job.</td>
+        </tr>
+        <tr>
+            <td><code>ItemListener.onDeleted</code></td>
+            <td>Called right before a job is going to be deleted.</td>
+        </tr>
+        <tr>
+            <td><code>ItemListener.onRenamed</code></td>
+            <td>Called after a job is renamed.</td>
+        </tr>
+        <tr>
+            <td><code>ItemListener.onLocationChanged</code></td>
+            <td>Called after an item's fully-qualified location has changed.</td>
+        </tr>
+        <tr>
+            <td><code>ItemListener.onUpdated</code></td>
+            <td>Called after a job has its configuration updated.</td>
         </tr>
         </tbody>
     </table>
-    <br/><br/>
-    <b>N.B.</b> There is also now an <a href="https://github.com/jenkinsci/groovy-events-listener-plugin/blob/master/src/main/groovy/org/jenkinsci/plugins/globalEventsPlugin/Event.java">Event class</a>
+    <p>
+    There is also an <a href="https://github.com/jenkinsci/groovy-events-listener-plugin/blob/master/src/main/groovy/org/jenkinsci/plugins/globalEventsPlugin/Event.java">Event</a> class
     (automatically imported) which contains constants for all of the available event names.
-
-    <br/><br/>
-
-    <h4>Logging:</h4>
-
-    To configure a logger, use the logging filter "<code>org.jenkinsci.plugins.globalEventsPlugin</code>".
+    <p>
+    <h4 id="logging">Logging:</h4>
+    To configure a logger for this plugin, use the logging filter <code>org.jenkinsci.plugins.globalEventsPlugin</code>.
 </div>
