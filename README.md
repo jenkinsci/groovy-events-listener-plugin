@@ -42,7 +42,7 @@ Building
 
 Prerequisites:
 
-- JDK 8 (or above)
+- JDK 11 (or above)
 
 To setup for use with Intellij IDEA
 

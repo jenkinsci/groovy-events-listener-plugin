@@ -3,10 +3,10 @@ plugins {
     id 'jacoco'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
 
-if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-    throw new GradleException("Build requires Java ${JavaVersion.VERSION_1_8}")
+if (JavaVersion.current() != JavaVersion.VERSION_11) {
+    throw new GradleException("Build requires Java ${JavaVersion.VERSION_11}")
 }
 
 jenkinsPlugin {

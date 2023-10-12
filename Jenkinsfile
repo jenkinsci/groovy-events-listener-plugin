@@ -1,2 +1,2 @@
 
-buildPluginWithGradle()
+buildPluginWithGradle(jdkVersions: ['11'])
