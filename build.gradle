@@ -12,8 +12,10 @@ if (JavaVersion.current() != JavaVersion.VERSION_11) {
     throw new GradleException("Build requires Java ${JavaVersion.VERSION_11}")
 }
 
+def coreBaseVersion = '2.361'
+
 jenkinsPlugin {
-    coreVersion = '2.361'
+    coreVersion = coreBaseVersion
     shortName = project.name
     displayName = jenkinsDisplayName
     url = "https://github.com/jenkinsci/$project.name"
@@ -38,6 +40,8 @@ dependencies {
     testImplementation 'io.cucumber:cucumber-junit:7.14.0'
     testImplementation 'io.cucumber:cucumber-java:7.14.0'
     testImplementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+
+    testRuntimeOnly("org.jenkins-ci.main:jenkins-war:${coreBaseVersion}")
 }
 
 defaultTasks 'clean', 'jpi'
