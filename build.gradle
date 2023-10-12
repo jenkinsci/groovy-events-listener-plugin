@@ -1,9 +1,12 @@
 plugins {
     id 'org.jenkins-ci.jpi' version '0.49.0'
     id 'jacoco'
+    id 'java'
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
 
 if (JavaVersion.current() != JavaVersion.VERSION_11) {
     throw new GradleException("Build requires Java ${JavaVersion.VERSION_11}")
@@ -41,7 +44,6 @@ defaultTasks 'clean', 'jpi'
 
 clean {
     delete 'work'
-    delete '.gradle'
 }
 
 tasks.register('deleteTarget', Delete) {
@@ -50,8 +52,8 @@ tasks.register('deleteTarget', Delete) {
 
 jacocoTestReport {
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required
+        html.required
     }
 }
 
@@ -61,8 +63,8 @@ check.dependsOn jacocoTestReport
 test {
     exclude '**/integration/**'
     reports {
-        junitXml.enabled = true
-        html.enabled = true
+        junitXml.required
+        html.required
     }
 }
 
@@ -73,8 +75,8 @@ tasks.register('integTest', Test) {
     include '**/integration/**'
     outputs.upToDateWhen { false }
     reports {
-        junitXml.enabled = true
-        html.enabled = true
+        junitXml.required
+        html.required
     }
 }
 
@@ -89,5 +91,5 @@ tasks.withType(Test) {
 clean.dependsOn deleteTarget
 
 wrapper {
-    gradleVersion = '6.0.1'
+    gradleVersion = '8.4'
 }
