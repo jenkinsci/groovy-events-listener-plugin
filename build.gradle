@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jenkins-ci.jpi' version '0.39.0'
+    id 'org.jenkins-ci.jpi' version '0.49.0'
     id 'jacoco'
 }
 
@@ -10,7 +10,7 @@ if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
 }
 
 jenkinsPlugin {
-    coreVersion = '2.143'
+    coreVersion = '2.361'
     shortName = project.name
     displayName = jenkinsDisplayName
     url = "https://github.com/jenkinsci/$project.name"
