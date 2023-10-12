@@ -35,8 +35,8 @@ dependencies {
     implementation 'org.codehaus.groovy:groovy-all:2.4.21' // add the Groovy lib to the plugin to make @Grab work
     implementation 'org.apache.ivy:ivy:2.4.0'              // required for @Grab
 
-    testImplementation 'io.cucumber:cucumber-junit:4.8.1'
-    testImplementation 'io.cucumber:cucumber-java:4.8.1'
+    testImplementation 'io.cucumber:cucumber-junit:7.14.0'
+    testImplementation 'io.cucumber:cucumber-java:7.14.0'
     testImplementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
 }
 

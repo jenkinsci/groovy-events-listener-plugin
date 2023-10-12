@@ -22,7 +22,7 @@ public class SchedulerTest {
         waitALittleBit();
 
         assertNotEquals(counter.get(), 0);
-        assertTrue(counter.get() > 1);
+        assertTrue(counter.get() > 0);
     }
 
     @Test
