@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>groovy-events-listener-plugin</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${revision}.${changelist}</version>
   <packaging>hpi</packaging>
   <name>Groovy Events Listener Plugin</name>
   <url>https://github.com/jenkinsci/${project.artifactId}</url>
@@ -37,8 +37,8 @@
   </scm>
 
   <properties>
-    <revision>1.020</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <revision>2</revision>
+    <changelist>999999-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.version>2.387.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}</gitHubRepo>
