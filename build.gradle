@@ -47,11 +47,11 @@ dependencies {
 defaultTasks 'clean', 'jpi'
 
 clean {
-    delete 'work'
+    delete 'work', "bin"
 }
 
 tasks.register('deleteTarget', Delete) {
-    delete 'target', 'out', 'work'
+    delete 'target', 'out', 'work', "bin"
 }
 
 jacocoTestReport {
