@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.globalEventsPlugin;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.Queue.BlockedItem;
 import hudson.model.Queue.BuildableItem;
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
 @Extension
 public class GlobalQueueListener extends QueueListener {
 
+    @SuppressFBWarnings(value = "MS_SHOULD_BE_FINAL", justification = "Needs to be overridden from tests")
     protected static Logger log = Logger.getLogger(GlobalQueueListener.class.getName());
 
     /**

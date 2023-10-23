@@ -1,3 +1,4 @@
+# https://github.com/jenkinsci/.github/blob/master/.github/release-drafter.adoc
+---
 _extends: .github
-tag-template: $NEXT_MINOR_VERSION
-version-template: $MAJOR.$MINOR
+tag-template: groovy-events-listener-plugin-$NEXT_MINOR_VERSION
