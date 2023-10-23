@@ -29,7 +29,7 @@ jenkinsPlugin {
 }
 
 dependencies {
-    implementation 'org.codehaus.groovy:groovy-all:2.4.12' // add the Groovy lib to the plugin to make @Grab work
+    implementation 'org.codehaus.groovy:groovy-all:2.4.21' // add the Groovy lib to the plugin to make @Grab work
     implementation 'org.apache.ivy:ivy:2.4.0'              // required for @Grab
 
     testImplementation 'io.cucumber:cucumber-junit:4.8.1'
