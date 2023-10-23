@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins.globalEventsPlugin;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.Computer;
 import hudson.model.TaskListener;
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
 @Extension
 public class GlobalComputerListener extends ComputerListener {
 
+    @SuppressFBWarnings(value = "MS_SHOULD_BE_FINAL", justification = "Needs to be overridden from tests")
     protected static Logger log = Logger.getLogger(GlobalComputerListener.class.getName());
 
     /**
