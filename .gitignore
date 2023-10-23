@@ -4,6 +4,7 @@ target/
 work/
 build/
 out/
+bin/
 target/
 *.iml
 *.iws

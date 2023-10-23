@@ -1,16 +1,21 @@
 plugins {
-    id 'org.jenkins-ci.jpi' version '0.39.0'
+    id 'org.jenkins-ci.jpi' version '0.49.0'
     id 'jacoco'
+    id 'java'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-
-if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-    throw new GradleException("Build requires Java ${JavaVersion.VERSION_1_8}")
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
 }
+
+if (JavaVersion.current() != JavaVersion.VERSION_11) {
+    throw new GradleException("Build requires Java ${JavaVersion.VERSION_11}")
+}
+
+def coreBaseVersion = '2.361'
 
 jenkinsPlugin {
-    coreVersion = '2.143'
+    coreVersion = coreBaseVersion
     shortName = project.name
     displayName = jenkinsDisplayName
     url = "https://github.com/jenkinsci/$project.name"
@@ -32,26 +37,27 @@ dependencies {
     implementation 'org.codehaus.groovy:groovy-all:2.4.21' // add the Groovy lib to the plugin to make @Grab work
     implementation 'org.apache.ivy:ivy:2.4.0'              // required for @Grab
 
-    testImplementation 'io.cucumber:cucumber-junit:4.8.1'
-    testImplementation 'io.cucumber:cucumber-java:4.8.1'
+    testImplementation 'io.cucumber:cucumber-junit:7.14.0'
+    testImplementation 'io.cucumber:cucumber-java:7.14.0'
     testImplementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+
+    testRuntimeOnly("org.jenkins-ci.main:jenkins-war:${coreBaseVersion}")
 }
 
 defaultTasks 'clean', 'jpi'
 
 clean {
-    delete 'work'
-    delete '.gradle'
+    delete 'work', "bin"
 }
 
 tasks.register('deleteTarget', Delete) {
-    delete 'target', 'out', 'work'
+    delete 'target', 'out', 'work', "bin"
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required
+        html.required
     }
 }
 
@@ -61,8 +67,8 @@ check.dependsOn jacocoTestReport
 test {
     exclude '**/integration/**'
     reports {
-        junitXml.enabled = true
-        html.enabled = true
+        junitXml.required
+        html.required
     }
 }
 
@@ -73,8 +79,8 @@ tasks.register('integTest', Test) {
     include '**/integration/**'
     outputs.upToDateWhen { false }
     reports {
-        junitXml.enabled = true
-        html.enabled = true
+        junitXml.required
+        html.required
     }
 }
 
@@ -89,5 +95,5 @@ tasks.withType(Test) {
 clean.dependsOn deleteTarget
 
 wrapper {
-    gradleVersion = '6.0.1'
+    gradleVersion = '8.4'
 }
