@@ -44,30 +44,15 @@ Prerequisites:
 
 - JDK 11 (or above)
 
-To setup for use with Intellij IDEA
+Open the project in your IDE as a Maven project
 
-```Shell
-./gradlew cleanIdea idea
+Maven goals:
 ```
+compiler:compile Compiles the project
 
-To run Jenkins ([http://localhost:8080](http://localhost:8080)) locally with the plugin installed:
+hpi:hpi Builds the .hpi file
 
-```Shell
-./gradlew clean server
-```
-
-To build the Jenkins plugin (.jpi) file:
-
-```Shell
-./gradlew clean jpi
-```
-
-To publish/release the Jenkins plugin:
-
-1. Update the `version` in `gradle.properties`, to remove "-SNAPSHOT" (increment and re-add after publishing)
-
-```Shell
-./gradlew clean publish
+hpi:run Runs Jenkins with the current plugin project
 ```
 
 Basic Usage
