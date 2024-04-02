@@ -45,6 +45,9 @@ Feature: Groovy Script - Runtime
       | Item.onDeleted                | actEvent | -> ItemListener.onDeleted                |
       | Item.onCopied                 | actEvent | -> ItemListener.onCopied                 |
       | Item.onCreated                | actEvent | -> ItemListener.onCreated                |
+      | Executor.taskStarted          | actEvent | -> ExecutorListener.taskStarted          |
+      | Executor.taskCompleted        | actEvent | -> ExecutorListener.taskCompleted        |
+      | Executor.taskCompletedWithProblems | actEvent | -> ExecutorListener.taskCompletedWithProblems |
 
 
   Scenario: The plugin's package should be imported by default, so that I can make use of the 'Event' convenience class
