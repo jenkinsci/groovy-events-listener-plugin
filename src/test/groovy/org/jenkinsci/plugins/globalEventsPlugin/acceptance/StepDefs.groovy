@@ -7,6 +7,7 @@ import io.cucumber.java.en.When
 import hudson.util.FormValidation
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPlugin
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalEventsPluginTest
+import org.jenkinsci.plugins.globalEventsPlugin.GlobalExecutorListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalItemListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalRunListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalComputerListener
@@ -20,6 +21,7 @@ class StepDefs {
     GlobalComputerListener computerListener
     GlobalQueueListener queueListener
     GlobalItemListener itemListener
+    GlobalExecutorListener executorListener
     LoggerTrap logger
     String groovyScript
     FormValidation validationResponse
@@ -49,6 +51,10 @@ class StepDefs {
         itemListener = new GlobalItemListener()
         itemListener.parentPluginDescriptorOverride = plugin
         itemListener.log = logger
+
+        executorListener = new GlobalExecutorListener()
+        executorListener.parentPluginDescriptorOverride = plugin
+        executorListener.log = logger
     }
 
     @Given('^the script$')
@@ -138,6 +144,15 @@ class StepDefs {
                     break
                 case "Item.onCreated":
                     itemListener.onCreated(null)
+                    break
+                case "Executor.taskStarted":
+                    executorListener.taskStarted(null, null)
+                    break
+                case "Executor.taskCompleted":
+                    executorListener.taskCompleted(null, null, 0)
+                    break
+                case "Executor.taskCompletedWithProblems":
+                    executorListener.taskCompletedWithProblems(null, null, 0, null)
                     break
             }
         } catch (Throwable t) {

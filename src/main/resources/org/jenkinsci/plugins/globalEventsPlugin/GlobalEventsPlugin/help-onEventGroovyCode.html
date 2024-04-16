@@ -171,6 +171,21 @@
             <td><code>ItemListener.onUpdated</code></td>
             <td>Called after a job has its configuration updated.</td>
         </tr>
+        <tr>
+            <th style="background:lightblue;text-align:left;" colspan="2"><code><a href="https://javadoc.jenkins.io/hudson/model/ExecutorListener.html">ExecutorListener</a></code></th>
+        </tr>
+        <tr>
+            <td><code>ExecutorListener.taskStarted</code></td>
+            <td>Called whenever a task is started by an executor.</td>
+        </tr>
+        <tr>
+            <td><code>ExecutorListener.taskCompleted</code></td>
+            <td>Called whenever a task is completed without any problems by an executor.</td>
+        </tr>
+        <tr>
+            <td><code>ExecutorListener.taskCompletedWithProblems</code></td>
+            <td>Called whenever a task is completed with some problems by an executor.</td>
+        </tr>
         </tbody>
     </table>
     <p>

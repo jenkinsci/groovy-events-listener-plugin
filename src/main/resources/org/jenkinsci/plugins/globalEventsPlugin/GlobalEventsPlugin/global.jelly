@@ -169,6 +169,26 @@
                     />
                 </f:entry>
             </f:section>
+            <f:section title="Task Execution">
+                <f:entry title="ExecutionStarted">
+                    <f:checkbox
+                            field="ExecutorListener__taskStarted"
+                            checked="${descriptor.isEventEnabled('ExecutorListener.taskStarted')}"
+                    />
+                </f:entry>
+                <f:entry title="ExecutionCompleted">
+                    <f:checkbox
+                            field="ExecutorListener__taskCompleted"
+                            checked="${descriptor.isEventEnabled('ExecutorListener.taskCompleted')}"
+                    />
+                </f:entry>
+                <f:entry title="ExecutionCompletedWithProblems">
+                    <f:checkbox
+                            field="ExecutorListener__taskCompletedWithProblems"
+                            checked="${descriptor.isEventEnabled('ExecutorListener.taskCompletedWithProblems')}"
+                    />
+                </f:entry>
+            </f:section>
             <f:section title="Scheduler">
                 <f:entry title="Schedule time" description="Raise PLUGIN_SCHEDULE event every $scheduledTime minutes. 0 - disabled">
                   <f:textbox field="scheduleTime" />
