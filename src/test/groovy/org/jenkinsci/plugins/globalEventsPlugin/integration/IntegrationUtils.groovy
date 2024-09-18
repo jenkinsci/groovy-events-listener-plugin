@@ -34,7 +34,7 @@ class IntegrationUtils {
     }
 
     private static String normaliseNewlines(String message) {
-        message.replaceAll("\\r?\\n", "")
+        message.replaceAll("\\r?\\n", "").replaceAll("\\s{2,}", "")
     }
 
     /**
