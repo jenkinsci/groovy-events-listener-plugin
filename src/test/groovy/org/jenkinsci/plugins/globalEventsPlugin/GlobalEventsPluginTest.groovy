@@ -5,6 +5,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import org.jvnet.hudson.test.JenkinsRule
 
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
@@ -18,6 +19,8 @@ import static groovy.test.GroovyAssert.shouldFail
  * Created by nickgrealy@gmail.com.
  */
 class GlobalEventsPluginTest {
+    @Rule
+    public JenkinsRule jenkinsRule = new JenkinsRule()
 
     private GlobalEventsPlugin.DescriptorImpl plugin
     private LoggerTrap logger
@@ -27,8 +30,6 @@ class GlobalEventsPluginTest {
 
     @Before
     void setup() {
-        // disable load method, create new plugin...
-        GlobalEventsPlugin.DescriptorImpl.metaClass.load = {}
         plugin = new GlobalEventsPlugin.DescriptorImpl(ClassLoader.getSystemClassLoader())
         logger = new LoggerTrap(GlobalEventsPluginTest.name)
     }

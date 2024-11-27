@@ -15,7 +15,6 @@ import org.jenkinsci.plugins.globalEventsPlugin.GlobalQueueListener
 import org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap
 
 class StepDefs {
-
     GlobalEventsPlugin.DescriptorImpl plugin
     GlobalRunListener runListener
     GlobalComputerListener computerListener
@@ -30,8 +29,6 @@ class StepDefs {
 
     @Before
     void setup() {
-        // disable load method, create new plugin...
-        GlobalEventsPlugin.DescriptorImpl.metaClass.load = {}
         plugin = new GlobalEventsPlugin.DescriptorImpl(ClassLoader.getSystemClassLoader())
         logger = new LoggerTrap(GlobalEventsPluginTest.name)
 
