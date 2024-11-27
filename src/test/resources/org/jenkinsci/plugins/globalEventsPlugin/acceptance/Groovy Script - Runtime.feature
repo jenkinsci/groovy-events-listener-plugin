@@ -63,11 +63,10 @@ Feature: Groovy Script - Runtime
   Scenario: All relevant job parameters should passed into the script, so that I don't have to manually retrieve data
     Given the script
     """
-    log.info("${log.class}, $listener, $jenkins, $context, $run, $event, $env")
+    log.info("${log.class}, $listener, null, $context, $run, $event, $env")
     """
     When the Run.onStarted event is triggered
     Then the log level info should display 'class org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap, null, null, [:], null, RunListener.onStarted, [:]'
-
 
   Scenario: If the script outputs a map, it should be placed into the cache for subsequent executions, so that the script can keep "memory"
     Given the script
