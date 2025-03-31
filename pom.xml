@@ -21,14 +21,6 @@
     </license>
   </licenses>
 
-  <developers>
-    <developer>
-      <id>nickg</id>
-      <name>Nick Grealy</name>
-      <email>nickgrealy@gmail.com</email>
-    </developer>
-  </developers>
-
   <scm>
     <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
@@ -41,7 +33,7 @@
     <changelist>-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.479</jenkins.baseline>
-    <jenkins.version>${jenkins.baseline}.1</jenkins.version>
+    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}</gitHubRepo>
     <!-- TODO GMavenPlus does not support Javadoc -->
     <maven.javadoc.skip>true</maven.javadoc.skip>
@@ -72,7 +64,6 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>2.4.21</version>
     </dependency>
     <dependency>
       <groupId>io.cucumber</groupId>
