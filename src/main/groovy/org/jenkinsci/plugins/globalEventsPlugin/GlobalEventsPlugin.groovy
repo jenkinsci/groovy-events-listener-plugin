@@ -108,6 +108,10 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
             return scheduleTime
         }
 
+        void setScheduleTime(int scheduleTime) {
+            this.scheduleTime = scheduleTime
+        }
+
         @SuppressWarnings("GroovyUnusedDeclaration")
         String getClassPath() {
             return classPath

@@ -181,6 +181,25 @@ class GlobalEventsPluginTest {
         assert plugin.isEventEnabled("GlobalEventsPlugin.schedule")
     }
 
+    @Test
+    void testGetScheduleTimeDefault() {
+        // Test that default schedule time is 0
+        assert plugin.getScheduleTime() == 0
+    }
+
+    @Test
+    void testSetAndGetScheduleTime() {
+        // Test basic setter and getter functionality
+        plugin.setScheduleTime(5)
+        assert plugin.getScheduleTime() == 5
+
+        plugin.setScheduleTime(10)
+        assert plugin.getScheduleTime() == 10
+
+        plugin.setScheduleTime(60)
+        assert plugin.getScheduleTime() == 60
+    }
+
     private static JSONObject getDefaultConfig() {
         new JSONObject([
                 onEventGroovyCode     : "",
