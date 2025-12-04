@@ -5,9 +5,10 @@ import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.model.listeners.RunListener;
+import jakarta.annotation.Nonnull;
 import jenkins.model.Jenkins;
 
-import javax.annotation.Nonnull;
+
 import java.util.HashMap;
 import java.util.logging.Logger;
 
