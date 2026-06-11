@@ -32,7 +32,7 @@
     <revision>2</revision>
     <changelist>-SNAPSHOT</changelist>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-    <jenkins.baseline>2.516</jenkins.baseline>
+    <jenkins.baseline>2.555</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}</gitHubRepo>
     <!-- TODO GMavenPlus does not support Javadoc -->
@@ -46,7 +46,7 @@
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-${jenkins.baseline}.x</artifactId>
-        <version>5857.vb_f3dd0731f44</version>
+        <version>6453.v115ff6f496dd</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
