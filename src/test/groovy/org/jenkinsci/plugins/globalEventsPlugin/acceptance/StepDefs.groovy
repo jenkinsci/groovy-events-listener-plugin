@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.globalEventsPlugin.acceptance
 
+import io.cucumber.java.AfterAll
 import io.cucumber.java.Before
+import io.cucumber.java.BeforeAll
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -13,8 +15,38 @@ import org.jenkinsci.plugins.globalEventsPlugin.GlobalRunListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalComputerListener
 import org.jenkinsci.plugins.globalEventsPlugin.GlobalQueueListener
 import org.jenkinsci.plugins.globalEventsPlugin.LoggerTrap
+import org.junit.runner.Description
+import org.jvnet.hudson.test.JenkinsRule
+
+class ManagedJenkinsRule extends JenkinsRule {
+    void startJenkins() {
+        // JenkinsRule expects this to be set by the JUnit4 runner.
+        this.testDescription = Description.createSuiteDescription("Cucumber")
+        super.before()
+    }
+
+    void stopJenkins() {
+        super.after()
+    }
+}
 
 class StepDefs {
+    static ManagedJenkinsRule jenkinsRule
+
+    @BeforeAll
+    static void beforeAll() {
+        jenkinsRule = new ManagedJenkinsRule()
+        jenkinsRule.startJenkins()
+    }
+
+    @AfterAll
+    static void afterAll() {
+        if (jenkinsRule != null) {
+            jenkinsRule.stopJenkins()
+            jenkinsRule = null
+        }
+    }
+
     GlobalEventsPlugin.DescriptorImpl plugin
     GlobalRunListener runListener
     GlobalComputerListener computerListener
