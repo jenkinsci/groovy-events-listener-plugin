@@ -8,7 +8,6 @@ import hudson.util.FormValidation
 import hudson.util.LogTaskListener
 import jenkins.model.Jenkins
 import net.sf.json.JSONObject
-import org.apache.commons.lang.StringUtils
 import org.kohsuke.stapler.QueryParameter
 import org.kohsuke.stapler.StaplerRequest
 import org.kohsuke.stapler.export.ExportedBean
@@ -136,7 +135,7 @@ class GlobalEventsPlugin extends Plugin implements Describable<GlobalEventsPlugi
         private updateClasspath() {
             groovyClassLoader = new GroovyClassLoader(parentClassLoader)
 
-            if (StringUtils.isNotEmpty(classPath)) {
+            if (classPath) {
                 for (String path : classPath.split(",")) {
                     groovyClassLoader.addClasspath(path.trim())
                 }

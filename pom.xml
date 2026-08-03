@@ -39,6 +39,7 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <!-- TODO fix existing violations -->
     <spotbugs.threshold>High</spotbugs.threshold>
+    <ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>
   </properties>
 
   <dependencyManagement>
