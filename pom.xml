@@ -109,6 +109,10 @@
       <plugin>
         <groupId>org.codehaus.gmavenplus</groupId>
         <artifactId>gmavenplus-plugin</artifactId>
+        <configuration>
+          <!-- Groovy 2.4 supports bytecode up to Java 8. Java sources still target Java 21. -->
+          <targetBytecode>8</targetBytecode>
+        </configuration>
         <executions>
           <execution>
             <goals>
