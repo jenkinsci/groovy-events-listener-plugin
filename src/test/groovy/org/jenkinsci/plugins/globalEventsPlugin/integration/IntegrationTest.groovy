@@ -41,8 +41,8 @@ class IntegrationTest {
     @Test
     void importDependenciesWithGrabAnnotation() {
         def groovyCode = '''
-            @Grab('commons-lang:commons-lang:2.4')
-            import org.apache.commons.lang.WordUtils
+            @Grab('org.apache.commons:commons-text:1.15.0')
+            import org.apache.commons.text.WordUtils
             log.info "Hello ${WordUtils.capitalize('world')}!"
         '''.stripIndent()
 

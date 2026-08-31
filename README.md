@@ -121,8 +121,8 @@ You can also use `@Grab` annotations if you'd like to import external dependenci
 (thanks [Daniel](https://github.com/CoreMedia/job-dsl-plugin/commit/830fae7a0fd8a046c620600e46633166804190e3) for your solution!).
 
 ```Groovy
-@Grab('commons-lang:commons-lang:2.4')
-import org.apache.commons.lang.WordUtils
+@Grab('org.apache.commons:commons-text:1.15.0')
+import org.apache.commons.text.WordUtils
 log.info "Hello ${WordUtils.capitalize('world')}!"
 ```
 
