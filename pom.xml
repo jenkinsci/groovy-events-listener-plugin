@@ -75,7 +75,7 @@
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit-platform-engine</artifactId>
-      <version>7.34.7</version>
+      <version>8.0.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
