@@ -6,6 +6,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      cucumber:
+        patterns:
+          - "io.cucumber:*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
